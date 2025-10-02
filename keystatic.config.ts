@@ -13,11 +13,12 @@ export default config({
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
         
-        description: fields.markdoc({ label: 'Content' }),
+        description: fields.markdoc({ label: 'Descripción' }),
+        
+        quote: fields.text({label: 'Pretitle',multiline: true}),
 
         avatar: fields.image({label: 'Imagen'}),
 
-        date: fields.datetime({label: 'Event date',description: 'The date of the event'}),
       },
     }),
   },
