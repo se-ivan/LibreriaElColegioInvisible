@@ -9,6 +9,13 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.15",
+    "@prisma/adapter-libsql": "^6.16.3",
+    "@prisma/client": "^6.16.3",
     "astro": "^5.14.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.16.3",
+    "tsx": "^4.20.6"
   }
 }

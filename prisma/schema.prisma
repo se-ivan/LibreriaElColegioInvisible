@@ -1,0 +1,102 @@
+// prisma/schema.prisma
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  lastName  String    @map("last_name")
+  email     String    @unique
+  password  String
+  isUser    Boolean   @default(true) @map("is_user")
+  news      New[]
+  events    Event[]
+  comments  Comment[]
+  
+  @@map("user")
+}
+
+model Book {
+  id              Int       @id @default(autoincrement())
+  isbn            String    @unique
+  title           String
+  price           Decimal
+  editorial       String
+  publicationYear Int       @map("anio_publicacion")
+  authorId        Int       @map("author_id_author")
+  author          Author    @relation(fields: [authorId], references: [id])
+  comments        Comment[]
+
+  @@map("book")
+}
+
+model Author {
+  id          Int      @id @default(autoincrement())
+  name        String
+  lastName    String   @map("last_name")
+  biography   String
+  birthdate   DateTime
+  imageUrl    String?  @map("url_image")
+  
+  // Relación con Book
+  books       Book[]
+
+  @@map("author")
+}
+
+model New {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   
+  imageUrl    String?  @map("url_image")
+  date        DateTime @default(now())
+  pretitle    String?
+  userId      Int      @map("user_id_user")
+  user        User     @relation(fields: [userId], references: [id])
+  
+  @@map("new")
+}
+
+model Event {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String    
+  imageUrl    String?   @map("url_imagen")
+  date        DateTime
+  startTime   DateTime  @map("start_time")
+  endTime     DateTime  @map("end_time")
+  cost        Decimal
+  guest       String?
+
+  userId      Int       @map("user_id_user")
+  user        User      @relation(fields: [userId], references: [id])
+  @@map("event")
+}
+
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String    
+  like        Int       @default(0)
+  userId      Int       @map("user_id_user")
+  user        User      @relation(fields: [userId], references: [id])
+  bookId      Int       @map("book_id_book")
+  book        Book      @relation(fields: [bookId], references: [id])
+  replies     Reply[]
+  @@map("comment")
+}
+
+model Reply {
+  id        Int      @id @default(autoincrement())
+  commentId Int      @map("id_comment")
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  @@map("reply")
+}
