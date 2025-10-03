@@ -1,51 +1,100 @@
-import type { APIRoute } from 'astro';
-import { comments, replies } from '../../data/mock-db';
-import type { Comment } from '../../data/mock-db';
+import type { APIRoute } from "astro";
+import { replies } from "./replies";
 
-export const GET: APIRoute = ({ url }) => {
-  const bookId = url.searchParams.get("bookId");
+export const prerender = false;
+
+type Comment = {
+  id: number;
+  title: string;
+  description: string;
+  like: number;
+  book_id: number;
+};
+
+export let comments: Comment[] = []; 
+ 
+export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
+  const bookId = url.searchParams.get("book_id");
+
   if (bookId) {
-    const filtered = comments.filter(c => c.bookId === bookId);
+    const filtered = comments.filter(c => c.book_id === Number(bookId));
     return new Response(JSON.stringify(filtered), { status: 200 });
   }
+
   return new Response(JSON.stringify(comments), { status: 200 });
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  const { title, text, bookId, username } = await request.json();
-  if (!title || !text || !bookId) {
-    return new Response(JSON.stringify({ error: "title, text y bookId son obligatorios" }), { status: 400 });
+  try {
+    const body = await request.json();
+    const { title, description, book_id } = body;
+
+    if (!title || !description || !book_id) {
+      return new Response(
+        JSON.stringify({ error: "title, description y book_id son obligatorios" }),
+        { status: 400 }
+      );
+    }
+
+    const newComment: Comment = {
+      id: comments.length + 1,
+      title,
+      description,
+      like: 0,
+      book_id,
+    };
+
+    comments.push(newComment);
+
+    return new Response(JSON.stringify(newComment), { status: 201 });
+  } catch {
+    return new Response(JSON.stringify({ error: "Error procesando comentario" }), { status: 500 });
   }
-  const newComment: Comment = {
-    id: String(Date.now()),
-    bookId,
-    username: username ?? "Anónimo",
-    title,
-    text,
-    likes: 0,
-    timestamp: new Date(),
-  };
-  comments.push(newComment);
-  return new Response(JSON.stringify(newComment), { status: 201 });
 };
 
-export const DELETE: APIRoute = ({ url }) => {
-  const commentIdToDelete = url.searchParams.get('id');
-  if (!commentIdToDelete) {
-    return new Response(JSON.stringify({ message: "No se proporcionó el parámetro 'id' en la URL" }), { status: 400 });
+
+export const DELETE: APIRoute = async ({ request }) => {
+  try {
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+
+    if (!id) {
+      return new Response(JSON.stringify({ error: "Falta el parámetro id" }), { status: 400 });
+    }
+
+    const commentId = Number(id);
+    const index = comments.findIndex(c => c.id === commentId);
+
+    if (index === -1) {
+      return new Response(JSON.stringify({ error: "Comentario no encontrado" }), { status: 404 });
+    }
+
+    const deletedComment = comments.splice(index, 1)[0];
+
+    const deletedReplies = replies.filter(
+      r => r.id_comment === commentId || r.id_reply === commentId
+    );
+
+    for (let r of deletedReplies) {
+      const idx = comments.findIndex(c => c.id === r.id_reply);
+      if (idx !== -1) comments.splice(idx, 1);
+    }
+
+    for (let r of deletedReplies) {
+      const idx = replies.findIndex(x => x === r);
+      if (idx !== -1) replies.splice(idx, 1);
+    }
+
+    return new Response(
+      JSON.stringify({
+        message: "Comentario y todas sus respuestas eliminados",
+        deletedComment,
+        deletedReplies
+      }),
+      { status: 200 }
+    );
+  } catch {
+    return new Response(JSON.stringify({ error: "Error al eliminar comentario" }), { status: 500 });
   }
-
-  const commentIndex = comments.findIndex(comment => comment.id === commentIdToDelete);
-  if (commentIndex === -1) {
-    return new Response(JSON.stringify({ message: "Comentario no encontrado" }), { status: 404 });
-  }
-  comments.splice(commentIndex, 1);
-  const repliesToKeep = replies.filter(reply => 
-    reply.commentId !== commentIdToDelete && reply.replyId !== commentIdToDelete
-  );
-
-  replies.length = 0;
-  replies.push(...repliesToKeep);
-
-  return new Response(JSON.stringify({ message: "Comentario y enlaces relacionados eliminados" }), { status: 200 });
 };
