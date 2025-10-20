@@ -1,23 +1,20 @@
 ---
-import LoginForm from "../components/LoginForm.astro";
+import Layout from "../layouts/Layout.astro";
 import { SignIn, SignOut } from "auth-astro/components";
-import { getSession } from "auth-astro/server";
-const session = await getSession(Astro.request);
+import LoginForm from "../components/LoginForm.astro";
 
-if (!session) {
-  return Astro.redirect('/login');
-}
+const session = await getSession(Astro.request)
+import { getSession } from "auth-astro/server";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Bienvenido de nuevo, {session.user?.name ?? 'Invitado'}!</h1>
-	</body>
-</html>
+<Layout>
+	{session ? (
+  		<p>Welcome {session.user?.name}</p>
+		<SignOut>Sign Out</SignOut>
+	) : (
+  		<div>
+
+			<LoginForm />
+		</div>
+	)}
+</Layout>

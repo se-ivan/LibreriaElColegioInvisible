@@ -1,19 +1,30 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaLibSQL } from '@prisma/adapter-libsql'
+import { createClient } from '@libsql/client'
 
-// Lazily require the adapter to avoid errors when running Prisma CLI locally
+// Create Prisma client with libsql adapter for Turso
 function createPrismaClient() {
   const databaseUrl = process.env.DATABASE_URL || ''
 
   if (databaseUrl.startsWith('libsql://')) {
-    // Use PrismaLibSQL adapter for Turso/libsql at runtime
-    // Import dynamically to keep Prisma CLI unaffected
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { PrismaLibSQL } = require('@prisma/adapter-libsql')
-    const adapter = new PrismaLibSQL({ url: databaseUrl, authToken: process.env.TURSO_AUTH_TOKEN })
+    // Extract auth token from URL if present, or use separate env var
+    const url = new URL(databaseUrl)
+    const authToken = url.searchParams.get('authToken') || process.env.TURSO_AUTH_TOKEN || ''
+    
+    // Remove authToken from URL for adapter config
+    url.searchParams.delete('authToken')
+    const cleanUrl = url.toString()
+
+    // Create adapter with config (not client instance)
+    const adapter = new PrismaLibSQL({
+      url: cleanUrl,
+      authToken: authToken,
+    })
+    
     return new PrismaClient({ adapter })
   }
 
-  // Default Prisma client (uses SQLite local file from DATABASE_URL)
+  // Fallback for local SQLite (if needed for migrations)
   return new PrismaClient()
 }
 

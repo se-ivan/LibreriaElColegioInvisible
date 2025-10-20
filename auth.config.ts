@@ -1,12 +1,10 @@
 import { defineConfig } from 'auth-astro';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
 import Google from '@auth/core/providers/google';
 import Credentials from '@auth/core/providers/credentials';
 import bcrypt from 'bcryptjs';
-import { z, ZodError } from 'zod';
-
-const prisma = new PrismaClient();
+import { z } from 'zod';
+import prisma from './src/lib/prisma';
 
 export default defineConfig({
   // Secret y adaptador

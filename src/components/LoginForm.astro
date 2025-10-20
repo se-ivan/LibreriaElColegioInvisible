@@ -1,10 +1,21 @@
 ---
-import { SignIn } from "auth-astro/components";
-
-const response = await fetch(`${Astro.url.origin}/api/auth/csrf`);
-const { csrfToken } = await response.json();
-
 import "../styles/global.css";
+
+let csrfToken = "";
+
+try {
+  const response = await fetch(`${Astro.url.origin}/api/auth/csrf`);
+  
+  if (response.ok) {
+    const json = await response.json();
+    csrfToken = json.csrfToken;
+  } else {
+    console.error("Server-side CSRF fetch failed with status:", response.status);
+  }
+} catch (error) {
+  console.error("Could not connect to the API to get CSRF token on server.", error);
+ 
+}
 
 const error = Astro.url.searchParams.get("error");
 ---
@@ -15,7 +26,6 @@ const error = Astro.url.searchParams.get("error");
   <div
     class="w-full max-w-5xl flex flex-col md:flex-row rounded-2xl shadow-2xl overflow-hidden bg-white"
   >
-    <!-- Left Panel - Branding -->
     <div
       class="w-full md:w-1/2 aspect-square flex flex-col items-center rounded-l-xl justify-center p-12 bg-[#281E67] text-white text-center relative overflow-hidden"
     >
@@ -26,9 +36,7 @@ const error = Astro.url.searchParams.get("error");
       />
     </div>
 
-    <!-- Right Panel - Form -->
     <div class="w-full md:w-1/2 bg-white p-8 md:p-12">
-      <!-- Tab Navigation -->
       <div class="flex mb-8 gap-4">
         <button
           id="show-login-btn"
@@ -52,29 +60,29 @@ const error = Astro.url.searchParams.get("error");
         )
       }
 
-      <!-- Login Form -->
       <div id="login-form" class="hidden">
-        <form
-          method="POST"
-          action="/api/auth/signin/credentials"
-          class="space-y-5"
+        <div
+          id="login-error"
+          class="hidden bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg mb-6 text-sm"
         >
-          <input type="hidden" name="csrfToken" value={csrfToken} />
+        </div>
+
+        <form id="login-form-el" class="space-y-5" novalidate>
+          <input type="hidden" id="csrfTokenInput" name="csrfToken" value={csrfToken} />
 
           <div class="space-y-1">
             <label
               for="login-email"
               class="block text-sm font-medium text-gray-700"
+              >Correo<span class="text-red-500">*</span></label
             >
-              Correo<span class="text-red-500">*</span>
-            </label>
             <input
               type="email"
               id="login-email"
               name="email"
+              required
               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
               placeholder="nombre@email.com"
-              required
             />
           </div>
 
@@ -82,67 +90,47 @@ const error = Astro.url.searchParams.get("error");
             <label
               for="login-password"
               class="block text-sm font-medium text-gray-700"
+              >Contraseña<span class="text-red-500">*</span></label
             >
-              Contraseña<span class="text-red-500">*</span>
-            </label>
             <input
               type="password"
               id="login-password"
               name="password"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-              placeholder="••••••••••••"
               required
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+              placeholder="••••••••"
             />
           </div>
 
           <button
             type="submit"
-            class="w-full bg-black text-white py-3 rounded-full font-medium hover:bg-gray-800 transition-all duration-200 mt-6"
+            class="w-full bg-black text-white py-3 rounded-full font-medium mt-6 hover:bg-gray-800 transition-all"
+            >Iniciar Sesión</button
           >
-            Iniciar Sesión
-          </button>
         </form>
 
         <div class="mt-6">
           <p class="text-xs text-center text-gray-500 mb-3">
             O inicia sesión con
           </p>
-          <form method="POST" action="/api/auth/signin/google">
-            <input type="hidden" name="csrfToken" value={csrfToken} />
+
+          <form id="google-form" method="POST" action="/api/auth/signin/google">
+            <input
+              type="hidden"
+              id="csrfTokenInputGoogle"
+              name="csrfToken"
+              value={csrfToken}
+            />
             <button
               type="submit"
-              class="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-full font-medium text-sm text-gray-700 hover:bg-gray-50 transition-all duration-200"
+              class="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-full hover:bg-gray-50 transition-all"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20"
-                width="20"
-                viewBox="0 0 48 48"
-              >
-                <path
-                  fill="#FFC107"
-                  d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039L38.804 8.841C34.522 4.908 29.563 2.5 24 2.5C11.318 2.5 2.5 11.318 2.5 24s8.818 21.5 21.5 21.5S45.5 36.682 45.5 24c0-1.542-.136-3.042-.389-4.417z"
-                ></path>
-                <path
-                  fill="#FF3D00"
-                  d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12.5 24 12.5c3.059 0 5.842 1.154 7.961 3.039L38.804 8.841C34.522 4.908 29.563 2.5 24 2.5C16.318 2.5 9.818 6.355 6.306 11.691z"
-                ></path>
-                <path
-                  fill="#4CAF50"
-                  d="M24 45.5c5.563 0 10.522-2.408 14.804-6.341L31.961 32.84c-2.119 1.883-4.902 3.039-7.961 3.039c-5.223 0-9.649-3.657-11.303-8.309l-6.571 4.819C9.818 39.145 16.318 45.5 24 45.5z"
-                ></path>
-                <path
-                  fill="#1976D2"
-                  d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.571 4.819C42.818 35.438 45.5 29.838 45.5 24c0-1.542-.136-3.042-.389-4.417z"
-                ></path>
-              </svg>
               <span>Continuar con Google</span>
             </button>
           </form>
         </div>
       </div>
 
-      <!-- Register Form -->
       <div id="register-form">
         <form method="POST" action="/api/register" class="space-y-5">
           <div class="space-y-1">
@@ -250,44 +238,105 @@ const error = Astro.url.searchParams.get("error");
   </div>
 </div>
 
-<script>
-  const loginForm = document.getElementById("login-form");
-  const registerForm = document.getElementById("register-form");
-  const showLoginBtn = document.getElementById("show-login-btn");
-  const showRegisterBtn = document.getElementById("show-register-btn");
-  const goToLoginLink = document.getElementById("go-to-login");
+<script type="module">
+  const form = document.getElementById("login-form-el");
+  const errorBox = document.getElementById("login-error");
+  const csrfInput = document.getElementById("csrfTokenInput");
+  const csrfInputGoogle = document.getElementById("csrfTokenInputGoogle");
+
+  async function fetchCsrf() {
+    try {
+      const res = await fetch("/api/auth/csrf", {
+        method: "GET",
+        credentials: "same-origin", // explícito para que use cookies
+      });
+      if (!res.ok) throw new Error("No se obtuvo CSRF");
+      const json = await res.json();
+      const token = json?.csrfToken ?? "";
+      
+      // Actualiza los inputs con el token fresco del cliente
+      if (csrfInput) csrfInput.value = token;
+      if (csrfInputGoogle) csrfInputGoogle.value = token;
+
+    } catch (err) {
+      console.warn("Could not refresh csrf token on client:", err);
+    }
+  }
+
+  // Llama al fetchCsrf en carga para asegurar que el token esté fresco
+  fetchCsrf();
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBox.textContent = "";
+    errorBox.classList.add("hidden");
+
+    const formData = new FormData(form);
+    formData.set("json", "true");
+
+    const body = new URLSearchParams();
+    for (const [k, v] of formData.entries()) {
+      body.append(k, String(v));
+    }
+
+    try {
+      const res = await fetch("/api/auth/callback/credentials", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+        credentials: "same-origin",
+      });
+
+      const result = await res.json();
+      if (result?.error) {
+        errorBox.textContent =
+          result.error === "CredentialsSignin"
+            ? "Email o contraseña incorrectos."
+            : result.error;
+        errorBox.classList.remove("hidden");
+        return;
+      }
+
+      if (result?.url) { 
+        window.location.href = result.url;
+      } else {
+        errorBox.textContent = "No se pudo iniciar sesión. Respuesta inesperada.";
+        errorBox.classList.remove("hidden");
+      }
+    } catch (err) {
+      console.error("fetch error", err);
+      errorBox.textContent = "Error de conexión con el servidor.";
+      errorBox.classList.remove("hidden");
+    }
+  });
+
+  // El resto de la lógica para cambiar entre formularios
+  const showLoginBtn = document.getElementById('show-login-btn');
+  const showRegisterBtn = document.getElementById('show-register-btn');
+  const loginForm = document.getElementById('login-form');
+  const registerForm = document.getElementById('register-form');
+  const goToLoginLink = document.getElementById('go-to-login');
 
   function showLogin() {
-    loginForm?.classList.remove("hidden");
-    registerForm?.classList.add("hidden");
-
-    // Update button styles
-    showLoginBtn?.classList.add("bg-black", "text-white");
-    showLoginBtn?.classList.remove("text-gray-700", "hover:bg-gray-50");
-
-    showRegisterBtn?.classList.remove("bg-black", "text-white");
-    showRegisterBtn?.classList.add("text-gray-700", "hover:bg-gray-50");
+    loginForm.classList.remove('hidden');
+    registerForm.classList.add('hidden');
+    showLoginBtn.classList.add('bg-black', 'text-white');
+    showRegisterBtn.classList.remove('bg-black', 'text-white');
   }
 
   function showRegister() {
-    loginForm?.classList.add("hidden");
-    registerForm?.classList.remove("hidden");
-
-    // Update button styles
-    showRegisterBtn?.classList.add("bg-black", "text-white");
-    showRegisterBtn?.classList.remove("text-gray-700", "hover:bg-gray-50");
-
-    showLoginBtn?.classList.remove("bg-black", "text-white");
-    showLoginBtn?.classList.add("text-gray-700", "hover:bg-gray-50");
+    loginForm.classList.add('hidden');
+    registerForm.classList.remove('hidden');
+    showRegisterBtn.classList.add('bg-black', 'text-white');
+    showLoginBtn.classList.remove('bg-black', 'text-white');
   }
-
-  // Por defecto, mostramos el formulario de registro (como en la imagen)
-  showLogin();
-
-  showLoginBtn?.addEventListener("click", showLogin);
-  showRegisterBtn?.addEventListener("click", showRegister);
-  goToLoginLink?.addEventListener("click", (e) => {
+  
+  showLoginBtn.addEventListener('click', showLogin);
+  showRegisterBtn.addEventListener('click', showRegister);
+  goToLoginLink.addEventListener('click', (e) => {
     e.preventDefault();
     showLogin();
   });
-</script>
+  
+  // Estado inicial al cargar la página
+  showLogin(); 
