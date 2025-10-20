@@ -4,8 +4,11 @@ import "../styles/global.css";
 let csrfToken = "";
 
 try {
-  const response = await fetch(`${Astro.url.origin}/api/auth/csrf`);
-  
+  // Hacemos fetch al endpoint de CSRF, pero pasamos las cabeceras del request original
+  const response = await fetch(`${Astro.url.origin}/api/auth/csrf`, {
+    headers: Astro.request.headers, // <-- Esta es la línea clave
+  });
+
   if (response.ok) {
     const json = await response.json();
     csrfToken = json.csrfToken;
@@ -14,7 +17,6 @@ try {
   }
 } catch (error) {
   console.error("Could not connect to the API to get CSRF token on server.", error);
- 
 }
 
 const error = Astro.url.searchParams.get("error");
@@ -67,8 +69,13 @@ const error = Astro.url.searchParams.get("error");
         >
         </div>
 
-        <form id="login-form-el" class="space-y-5" novalidate>
-          <input type="hidden" id="csrfTokenInput" name="csrfToken" value={csrfToken} />
+        <form
+          method="POST"
+          action="/api/auth/callback/credentials"
+          class="space-y-5"
+          novalidate
+        >
+          <input type="hidden" name="csrfToken" value={csrfToken} />
 
           <div class="space-y-1">
             <label
@@ -85,7 +92,6 @@ const error = Astro.url.searchParams.get("error");
               placeholder="nombre@email.com"
             />
           </div>
-
           <div class="space-y-1">
             <label
               for="login-password"
@@ -253,11 +259,10 @@ const error = Astro.url.searchParams.get("error");
       if (!res.ok) throw new Error("No se obtuvo CSRF");
       const json = await res.json();
       const token = json?.csrfToken ?? "";
-      
+
       // Actualiza los inputs con el token fresco del cliente
       if (csrfInput) csrfInput.value = token;
       if (csrfInputGoogle) csrfInputGoogle.value = token;
-
     } catch (err) {
       console.warn("Could not refresh csrf token on client:", err);
     }
@@ -266,77 +271,36 @@ const error = Astro.url.searchParams.get("error");
   // Llama al fetchCsrf en carga para asegurar que el token esté fresco
   fetchCsrf();
 
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    errorBox.textContent = "";
-    errorBox.classList.add("hidden");
-
-    const formData = new FormData(form);
-    formData.set("json", "true");
-
-    const body = new URLSearchParams();
-    for (const [k, v] of formData.entries()) {
-      body.append(k, String(v));
-    }
-
-    try {
-      const res = await fetch("/api/auth/callback/credentials", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body,
-        credentials: "same-origin",
-      });
-
-      const result = await res.json();
-      if (result?.error) {
-        errorBox.textContent =
-          result.error === "CredentialsSignin"
-            ? "Email o contraseña incorrectos."
-            : result.error;
-        errorBox.classList.remove("hidden");
-        return;
-      }
-
-      if (result?.url) { 
-        window.location.href = result.url;
-      } else {
-        errorBox.textContent = "No se pudo iniciar sesión. Respuesta inesperada.";
-        errorBox.classList.remove("hidden");
-      }
-    } catch (err) {
-      console.error("fetch error", err);
-      errorBox.textContent = "Error de conexión con el servidor.";
-      errorBox.classList.remove("hidden");
-    }
-  });
+  
 
   // El resto de la lógica para cambiar entre formularios
-  const showLoginBtn = document.getElementById('show-login-btn');
-  const showRegisterBtn = document.getElementById('show-register-btn');
-  const loginForm = document.getElementById('login-form');
-  const registerForm = document.getElementById('register-form');
-  const goToLoginLink = document.getElementById('go-to-login');
+  const showLoginBtn = document.getElementById("show-login-btn");
+  const showRegisterBtn = document.getElementById("show-register-btn");
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+  const goToLoginLink = document.getElementById("go-to-login");
 
   function showLogin() {
-    loginForm.classList.remove('hidden');
-    registerForm.classList.add('hidden');
-    showLoginBtn.classList.add('bg-black', 'text-white');
-    showRegisterBtn.classList.remove('bg-black', 'text-white');
+    loginForm.classList.remove("hidden");
+    registerForm.classList.add("hidden");
+    showLoginBtn.classList.add("bg-black", "text-white");
+    showRegisterBtn.classList.remove("bg-black", "text-white");
   }
 
   function showRegister() {
-    loginForm.classList.add('hidden');
-    registerForm.classList.remove('hidden');
-    showRegisterBtn.classList.add('bg-black', 'text-white');
-    showLoginBtn.classList.remove('bg-black', 'text-white');
+    loginForm.classList.add("hidden");
+    registerForm.classList.remove("hidden");
+    showRegisterBtn.classList.add("bg-black", "text-white");
+    showLoginBtn.classList.remove("bg-black", "text-white");
   }
-  
-  showLoginBtn.addEventListener('click', showLogin);
-  showRegisterBtn.addEventListener('click', showRegister);
-  goToLoginLink.addEventListener('click', (e) => {
+
+  showLoginBtn.addEventListener("click", showLogin);
+  showRegisterBtn.addEventListener("click", showRegister);
+  goToLoginLink.addEventListener("click", (e) => {
     e.preventDefault();
     showLogin();
   });
-  
+
   // Estado inicial al cargar la página
-  showLogin(); 
+  showLogin();
+</script>

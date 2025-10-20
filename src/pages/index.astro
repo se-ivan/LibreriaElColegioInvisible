@@ -1,20 +1,25 @@
 ---
+// 1. La importación viene de "auth-astro/server"
+import { getSession } from "auth-astro/server";
 import Layout from "../layouts/Layout.astro";
-import { SignIn, SignOut } from "auth-astro/components";
+import { SignOut } from "auth-astro/components";
 import LoginForm from "../components/LoginForm.astro";
 
-const session = await getSession(Astro.request)
-import { getSession } from "auth-astro/server";
+// 2. Le pasas el objeto Astro.request
+const session = await getSession(Astro.request);
+console.log(session);
 ---
-
 <Layout>
-	{session ? (
-  		<p>Welcome {session.user?.name}</p>
-		<SignOut>Sign Out</SignOut>
-	) : (
-  		<div>
-
-			<LoginForm />
-		</div>
-	)}
+  {session ? (
+    <div>
+      <p>Bienvenido, {session.user?.name}</p>
+      <SignOut>
+        Cerrar Sesion
+      </SignOut>
+    </div>
+  ) : (
+    <div>
+      <LoginForm />
+    </div>
+  )}
 </Layout>

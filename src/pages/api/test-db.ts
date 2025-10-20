@@ -1,10 +1,10 @@
-// Test endpoint to verify Turso database connection
+
 import type { APIRoute } from "astro";
 import prisma from "../../lib/prisma";
 
 export const GET: APIRoute = async () => {
   try {
-    // Try to query the database
+
     const userCount = await prisma.user.count();
     
     return new Response(
