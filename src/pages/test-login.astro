@@ -1,0 +1,41 @@
+---
+// src/pages/test-login.astro
+import Layout from '../layouts/Layout.astro';
+
+const response = await fetch(`${Astro.url.origin}/api/auth/csrf`);
+const data = await response.json();
+const csrfToken = data.csrfToken;
+
+// Imprimimos el token en la consola del servidor para asegurarnos de que lo estamos recibiendo
+console.log("CSRF Token Obtenido:", csrfToken);
+---
+<Layout title="Test Login">
+  <main class="p-8">
+    <h1>Página de Prueba de Login</h1>
+
+    <p class="my-4">
+      <strong>Token CSRF que se usará en el formulario:</strong> 
+      <code class="bg-gray-200 p-1 rounded">{csrfToken}</code>
+    </p>
+
+    <div class="mt-8 border p-4 max-w-md">
+      <form method="POST" action="/api/auth/signin/credentials">
+        <input type="hidden" name="csrfToken" value={csrfToken} />
+
+        <div class="mb-4">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" class="border w-full p-2" required />
+        </div>
+
+        <div class="mb-4">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" class="border w-full p-2" required />
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white p-2 w-full">
+          Iniciar Sesión (Prueba)
+        </button>
+      </form>
+    </div>
+  </main>
+</Layout>

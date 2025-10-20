@@ -9,12 +9,23 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/markdoc": "^0.15.8",
+    "@astrojs/react": "^4.4.0",
+    "@astrojs/vercel": "^8.2.10",
+    "@auth/core": "^0.37.4",
+    "@auth/prisma-adapter": "^2.11.0",
+    "@keystatic/astro": "^5.0.6",
     "@libsql/client": "^0.15.15",
     "@prisma/adapter-libsql": "^6.16.3",
     "@prisma/client": "^6.16.3",
-    "astro": "^5.14.1"
+    "@tailwindcss/vite": "^4.1.14",
+    "astro": "^5.14.1",
+    "auth-astro": "^4.2.0",
+    "bcryptjs": "^3.0.2",
+    "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "prisma": "^6.16.3",
     "tsx": "^4.20.6"
   }
