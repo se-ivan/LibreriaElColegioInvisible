@@ -12,12 +12,12 @@ datasource db {
 model User {
   id            String          @id @default(cuid())
   name          String?
-  lastName      String?         @map("last_name") // Tu campo personalizado
+  lastName      String?         @map("last_name") 
   email         String?         @unique
   emailVerified DateTime?
   image         String?
-  password      String?         // Necesario para el login con contraseña
-  isUser        Boolean         @default(true) @map("is_user") // Tu campo
+  password      String?      
+  isUser        Boolean         @default(true) @map("is_user") 
   
   accounts      Account[]
   sessions      Session[]
