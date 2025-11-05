@@ -3,6 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import DonatingHeroCard from "../components/DonatingHeroCard.astro";
 import DonatingHowWorks from "../components/DonatingHowWorks.astro";
+import DonatingAceptedBook from "../components/DonatingAceptedBook.astro";
+import DonatingRejectedBook from "../components/DonatingRejectedBook.astro";
+import DonatingBook from "../components/DonatingBook.astro";
+import FormDonation from "../components/FormDonation.astro";
 import "../styles/global.css";
 ---
 
@@ -107,11 +111,62 @@ import "../styles/global.css";
             </div>
         </section>
 
-        <section class="text-black flex flex-col items-center justify-between bg-[#FAFDFF]">
-            <h2 class="text-3xl font-medium">Guia de Donacion</h2>
+        <section class="text-black flex flex-col items-center justify-between bg-[#FAFDFF] py-15">
+            <h2 class="text-3xl font-medium mb-10">Guia de Donacion</h2>
 
-            
+            <div class="flex flex-row gap-10">
+                <DonatingAceptedBook />
+                <DonatingRejectedBook />
+            </div>
+
         </section>
 
+        <section class="flex flex-col py-15 items-center justify-center bg-[#EDF4FD]">
+            <div class="flex flex-col gap-5 text-center mb-6">
+                <h2 class="text-3xl font-semibold">¿A donde Van Tus Libros?</h2>
+                <p class="text-xl text-[#617992]">Transparencia total: conoce las organizaciones que reciben tus donaciones</p>
+            </div>
+            
+            <div class="flex flex-row gap-8">
+                <DonatingBook 
+                    img="/imgPrueba.png"
+                    title="Centro Juvenil 'Horizontes'"
+                    place="Zona Sur"
+                    description="280 libros entregados"
+                />
+                <DonatingBook 
+                    img="/imgPrueba.png"
+                    title="Centro Juvenil 'Horizontes'"
+                    place="Zona Sur"
+                    description="280 libros entregados"
+                />
+                <DonatingBook 
+                    img="/imgPrueba.png"
+                    title="Centro Juvenil 'Horizontes'"
+                    place="Zona Sur"
+                    description="280 libros entregados"
+                />
+            </div>
+
+        </section>
+
+        <section class="bg-[#E5EFF6] flex items-center justify-center py-15">
+            <FormDonation />
+        </section>
+
+        <section class="bg-[#00305D] py-15 text-center flex flex-col items-center justify-center">
+            <div class="w-250 h-95 flex flex-col items-center justify-center bg-white border-2 border-[#F1C86E]/50 rounded-3xl">
+                <div class="mb-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00305D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-heart"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
+                </div>
+
+                <div class="flex flex-col gap-4 mb-5">
+                    <p class="text-3xl font-medium">Donación Monetaria</p>
+                    <p class="text-[#617992] text-xl">También puedes ayudarnos con una donación monetaria para comprar libros nuevos</p>
+                </div>
+
+                <button class="rounded-lg h-12 w-88 bg-[#0096A2] text-xl text-white hover:bg-[#007f87] transition-colors duration-300">Hacer una Donación Monetaria</button>
+            </div>
+        </section>
     </main>
 </Layout>
