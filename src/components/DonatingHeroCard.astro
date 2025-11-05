@@ -1,0 +1,13 @@
+---
+const { number, description } = Astro.props;
+---
+
+<div
+    class="min-h-45 w-90 max-h-50 flex flex-col items-center justify-center rounded-2xl bg-[#ECF5FC] border-2 border-[#DEE8F2] "
+>
+    <slot />
+    <div class="text-center px-4">
+        <h2 class="text-4xl font-medium mb-2 text-[#00305D]">{number}</h2>
+        <p class="text-[#617992]">{description}</p>
+    </div>
+</div>
