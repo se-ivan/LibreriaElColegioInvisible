@@ -1,25 +1,274 @@
 ---
-// 1. La importación viene de "auth-astro/server"
-import { getSession } from "auth-astro/server";
+import Footer from "../components/Footer.astro";
 import Layout from "../layouts/Layout.astro";
-import { SignOut } from "auth-astro/components";
-import LoginForm from "../components/LoginForm.astro";
 
-// 2. Le pasas el objeto Astro.request
-const session = await getSession(Astro.request);
-console.log(session);
+const newsArticles = [
+    {
+        title: "Anuncian el Ganador del Premio Nobel de Literatura 2025: ¿Quién es el Elegido?",
+        date: "Oct 04, 2025",
+        description:
+            "La Academia Sueca ha dictaminado su fallo. Conoce al nuevo ganador del premio más prestigioso de las letras mundiales y descubre por qué su obra es indispensable en la colección. ¡Tenemos sus títulos disponibles!",
+        image: "/placeholder.svg?height=400&width=300",
+    },
+    {
+        title: "Se Inaugura la 12ª Feria del Libro de Morelia: ¡Agenda tus Visitas y Autores!",
+        date: "Oct 04, 2025",
+        description:
+            "Te traemos la guía completa del evento literario más esperado del año. Conoce los horarios, las firmas de autores y las presentaciones imperdibles de esta semana. ¡No te lo pierdas!",
+        image: "/placeholder.svg?height=400&width=300",
+    },
+    {
+        title: "¿El Fin del Papel? La I.A. en la Creación de Textos Desata el Debate entre Lectores y Autores.",
+        date: "Oct 04, 2025",
+        description:
+            "Los audiolibros y las narrativas generadas por IA están presentando al mayor cambio desde la imprenta? Analizamos las tendencias que están impactando la forma de leer.",
+        image: "/placeholder.svg?height=400&width=300",
+    },
+    {
+        title: "El Viaje de los Libros: Cómo Llegan las Obras a la Comunidad",
+        date: "Oct 04, 2025",
+        description:
+            "La nueva exposición en nuestra librería te lleva en una trama y viaje fascinante. Descubre cómo está en D.",
+        image: "/placeholder.svg?height=400&width=300",
+    },
+];
 ---
-<Layout>
-  {session ? (
-    <div>
-      <p>Bienvenido, {session.user?.name}</p>
-      <SignOut>
-        Cerrar Sesion
-      </SignOut>
-    </div>
-  ) : (
-    <div>
-      <LoginForm />
-    </div>
-  )}
+
+<Layout title="El Colegio Invisible || Morelia">
+
+    <!-- Hero Section with Video -->
+    <section
+        class="relative h-screen bg-gradient-to-br from-blue-100 via-purple-50 to-blue-50 flex items-center justify-center overflow-hidden"
+    >
+        <!-- Video Background -->
+        <video
+            id="hero-video"
+            class="absolute inset-0 w-full h-full object-cover"
+            autoplay
+            muted
+            playsinline
+        >
+            <source src="/images/home/video-hero.mp4" type="video/mp4" />
+        </video>
+
+        <div
+            id="hero-logo"
+            class="relative z-10 text-center opacity-0 transition-opacity duration-1000"
+        >
+            <img
+                src="/images/home/logo.png"
+                alt="El Colegio Invisible"
+                class="mx-auto mb-8 max-w-md w-full px-4"
+            />
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="bg-white rounded-3xl p-8 md:p-12 shadow-lg">
+            <div class="flex flex-col justify-center items-center">
+
+                <div class="text-center">
+                    <h2
+                        class="md:text-5xl mb-6 font-bold text-9xl text-balance font-geist"
+                    >
+                        El <span
+                            class="text-8xl
+                                    inline-block text-transparent
+                                    bg-clip-text
+                                    font-normal font-lobster
+                                    
+                                    bg-[radial-gradient(ellipse_at_center,_#1E4B8F_0%,_#08A5AA_52%,_#356AAF_100%)]"
+                        >
+                            descubrimiento
+                        </span> del Mes
+                    </h2>
+                    <div class="prose prose-lg">
+                        <p class="text-gray-700 leading-relaxed">
+                            "El Descubrimiento del Mes" es nuestra recomendación
+                            más apasionada. Es el libro que nos hizo <strong
+                                >detenernos, pensar y sentir</strong
+                            >. Ese que no pudimos dejar de comentar en nuestros
+                            pasillos. Ese que queremos que llegue a tus manos
+                            porque cada casa
+                            <span class="text-blue-600 font-semibold"
+                                >una historia</span
+                            > que realmente merece ser descubierta.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                        <div class="relative">
+                            <img
+                                src="/images/home/descubrimientodelmes.png"
+                                alt="El reino de las sombras azules"
+                                class="rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                            />
+                        </div>
+                        <div
+                            class="mt-12 bg-white rounded-2xl p-8 shadow-md max-w-2xl"
+                        >
+                            <span
+                                class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mb-4"
+                            >
+                                Fantasía Épica
+                            </span>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">
+                                El reino de las sombras azules
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                por Edna Martínez
+                            </p>
+                            <p class="text-gray-700 leading-relaxed mb-6">
+                                Una fábula aventura donde la magia y el destino
+                                se entrelazan en un mundo de tonalidades azules.
+                                Descubre por qué miles de lectores han quedado
+                                cautivados por esta historia.
+                            </p>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500 mt-4">
+                                ¡1,234 lectores!
+                            </p>
+                                <div class="flex gap-1">
+                                    {
+                                        [1, 2, 3, 4, 5].map(() => (
+                                            <svg
+                                                class="w-5 h-5 text-amber-400"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                            <button
+                                    class="bg-blue-900 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
+                                >
+                                    Ver detalles
+                                </button>
+                            
+                        </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-4xl md:text-5xl font-serif">
+                Últimas <span class="text-amber-500 italic">noticias</span>
+            </h2>
+            <div class="flex gap-2">
+                <button
+                    class="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
+                    aria-label="Anterior"
+                >
+                    <svg
+                        class="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <button
+                    class="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
+                    aria-label="Siguiente"
+                >
+                    <svg
+                        class="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {
+                newsArticles.map((article) => (
+                    <article class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="aspect-[3/4] overflow-hidden">
+                            <img
+                                src={article.image || "/placeholder.svg"}
+                                alt={article.title}
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
+                        </div>
+                        <div class="p-6">
+                            <h3 class="font-bold text-lg mb-3 text-gray-900 leading-tight text-balance">
+                                {article.title}
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+                                {article.description}
+                            </p>
+                            <p class="text-xs text-gray-500">{article.date}</p>
+                        </div>
+                    </article>
+                ))
+            }
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div
+            class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-12 md:p-20 text-center"
+        >
+            <h2 class="text-4xl md:text-6xl font-serif mb-6 text-balance">
+                Lleva <span class="text-green-600 italic">tu historia</span> a nuevos
+                lectores.
+            </h2>
+            <p
+                class="text-lg text-gray-700 max-w-2xl mx-auto mb-8 leading-relaxed"
+            >
+                ¿Escribes en Morelia? Descubre cómo nuestra comunidad te puede
+                ofrecer promoción, visibilidad, y un espacio exclusivo para que
+                tu libro llegue a cientos de nuevos lectores.
+            </p>
+            <button
+                class="bg-teal-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl"
+            >
+                Más Información
+            </button>
+        </div>
+    </section>
+
+    <Footer />
+
+    <script>
+        // Video hero
+        const video = document.getElementById("hero-video") as HTMLVideoElement;
+        const logo = document.getElementById("hero-logo");
+
+        if (video && logo) {
+            video.addEventListener("ended", () => {
+                video.classList.add("opacity-0");
+                logo.classList.remove("opacity-0");
+                logo.classList.add("opacity-100");
+            });
+
+            // Mostrar logo despues de 3 seg sin cargar el video
+            setTimeout(() => {
+                if (logo.classList.contains("opacity-0")) {
+                    logo.classList.remove("opacity-0");
+                    logo.classList.add("opacity-100");
+                }
+            }, 10000);
+        }
+    </script>
 </Layout>
