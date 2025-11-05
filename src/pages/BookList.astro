@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import prisma from "../lib/prisma";
 import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
 
 const pageSize = 8;
 const currentPage = Number(Astro.url.searchParams.get("page") || 1);
@@ -107,6 +108,7 @@ const pageTitle = "Catálogo de Libros";
 ---
 
 <Layout title={pageTitle}>
+    <Header />
     <main>
         <div class="container mx-auto px-4 py-12">
             <div class="text-center mb-12">
