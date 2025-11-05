@@ -7,12 +7,14 @@ import DonatingAceptedBook from "../components/DonatingAceptedBook.astro";
 import DonatingRejectedBook from "../components/DonatingRejectedBook.astro";
 import DonatingBook from "../components/DonatingBook.astro";
 import FormDonation from "../components/FormDonation.astro";
+import Footer from "../components/Footer.astro";
 import "../styles/global.css";
+
 ---
 
 <Layout title="Donaciones">
     <Header />
-    <main>
+    <main class="font-geist mx-auto">
         
         <section
             class="font-geist text-center mt-20 flex justify-between items-center flex-col mb-14"
@@ -169,4 +171,5 @@ import "../styles/global.css";
             </div>
         </section>
     </main>
+    <Footer />
 </Layout>
