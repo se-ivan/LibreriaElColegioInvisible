@@ -1,0 +1,36 @@
+---
+const { currentCategory = "todos" } = Astro.props;
+import {createFilter} from "../lib/CreateFilter";
+---
+
+<div class="flex gap-3 mt-6">
+  <a 
+    href={createFilter(Astro.url,"todos")}
+    class={`px-4 py-2 rounded-4xl border text-sm transition 
+      ${currentCategory === "todos" 
+        ? "bg-[#01ACA5] text-white border-[#01ACA5]" 
+        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"}`}
+  >
+    Todos
+  </a>
+
+  <a 
+    href={createFilter(Astro.url,"eventos")}
+    class={`px-4 py-2 rounded-full border text-sm transition 
+      ${currentCategory === "eventos" 
+        ? "bg-[#01ACA5] text-white border-[#01ACA5]" 
+        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"}`}
+  >
+    Eventos
+  </a>
+
+  <a 
+    href={createFilter(Astro.url,"noticias")}
+    class={`px-4 py-2 rounded-full border text-sm transition 
+      ${currentCategory === "noticias" 
+        ? "bg-[#01ACA5] text-white border-[#01ACA5]" 
+        : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"}`}
+  >
+    Noticias
+  </a>
+</div>
