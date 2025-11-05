@@ -1,14 +1,117 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import DonatingHeroCard from "../components/DonatingHeroCard.astro";
+import DonatingHowWorks from "../components/DonatingHowWorks.astro";
 import "../styles/global.css";
 ---
 
 <Layout title="Donaciones">
-    <Header/>
-    <div>
-        <h1>Dona un Libro, Cambia una Vida</h1>
-        <p>Tus libros pueden abrir puertas a nuevos mundos para quienes más lo necesitan</p>
-    </div>
+    <Header />
+    <main>
+        
+        <section
+            class="font-geist text-center mt-20 flex justify-between items-center flex-col mb-14"
+        >
+            <h1 class="font-bold text-6xl mb-4">Dona un Libro, Cambia una Vida</h1>
+            <p class="text-xl text-[#617992] w-165">
+                Tus libros pueden abrir puertas a nuevos mundos para quienes más lo
+                necesitan
+            </p>
 
+            <div
+                class="w-full flex flex-row items-center justify-center gap-15 mt-10"
+            >
+                <DonatingHeroCard number="5,000+" description="Libros Donados">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="#00305D"
+                        stroke="#00305D"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-book"
+                        ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                        ></path><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"
+                        ></path><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"
+                        ></path><path d="M3 6l0 13"></path><path d="M12 6l0 13"
+                        ></path><path d="M21 6l0 13"></path></svg
+                    >
+                </DonatingHeroCard>
+                <DonatingHeroCard number="50+" description="Escuelas Beneficiadas">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#00305D"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-school"
+                        ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                        ></path><path d="M22 9l-10 -4l-10 4l10 4l10 -4v6"
+                        ></path><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4"
+                        ></path></svg
+                    >
+                </DonatingHeroCard>
+                <DonatingHeroCard
+                    number="15"
+                    description="Bibliotecas Comunitarias"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#00305D"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon icon-tabler icons-tabler-outline icon-tabler-heart"
+                        ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                        ></path><path
+                            d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"
+                        ></path></svg
+                    >
+                </DonatingHeroCard>
+            </div>
+        </section>
+
+        <section class="w-full bg-[#00305D] text-white flex flex-col items-center py-15">
+            <h2 class="text-3xl font-bold">¿Como Funciona?</h2>
+            <div class="w-full flex flex-row items-center justify-center gap-15 mt-10">
+                <DonatingHowWorks
+                    title="1.- Prepara tus libros"
+                    description="Selecciona los libros que deseas donar y asegúrate de que estén en buen estado"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00305D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-box"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /></svg>
+                </DonatingHowWorks>
+                <DonatingHowWorks
+                    title="2.- Tráelos a Nuestras Sucursales"
+                    description="Visita cualquiera de nuestras sucursales o solicita recolección a domicilio"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00305D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-map-pin"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                </DonatingHowWorks>
+                <DonatingHowWorks
+                    title="3.- Hacemos la Entrega"
+                    description="Distribuimos tus libros a escuelas, bibliotecas y organizaciones comunitarias"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00305D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-heart"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
+
+            </div>
+        </section>
+
+        <section class="text-black flex flex-col items-center justify-between bg-[#FAFDFF]">
+            <h2 class="text-3xl font-medium">Guia de Donacion</h2>
+
+            
+        </section>
+
+    </main>
 </Layout>
