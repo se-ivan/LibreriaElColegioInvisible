@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import prisma from "../lib/prisma";
+import Footer from "../components/Footer.astro";
 
 const pageSize = 8;
 const currentPage = Number(Astro.url.searchParams.get("page") || 1);
@@ -309,4 +310,5 @@ const pageTitle = "Catálogo de Libros";
             </nav>
         </div>
     </main>
+    <Footer />
 </Layout>
