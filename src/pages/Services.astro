@@ -1,0 +1,931 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const pageTitle = "Nuestros Servicios";
+---
+
+<Layout title={pageTitle}>
+    <Header />
+
+    <main class="bg-gray-50 min-h-screen py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h1
+                    class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4"
+                >
+                    Nuestros Servicios
+                </h1>
+                <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+                    Más que una librería, ofrecemos soluciones especializadas
+                    para cuidar, encontrar y crear tus libros ideales.
+                </p>
+            </div>
+
+            <div
+                class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto"
+            >
+                <div
+                    class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col border border-gray-100"
+                >
+                    <div
+                        class="bg-blue-50 p-6 flex items-center justify-between border-b border-blue-100"
+                    >
+                        <div
+                            class="p-3 bg-white rounded-lg shadow-sm text-blue-600"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-8 w-8"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                                ></path>
+                            </svg>
+                        </div>
+                        <span
+                            class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide"
+                            >Desde $15.99</span
+                        >
+                    </div>
+
+                    <div class="p-8 flex-grow flex flex-col">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-3">
+                            Empastado de Libros
+                        </h3>
+                        <p class="text-slate-600 mb-6 leading-relaxed">
+                            Restaura y protege tus libros favoritos con nuestro
+                            servicio profesional de empastado artesanal e
+                            industrial.
+                        </p>
+
+                        <div class="mb-6">
+                            <h4
+                                class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-blue-500"
+                                ></span> Características
+                            </h4>
+                            <ul class="space-y-3">
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-blue-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Acabados en tela, cuero y sintético
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-blue-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Restauración de libros antiguos
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-blue-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Personalización con grabados dorados
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-blue-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Costura reforzada para durabilidad
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div
+                            class="mt-auto pt-6 border-t border-gray-100 flex items-center text-sm text-gray-500"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 mr-2 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path></svg
+                            >
+                            Tiempo estimado: 3-5 días hábiles
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 border-t border-gray-100">
+                        <button
+                            class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition-all duration-200 flex items-center justify-center group"
+                        >
+                            Solicitar Servicio
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg
+                            >
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col border border-gray-100"
+                >
+                    <div
+                        class="bg-purple-50 p-6 flex items-center justify-between border-b border-purple-100"
+                    >
+                        <div
+                            class="p-3 bg-white rounded-lg shadow-sm text-purple-600"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-8 w-8"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                ></path>
+                            </svg>
+                        </div>
+                        <span
+                            class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide"
+                            >Gratuito</span
+                        >
+                    </div>
+
+                    <div class="p-8 flex-grow flex flex-col">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-3">
+                            Búsqueda de Libros
+                        </h3>
+                        <p class="text-slate-600 mb-6 leading-relaxed">
+                            ¿No encuentras ese libro especial? Nosotros lo
+                            rastreamos por ti a través de nuestra red
+                            internacional de proveedores.
+                        </p>
+
+                        <div class="mb-6">
+                            <h4
+                                class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-purple-500"
+                                ></span> Características
+                            </h4>
+                            <ul class="space-y-3">
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-purple-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Acceso a red global de distribuidores
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-purple-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Búsqueda de ediciones descatalogadas
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-purple-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Libros raros y de colección
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-purple-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Notificación automática de disponibilidad
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div
+                            class="mt-auto pt-6 border-t border-gray-100 flex items-center text-sm text-gray-500"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 mr-2 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path></svg
+                            >
+                            Tiempo variable según rareza
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 border-t border-gray-100">
+                        <button
+                            class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition-all duration-200 flex items-center justify-center group"
+                        >
+                            Solicitar Búsqueda
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg
+                            >
+                        </button>
+                    </div>
+                </div>
+                <div
+                    class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col border border-gray-100"
+                >
+                    <div
+                        class="bg-green-50 p-6 flex items-center justify-between border-b border-green-100"
+                    >
+                        <div
+                            class="p-3 bg-white rounded-lg shadow-sm text-green-600"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-8 w-8"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                ></path>
+                            </svg>
+                        </div>
+                        <span
+                            class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide"
+                            >Desde $0.10 p/pag</span
+                        >
+                    </div>
+
+                    <div class="p-8 flex-grow flex flex-col">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-3">
+                            Impresión y Tesis
+                        </h3>
+                        <p class="text-slate-600 mb-6 leading-relaxed">
+                            Imprime y encuaderna tus documentos, tesis o
+                            proyectos académicos con calidad profesional láser.
+                        </p>
+
+                        <div class="mb-6">
+                            <h4
+                                class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-green-500"
+                                ></span> Características
+                            </h4>
+                            <ul class="space-y-3">
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Impresión láser B/N y Color
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Múltiples formatos de papel (Carta, Oficio, A4)
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Encuadernación espiral, térmica o cosida
+                                </li>
+                                <li
+                                    class="flex items-start text-slate-600 text-sm"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-green-500 mr-2 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path></svg
+                                    >
+                                    Respeto estricto a derechos de autor
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div
+                            class="mt-auto pt-6 border-t border-gray-100 flex items-center text-sm text-gray-500"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 mr-2 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path></svg
+                            >
+                            Entrega inmediata o 24h
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-gray-50 border-t border-gray-100">
+                        <button
+                            class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition-all duration-200 flex items-center justify-center group"
+                        >
+                            Cotizar Impresión
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg
+                            >
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="mt-24 bg-white border border-gray-200 rounded-3xl p-8 md:p-12 shadow-sm"
+            >
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+                    <div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="p-2 bg-blue-50 rounded-lg text-blue-600"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-3xl font-bold text-slate-900">
+                                Empastado de Libros
+                            </h2>
+                        </div>
+
+                        <p class="text-slate-600 leading-relaxed mb-8 text-lg">
+                            Nuestro servicio de empastado profesional te permite
+                            preservar y proteger tus libros más preciados.
+                            Trabajamos con materiales de alta calidad y técnicas
+                            tradicionales de encuadernación para asegurar que
+                            tus historias duren para siempre.
+                        </p>
+
+                        <div class="mb-8">
+                            <h3 class="font-bold text-slate-900 mb-4 text-base">
+                                Tipos de Materiales
+                            </h3>
+                            <div class="flex flex-wrap gap-3">
+                                {
+                                    [
+                                        "Tela",
+                                        "Cuero Genuino",
+                                        "Sintético",
+                                        "Papel Decorativo",
+                                    ].map((material) => (
+                                        <span class="px-4 py-2 rounded-full border border-gray-200 text-slate-600 text-sm font-medium hover:border-blue-300 hover:text-blue-600 transition-colors cursor-default bg-white shadow-sm">
+                                            {material}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-slate-900 mb-4 text-base">
+                                Precios
+                            </h3>
+                            <ul class="space-y-3 text-slate-600">
+                                <li
+                                    class="flex items-center justify-between border-b border-gray-100 pb-2"
+                                >
+                                    <span>• Empastado básico</span>
+                                    <span class="font-semibold text-slate-900"
+                                        >$15.99</span
+                                    >
+                                </li>
+                                <li
+                                    class="flex items-center justify-between border-b border-gray-100 pb-2"
+                                >
+                                    <span>• Empastado premium</span>
+                                    <span class="font-semibold text-slate-900"
+                                        >$29.99</span
+                                    >
+                                </li>
+                                <li
+                                    class="flex items-center justify-between border-b border-gray-100 pb-2"
+                                >
+                                    <span>• Restauración completa</span>
+                                    <span class="font-semibold text-slate-900"
+                                        >$49.99+</span
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-slate-900 mb-6 text-base">
+                            Galería de Trabajos
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div
+                                class="aspect-square bg-blue-100 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
+                            >
+                            </div>
+                            <div
+                                class="aspect-square bg-blue-100 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
+                            >
+                            </div>
+                            <div
+                                class="aspect-square bg-blue-100 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
+                            >
+                            </div>
+                            <div
+                                class="aspect-square bg-blue-100 rounded-2xl overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="mt-12 bg-white border border-gray-200 rounded-3xl p-8 md:p-12 shadow-sm"
+            >
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="p-2 bg-purple-50 rounded-lg text-purple-600"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-3xl font-bold text-slate-900">
+                                Búsqueda de Libros
+                            </h2>
+                        </div>
+
+                        <p class="text-slate-600 leading-relaxed mb-8 text-lg">
+                            ¿Buscas un libro específico que no encuentras?
+                            Nuestro servicio de búsqueda especializada te
+                            conecta con una red internacional de distribuidores
+                            y coleccionistas para encontrar esa edición
+                            especial.
+                        </p>
+
+                        <div class="mb-8">
+                            <h3 class="font-bold text-slate-900 mb-4 text-base">
+                                Cómo Funciona
+                            </h3>
+                            <ul
+                                class="space-y-2 text-slate-600 text-sm md:text-base"
+                            >
+                                <li class="flex gap-3">
+                                    <span class="font-bold text-purple-600"
+                                        >1.</span
+                                    > Completa el formulario con los detalles del
+                                    libro
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="font-bold text-purple-600"
+                                        >2.</span
+                                    > Nuestro equipo inicia la búsqueda en nuestra
+                                    red
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="font-bold text-purple-600"
+                                        >3.</span
+                                    > Te notificamos cuando lo encontremos con el
+                                    precio
+                                </li>
+                                <li class="flex gap-3">
+                                    <span class="font-bold text-purple-600"
+                                        >4.</span
+                                    > Decides si deseas adquirirlo
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-slate-900 mb-4 text-base">
+                                Información Necesaria
+                            </h3>
+                            <ul
+                                class="list-disc list-inside text-slate-600 space-y-1 text-sm md:text-base marker:text-gray-400"
+                            >
+                                <li>Título y autor (Obligatorio)</li>
+                                <li>ISBN (si lo conoces, ayuda mucho)</li>
+                                <li>Edición específica (opcional)</li>
+                                <li>Año de publicación aproximado</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div
+                            class="bg-white border border-gray-200 rounded-2xl p-6 h-fit shadow-sm"
+                        >
+                            <h3 class="font-bold text-slate-900 mb-2">
+                                Solicitar Búsqueda
+                            </h3>
+                            <p class="text-sm text-slate-500 mb-6">
+                                Completa el formulario y te contactaremos en
+                                cuanto encontremos tu libro.
+                            </p>
+
+                            <button
+                                class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-xl transition-colors"
+                            >
+                                Ir al Formulario
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="mt-12 bg-white border border-gray-200 rounded-3xl p-8 md:p-12 shadow-sm"
+            >
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    <div class="lg:col-span-2">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div
+                                class="p-2 bg-green-50 rounded-lg text-green-600"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-8 w-8"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-3xl font-bold text-slate-900">
+                                Impresión y Encuadernación
+                            </h2>
+                        </div>
+
+                        <p class="text-slate-600 leading-relaxed mb-8 text-lg">
+                            Ofrecemos servicios de impresión y encuadernación
+                            profesional para tus documentos, tesis, proyectos y
+                            más. Calidad garantizada con respeto estricto a los
+                            derechos de autor.
+                        </p>
+
+                        <div class="mb-8">
+                            <h3 class="font-bold text-slate-900 mb-4 text-base">
+                                Opciones de Impresión
+                            </h3>
+                            <ul
+                                class="space-y-2 text-slate-600 text-sm md:text-base"
+                            >
+                                <li
+                                    class="flex items-center justify-between max-w-md border-b border-gray-50 pb-1"
+                                >
+                                    <span>• Blanco y negro</span>
+                                    <span class="font-medium text-slate-900"
+                                        >$0.10/página</span
+                                    >
+                                </li>
+                                <li
+                                    class="flex items-center justify-between max-w-md border-b border-gray-50 pb-1"
+                                >
+                                    <span>• Color</span>
+                                    <span class="font-medium text-slate-900"
+                                        >$0.50/página</span
+                                    >
+                                </li>
+                                <li
+                                    class="flex items-center justify-between max-w-md border-b border-gray-50 pb-1"
+                                >
+                                    <span>• Doble cara</span>
+                                    <span class="font-medium text-green-600"
+                                        >+$0.05/página</span
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-slate-900 mb-4 text-base">
+                                Tipos de Encuadernación
+                            </h3>
+                            <div class="flex flex-wrap gap-2">
+                                {
+                                    [
+                                        "Espiral",
+                                        "Térmica",
+                                        "Cosida",
+                                        "Anillado",
+                                    ].map((tipo) => (
+                                        <span class="px-3 py-1 rounded-full border border-gray-200 text-slate-600 text-xs font-medium bg-gray-50">
+                                            {tipo}
+                                        </span>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div
+                            class="bg-slate-50 border border-slate-200 rounded-2xl p-6 h-full"
+                        >
+                            <h3 class="font-bold text-slate-900 mb-4">
+                                Política de Derechos de Autor
+                            </h3>
+                            <p
+                                class="text-sm text-slate-600 mb-4 leading-relaxed"
+                            >
+                                Respetamos estrictamente las leyes de propiedad
+                                intelectual. Solo imprimimos:
+                            </p>
+
+                            <ul class="space-y-3 mb-6">
+                                <li
+                                    class="flex items-start gap-2 text-sm text-slate-700"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-blue-600 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        ></path></svg
+                                    >
+                                    Documentos personales y trabajos académicos propios
+                                </li>
+                                <li
+                                    class="flex items-start gap-2 text-sm text-slate-700"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-blue-600 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        ></path></svg
+                                    >
+                                    Material con licencia o permiso explícito
+                                </li>
+                                <li
+                                    class="flex items-start gap-2 text-sm text-slate-700"
+                                >
+                                    <svg
+                                        class="h-5 w-5 text-blue-600 flex-shrink-0"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        ></path></svg
+                                    >
+                                    Obras de dominio público
+                                </li>
+                            </ul>
+
+                            <p
+                                class="text-xs text-gray-400 pt-4 border-t border-gray-200"
+                            >
+                                Nos reservamos el derecho de rechazar trabajos
+                                que infrinjan derechos de autor.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="mt-24 bg-blue-50 border border-blue-100 rounded-3xl p-12 text-center"
+            >
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">
+                    ¿Necesitas Más Información?
+                </h2>
+                <p class="text-slate-600 mb-8 max-w-2xl mx-auto">
+                    Nuestro equipo está listo para ayudarte con cualquier
+                    consulta sobre nuestros servicios. Contáctanos y te
+                    responderemos a la brevedad.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                        class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                        Contactar
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                    <button
+                        class="bg-white border border-gray-200 text-slate-700 font-bold py-3 px-8 rounded-xl hover:bg-gray-50 transition-colors"
+                    >
+                        Ver Preguntas Frecuentes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <Footer />
+</Layout>

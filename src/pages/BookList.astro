@@ -26,16 +26,6 @@ try {
 
 let totalPages = Math.ceil(totalBooks / pageSize);
 
-/*if (books.length === 0 && totalBooks === 0) {
-  books.push({
-    id: 999,
-    title: "Libro de Ejemplo (Mock)",
-    price: 29.99,
-    author: { id: 1, name: "Autor", lastName: "Prueba" }, 
-  });
-  totalPages = 1; 
-}*/
-
 if (totalBooks === 0) {
     const mockBooks = [
         {
@@ -193,16 +183,26 @@ const pageTitle = "Catálogo de Libros";
                         return (
                             <div class="bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-xl flex flex-col">
                                 {" "}
-                                <img
-                                    src={mock.imageSrc}
-                                    alt={`Portada de ${book.title}`}
-                                    class="w-full h-64 object-cover"
-                                />{" "}
+                                <a
+                                    href={`/books/${book.id}`}
+                                    class="block overflow-hidden"
+                                >
+                                    <img
+                                        src={mock.imageSrc}
+                                        alt={`Portada de ${book.title}`}
+                                        class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
+                                    />
+                                </a>{" "}
                                 <div class="p-4 flex-grow flex flex-col">
                                     {" "}
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate">
-                                        {book.title}
-                                    </h3>{" "}
+                                    <a
+                                        href={`/books/${book.id}`}
+                                        class="hover:text-teal-600 transition-colors block"
+                                    >
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate">
+                                            {book.title}
+                                        </h3>
+                                    </a>{" "}
                                     <p class="text-sm text-gray-600 mb-2">
                                         {book.author.name}{" "}
                                         {book.author.lastName}

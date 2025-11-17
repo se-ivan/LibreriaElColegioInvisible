@@ -1,0 +1,362 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import prisma from "../../lib/prisma";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+const { id } = Astro.params;
+
+let book: any = null;
+let relatedBooks: any[] = [];
+
+if (id) {
+  try {
+    book = await prisma.book.findUnique({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    if (book) {
+        const relatedRaw = await prisma.book.findMany({
+            where: {
+                id: { not: book.id },
+            },
+            take: 3,
+            include: { author: true }
+        });
+        relatedBooks = relatedRaw;
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+if (!book) {
+  book = {
+    id: 999,
+    title: "El Nombre del Viento",
+    price: 29.99,
+    description:
+      "Kvothe, conocido como Reshi por los pocos que conocen su verdadero nombre, es el protagonista de su propia leyenda. Músico, mendigo, ladrón, estudiante, mago, héroe y asesino, Kvothe ha borrado su rastro. Y ahora ha decidido revelar la verdad sobre sí mismo. Y esta verdad es más extraña que todos los rumores.",
+    imageSrc: "/imgPrueba.png",
+    rating: 4.8,
+    reviews: 342,
+    stock: true,
+    genre: "Fantasía",
+    author: { name: "Patrick", lastName: "Rothfuss" },
+    specs: {
+      isbn: "978-0-7564-0407-9",
+      pages: 662,
+      editorial: "DAW Books",
+      year: 2007,
+      language: "Español",
+    },
+    highlights: [
+      "Primera entrega de la trilogía Crónica del Asesino de Reyes",
+      "Bestseller del New York Times",
+      "Traducido a más de 30 idiomas",
+      "Ganador del premio Quill Award",
+    ],
+    reviewsList: [
+        {
+            id: 1,
+            user: "María González",
+            date: "15 de Marzo, 2024",
+            comment: "Una obra maestra de la fantasía moderna. La prosa de Rothfuss es simplemente hermosa.",
+            rating: 5
+        },
+        {
+            id: 2,
+            user: "Carlos Ruiz",
+            date: "10 de Marzo, 2024",
+            comment: "No puedo esperar a leer la continuación. Kvothe es un personaje fascinante.",
+            rating: 5
+        },
+        {
+            id: 3,
+            user: "Ana Martínez",
+            date: "5 de Marzo, 2024",
+            comment: "Excelente libro, aunque el ritmo puede ser lento en algunas partes. Totalmente recomendado.",
+            rating: 4
+        }
+    ]
+  };
+}
+
+if (relatedBooks.length === 0) {
+    relatedBooks = [
+      {
+        id: 101,
+        title: "El Temor de un Hombre Sabio",
+        author: { name: "Patrick", lastName: "Rothfuss" },
+        price: 32.99,
+        imageSrc: "/imgPrueba.png"
+      },
+      {
+        id: 102,
+        title: "El Hobbit",
+        author: { name: "J.R.R.", lastName: "Tolkien" },
+        price: 22.99,
+        imageSrc: "/imgPrueba.png"
+      },
+      {
+        id: 103,
+        title: "El Camino de los Reyes",
+        author: { name: "Brandon", lastName: "Sanderson" },
+        price: 34.99,
+        imageSrc: "/imgPrueba.png"
+      }
+    ];
+}
+
+const fullStars = Math.floor(book.rating || 0);
+const emptyStars = 5 - fullStars;
+---
+
+<Layout title={`${book.title} | Librería`}>
+  <Header />
+
+  <main class="bg-gray-50 min-h-screen py-8">
+    <div class="container mx-auto px-4">
+      <nav class="text-sm text-gray-500 mb-8">
+        <a href="/BookList" class="hover:text-blue-700">Libros</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">{book.title}</span>
+      </nav>
+
+      <div class="bg-white rounded-xl shadow-sm p-6 md:p-10">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+          <div class="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
+            <div class="relative rounded-lg overflow-hidden shadow-lg border border-gray-100">
+              <img
+                src={book.imageSrc || "https://placehold.co/400x600?text=Portada"}
+                alt={`Portada de ${book.title}`}
+                class="w-full h-auto object-cover"
+              />
+            </div>
+
+            <div class="flex flex-col gap-3">
+              <button
+                class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                  ></path>
+                </svg>
+                Agregar al Carrito - ${Number(book.price).toFixed(2)}
+              </button>
+
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  class="flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition"
+                >
+                  <span class="text-xl">♡</span> Favoritos
+                </button>
+                <button
+                  class="flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                    ></path>
+                  </svg> Compartir
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="md:col-span-8 lg:col-span-9">
+            <div class="flex justify-between items-start">
+              <div>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+                  {book.title}
+                </h1>
+                <p class="text-xl text-slate-600 mb-4">
+                  por <span class="font-medium text-blue-700"
+                    >{book.author.name} {book.author.lastName}</span
+                  >
+                </p>
+              </div>
+              <span
+                class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"
+              >
+                {book.genre || "General"}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-4 mb-6 text-sm">
+              <div class="flex items-center text-yellow-400">
+                {Array(fullStars).fill(null).map(() => <span>★</span>)}
+                {Array(emptyStars).fill(null).map(() => <span class="text-gray-300">★</span>)}
+                <span class="ml-2 text-slate-600 font-medium text-base">
+                  {book.rating}
+                </span>
+                <span class="ml-1 text-gray-400">({book.reviews || 0} reseñas)</span>
+              </div>
+              <div class="h-4 w-px bg-gray-300"></div>
+              <span class="flex items-center text-green-600 font-medium gap-1">
+                <span class="text-lg">•</span> En stock
+              </span>
+            </div>
+
+            <hr class="border-gray-100 mb-6" />
+
+            <div class="mb-8">
+              <h3 class="text-lg font-bold text-slate-900 mb-3">Descripción</h3>
+              <p class="text-slate-600 leading-relaxed">
+                {book.description}
+              </p>
+            </div>
+
+            {book.highlights && (
+              <div class="mb-8">
+                <h3 class="text-lg font-bold text-slate-900 mb-3">
+                  Características Destacadas
+                </h3>
+                <ul class="list-disc list-inside text-slate-600 space-y-1">
+                  {book.highlights.map((item: string) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-6">
+              <h3 class="flex items-center gap-2 font-bold text-slate-900 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                Especificaciones
+              </h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
+                
+                <div>
+                  <p class="text-gray-400 mb-1">ISBN</p>
+                  <p class="font-medium text-slate-900">{book.specs?.isbn || "N/A"}</p>
+                </div>
+                <div>
+                  <p class="text-gray-400 mb-1">Editorial</p>
+                  <p class="font-medium text-slate-900">{book.specs?.editorial || "Generica"}</p>
+                </div>
+                 <div>
+                  <p class="text-gray-400 mb-1">Idioma</p>
+                  <p class="font-medium text-slate-900">{book.specs?.language || "Español"}</p>
+                </div>
+                 <div>
+                  <p class="text-gray-400 mb-1">Páginas</p>
+                  <p class="font-medium text-slate-900">{book.specs?.pages || "300"}</p>
+                </div>
+                 <div>
+                  <p class="text-gray-400 mb-1">Año</p>
+                  <p class="font-medium text-slate-900">{book.specs?.year || "2024"}</p>
+                </div>
+                 <div class="col-span-2">
+                  <p class="text-gray-400 mb-1">Disponibilidad</p>
+                  <p class="font-medium text-blue-600 flex items-center gap-1">
+                    <span class="text-xs">📍</span> Ambas sucursales
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-16">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6">Reseñas de Clientes</h2>
+            
+            <div class="space-y-4">
+                {book.reviewsList && book.reviewsList.map((review: any) => {
+                    const reviewFullStars = Math.floor(review.rating);
+                    const reviewEmptyStars = 5 - reviewFullStars;
+
+                    return (
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-base">{review.user}</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">{review.date}</p>
+                                </div>
+                                
+                                <div class="flex text-blue-700 text-sm mt-2 sm:mt-0">
+                                     {Array(reviewFullStars).fill(null).map(() => (
+                                        <span>★</span>
+                                    ))}
+                                    {Array(reviewEmptyStars).fill(null).map(() => (
+                                        <span class="text-gray-300">★</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <p class="text-slate-600 text-sm leading-relaxed border-t border-gray-50 pt-3 mt-2 sm:border-0 sm:pt-0 sm:mt-0">
+                                {review.comment}
+                            </p>
+                        </div>
+                    )
+                })}
+            </div>
+
+            <div class="mt-8">
+                <button class="bg-white border border-gray-300 text-slate-700 font-medium py-2 px-6 rounded-lg hover:bg-gray-50 hover:text-blue-700 transition-colors text-sm shadow-sm">
+                    Ver Todas las Reseñas
+                </button>
+            </div>
+        </div>
+
+        {relatedBooks.length > 0 && (
+            <div class="mt-16 pt-10 border-t border-gray-100">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6">Libros Relacionados</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {relatedBooks.map((related) => (
+                        <a href={`/books/${related.id}`} class="group block bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="relative aspect-[2/3] overflow-hidden bg-gray-100">
+                                <img 
+                                    src={related.imageSrc && related.imageSrc.startsWith('/') ? related.imageSrc : "https://placehold.co/300x450?text=Portada"} 
+                                    alt={related.title}
+                                    class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                                />
+                            </div>
+                            
+                            <div class="p-4">
+                                <h3 class="font-bold text-slate-900 truncate text-lg mb-1 group-hover:text-blue-700 transition-colors">
+                                    {related.title}
+                                </h3>
+                                <p class="text-sm text-gray-500 mb-3">
+                                    {related.author.name} {related.author.lastName}
+                                </p>
+                                <p class="font-bold text-blue-700 text-lg">
+                                    ${Number(related.price).toFixed(2)}
+                                </p>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        )}
+
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
