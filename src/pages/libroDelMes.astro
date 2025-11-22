@@ -1,0 +1,167 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import MonthlyBook from "../components/MonthlyBook.astro";
+import NextMontlyBook from "../components/NextMontlyBook.astro";
+import Comment from "../components/Comment.astro";
+import FormerMonthlyBook from "../components/FormerMonthlyBook.astro";
+---
+
+<Layout title="Libro del Mes">
+    <header
+        class="w-full bg-texto-resaltado py-10 text-white flex flex-col items-center justify-center font-medium mb-11"
+    >
+        <h1 class="text-4xl flex flex-row items-center gap-1">
+            <span
+                ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-trophy"
+                    ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                    ></path><path d="M8 21l8 0"></path><path d="M12 17l0 4"
+                    ></path><path d="M7 4l10 0"></path><path
+                        d="M17 4v8a5 5 0 0 1 -10 0v-8"></path><path
+                        d="M5 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path
+                        d="M19 9m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path></svg
+                ></span
+            >Libro del Mes
+        </h1>
+        <p class="mt-4 text-center">
+            Vota por tu libro favorito y descubre las recomendaciones de nuestra
+            comunidad
+        </p>
+    </header>
+
+    <main class="font-geist mx-auto container px-4 md:px-20">
+        <article
+            class="hidden md:inline-block w-full m-auto max-w-375 py-12 px-6 bg-[#F9FCFF] rounded-2xl border border-[#BFD6EC]"
+        >
+            <div class="mb-3">
+                <p class="font-medium text-xl">¿Como funciona?</p>
+            </div>
+            <div>
+                <ol
+                    class="flex flex-row gap-3 text-sm font-medium text-[#5B748E]"
+                >
+                    <li>
+                        <span class="text-black">Vota:</span> Cada usuario registrado
+                        puede votar una vez al mes por su libro favorito.
+                    </li>
+                    <li>
+                        <span class="text-black">Comenta:</span> Comparte tu opinión
+                        y califica el libro ganador con estrellas.
+                    </li>
+                    <li>
+                        <span class="text-black">Descubre:</span> El libro con más
+                        votos se convierte en nuestro Libro del Mes.
+                    </li>
+                </ol>
+            </div>
+        </article>
+        <section class="flex flex-col items-center justify-center mt-12">
+            <div class="bg-[#01ACA5] rounded-xl px-1 py-2 mb-4">
+                <h2 class="font-medium md:text-lg text-white">
+                    Ganador de Marzo 2024
+                </h2>
+            </div>
+
+            <h2 class="font-medium text-3xl">Libro del Mes Actual</h2>
+
+            <MonthlyBook />
+        </section>
+        <section class="font-medium w-full mt-16">
+            <div class="text-center">
+                <h2 class="text-3xl mb-4">Vota por el Proximo Libro del Mes</h2>
+                <p class="text-[#5B748E]">
+                    La votacion se reinicia el 1 de cada mes
+                </p>
+            </div>
+
+            <div
+                class="flex items-center justify-center lg:justify-between flex-wrap gap-6 mt-8"
+            >
+                <NextMontlyBook />
+                <NextMontlyBook />
+                <NextMontlyBook />
+            </div>
+        </section>
+
+        <section class="w-full font-medium">
+            <h2 class="text-3xl mt-12">Reseñas y Comentarios</h2>
+
+            <div
+                class="flex flex-col w-full bg-[#F9FCFF] border border-[#BFD6EC] rounded-2xl px-6 py-6 mt-6"
+            >
+                <p><span></span>Comparte tu Opinion</p>
+
+                <p class="mt-6">Tu Calificacion</p>
+
+                <div class="flex flex-row gap-2 mt-1">
+                    {
+                        Array.from({ length: 5 }).map(() => (
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="#D9E7F1"
+                                stroke-width="1"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-star"
+                            >
+                                <>
+                                    <path
+                                        stroke="none"
+                                        d="M0 0h24v24H0z"
+                                        fill="none"
+                                    />
+                                    <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
+                                </>
+                            </svg>
+                        ))
+                    }
+                </div>
+
+                <label for="comment" class="mt-4">Tu Comentario</label>
+                <textarea
+                    name="comment"
+                    id="comment"
+                    class="border border-[#7DA9D2] rounded-lg mt-2 px-3 py-2"
+                    placeholder="Comparte tu experiencia con este libro..."
+                ></textarea>
+
+                <button
+                    class="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1"
+                    >Publicar Comentario</button
+                >
+            </div>
+
+            <div class="flex flex-col gap-4 mt-8 mb-16">
+                <Comment />
+                <Comment />
+                <Comment />
+            </div>
+        </section>
+
+        <section class="w-full font-medium">
+            <h1 class="text-3xl mt-12">Ganadores Anteriores</h1>
+
+            <div class="flex flex-wrap items-center justify-between gap-8 mt-8">
+                <FormerMonthlyBook />
+                <FormerMonthlyBook />
+                <FormerMonthlyBook />
+            </div>
+        </section>
+    </main>
+    <Footer />
+</Layout>
