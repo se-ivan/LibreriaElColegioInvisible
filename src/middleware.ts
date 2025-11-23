@@ -2,10 +2,8 @@
 import { defineMiddleware } from "astro:middleware";
 import { getSession } from "auth-astro/server";
 
-// Rutas que requieren que el usuario esté autenticado
 const protectedRoutes = ["/dashboard", "/profile", "/admin"];
 
-// Rutas que solo son para usuarios NO autenticados (ej. login)
 const authRoutes = ["/login"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -20,16 +18,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Si es una ruta protegida y no hay sesión, redirigir al login
   if (isProtectedRoute && !session) {
-    console.log("⚠️ Usuario no autenticado intentando acceder a:", pathname);
+    console.log("Usuario no autenticado intentando acceder a:", pathname);
     return context.redirect("/login");
   }
 
   // Verificar si es una ruta de autenticación (login/register)
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
-  // Si ya está autenticado e intenta ir al login, redirigir a home
   if (isAuthRoute && session) {
-    console.log("✅ Usuario autenticado redirigido desde login a home");
+    console.log("Usuario autenticado redirigido desde login a home");
     return context.redirect("/");
   }
 
