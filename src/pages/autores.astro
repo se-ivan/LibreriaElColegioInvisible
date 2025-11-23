@@ -1,0 +1,91 @@
+---
+
+import Layout from "../layouts/Layout.astro";
+
+import "../styles/global.css";
+
+import Header from "../components/Header.astro";
+
+import Footer from "../components/Footer.astro"
+
+import AutorDestacado from "../components/AutorDestac.astro";
+
+import AutorCard from "../components/AutorCard.astro";
+
+
+
+const autores = [
+
+  { name: "Ana Silva", nationality: "Argentina", genre: "Romance", imageUrl: "https://via.placeholder.com/300x240?text=Ana+Silva" },
+
+  { name: "Juan Pérez", nationality: "España", genre: "Fantasía", imageUrl: "https://via.placeholder.com/300x240?text=Juan+Perez" },
+
+  { name: "María García", nationality: "México", genre: "Thriller", imageUrl: "https://via.placeholder.com/300x240?text=Maria+Garcia" },
+
+  { name: "Carlos Ruiz", nationality: "Colombia", genre: "Ciencia Ficción", imageUrl: "https://via.placeholder.com/300x240?text=Carlos+Ruiz" },
+
+  { name: "Laura Fernández", nationality: "Perú", genre: "Misterio", imageUrl: "https://via.placeholder.com/300x240?text=Laura+Fernandez" },
+
+  { name: "Pedro López", nationality: "Chile", genre: "Histórica", imageUrl: "https://via.placeholder.com/300x240?text=Pedro+Lopez" },
+
+];
+
+---
+
+
+
+<Layout title="autores">
+
+  <Header />
+
+<main>
+
+    <div class="bg-[#00305d] text-white py-16">
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+        <h1 class="text-5xl font-bold mb-4">Nuestros Autores</h1>
+
+        <p class="text-xl">Conoce a los escritores que dan vida a las historias que amas</p>
+
+      </div>
+
+    </div>
+
+
+
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <AutorDestacado />
+
+
+
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            {autores.map(autor => (
+
+              <AutorCard
+
+                name={autor.name}
+
+                nationality={autor.nationality}
+
+                genre={autor.genre}
+
+                imageUrl={autor.imageUrl}
+
+              />
+
+          ))}
+
+        </div>
+
+    </section>
+
+  </main>
+
+
+
+  <Footer />
+
+</Layout>

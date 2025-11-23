@@ -1,13 +1,13 @@
 // prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-
 
 model User {
   id            String          @id @default(cuid())
@@ -70,13 +70,13 @@ model Book {
   id              Int       @id @default(autoincrement())
   isbn            String    @unique
   title           String
-  price           Decimal
+  price           Float
   editorial       String
   publicationYear Int       @map("anio_publicacion")
   authorId        Int       @map("author_id_author")
   author          Author    @relation(fields: [authorId], references: [id])
   comments        Comment[]
-
+  votes           Int       @default(0)
   @@map("book")
 }
 
@@ -87,7 +87,8 @@ model Author {
   biography   String
   birthdate   DateTime
   imageUrl    String?  @map("url_image")
-  
+  nationality String?
+  genre       String   @default("Unknown")
   // Relación con Book
   books       Book[]
 
@@ -115,7 +116,7 @@ model Event {
   date        DateTime
   startTime   DateTime  @map("start_time")
   endTime     DateTime  @map("end_time")
-  cost        Decimal
+  cost        Float
   guest       String?
 
   userId      String    @map("user_id_user")
