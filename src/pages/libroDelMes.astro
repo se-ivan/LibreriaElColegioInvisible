@@ -6,6 +6,12 @@ import MonthlyBook from "../components/MonthlyBook.astro";
 import NextMontlyBook from "../components/NextMontlyBook.astro";
 import Comment from "../components/Comment.astro";
 import FormerMonthlyBook from "../components/FormerMonthlyBook.astro";
+import { getSession } from "auth-astro/server";
+
+const session = await getSession(Astro.request);
+const userId = session?.user?.id || null;
+
+
 ---
 
 <Layout title="Libro del Mes">
@@ -103,35 +109,14 @@ import FormerMonthlyBook from "../components/FormerMonthlyBook.astro";
             >
                 <p><span></span>Comparte tu Opinion</p>
 
-                <p class="mt-6">Tu Calificacion</p>
-
-                <div class="flex flex-row gap-2 mt-1">
-                    {
-                        Array.from({ length: 5 }).map(() => (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#D9E7F1"
-                                stroke-width="1"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="icon icon-tabler icons-tabler-outline icon-tabler-star"
-                            >
-                                <>
-                                    <path
-                                        stroke="none"
-                                        d="M0 0h24v24H0z"
-                                        fill="none"
-                                    />
-                                    <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
-                                </>
-                            </svg>
-                        ))
-                    }
-                </div>
+                <label class="mt-6" for="title">Titulo</label>
+                <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    class="border border-[#7DA9D2] rounded-lg mt-2 px-3 py-2"
+                    placeholder="Escribe un titulo para tu reseña"
+                />
 
                 <label for="comment" class="mt-4">Tu Comentario</label>
                 <textarea

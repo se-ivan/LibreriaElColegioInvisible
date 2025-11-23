@@ -1,10 +1,23 @@
-import type { APIRoute } from 'astro';
-import { books } from '../../data/mock-db';
+import prisma from '../lib/prisma';
+import { defineAction } from 'astro:actions';
 
-export const GET: APIRoute = () => {
-  if (books.length === 0) {
-    return new Response(null, { status: 204 });
-  }
-  const bookOfTheMonth = books.reduce((prev, current) => (prev.votes > current.votes) ? prev : current);
-  return new Response(JSON.stringify(bookOfTheMonth));
+
+export const server = {
+  bookOfTheMonth: defineAction({
+    accept: "json",
+    handler: async () => {
+      const books = await prisma.book.findMany();
+
+      if (books.length === 0) {
+        return null;
+      }
+
+      const montlyBook = books.reduce((prev, current) => {
+        return (prev.votes < current.votes) ? prev : current;
+      });
+
+      return montlyBook;
+    },
+  }),
 };
+
