@@ -1,21 +1,36 @@
-import type { APIRoute } from 'astro';
-import { authors } from '../../../../data/mock-db';
+import type { APIRoute } from "astro";
+import prisma from "../../../../lib/prisma";
 
 export const POST: APIRoute = async ({ request }) => {
-  const body = await request.json();
-  if (!body.name) {
-    return new Response(JSON.stringify({ error: "El nombre es obligatorio" }), { status: 400 });
+  try {
+    const body = await request.json();
+
+    if (!body.name || !body.lastName || !body.biography || !body.birthdate) {
+      return new Response(
+        JSON.stringify({ 
+          message: "Faltan datos obligatorios: name, lastName, biography, birthdate" 
+        }), 
+        { status: 400 }
+      );
+    }
+
+    const newAuthor = await prisma.author.create({
+      data: {
+        name: body.name,
+        lastName: body.lastName,
+        biography: body.biography,
+        birthdate: new Date(body.birthdate), 
+        imageUrl: body.imageUrl || null,
+      },
+    });
+
+    return new Response(JSON.stringify(newAuthor), { status: 201 });
+
+  } catch (error) {
+    console.error("Error creando autor:", error);
+    return new Response(
+      JSON.stringify({ error: "Error interno al crear autor" }), 
+      { status: 500 }
+    );
   }
-
-  const newAuthor = {
-    id: String(Date.now()), 
-    name: body.name,
-    nationality: body.nationality ?? "Desconocida",
-    birthDate: body.birthDate ?? null,
-    bio: body.bio ?? "",
-    imageUrl: body.imageUrl ?? '/img/author-default.jpg',
-  };
-
-  authors.push(newAuthor);
-  return new Response(JSON.stringify(newAuthor), { status: 201 });
 };

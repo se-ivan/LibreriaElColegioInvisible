@@ -77,6 +77,10 @@ model Book {
   author          Author    @relation(fields: [authorId], references: [id])
   comments        Comment[]
   votes           Int       @default(0)
+  raiting         Float     @default(0.0)  
+  imageUrl        String?   @map("url_image")
+  description     String?
+  
   @@map("book")
 }
 

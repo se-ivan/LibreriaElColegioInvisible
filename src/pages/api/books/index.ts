@@ -1,24 +1,19 @@
-import type { APIRoute } from 'astro';
-import { books, authors } from '../../../data/mock-db';
+import type { APIRoute } from "astro";
+import prisma from "../../../lib/prisma"; 
 
-export const GET: APIRoute = ({ url }) => {
-  const { searchParams } = url;
-  const query = searchParams.get('q');
-  const genre = searchParams.get('genero');
-  
-  let result = books;
+export const GET: APIRoute = async () => {
+  try {
+    const books = await prisma.book.findMany({
+      include: { author: true },
+    });
 
-  if (query) {
-    const authorIds = authors.filter(a => a.name.toLowerCase().includes(query.toLowerCase())).map(a => a.id);
-    result = result.filter(book => 
-      book.title.toLowerCase().includes(query.toLowerCase()) || 
-      authorIds.includes(book.authorId)
-    );
+    return new Response(JSON.stringify(books), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+
+  } catch (error) {
+    console.error("Error al obtener libros:", error);
+    return new Response(JSON.stringify({ error: "Error al leer la base de datos" }), { status: 500 });
   }
-
-  if (genre) {
-    result = result.filter(book => book.genre.toLowerCase() === genre.toLowerCase());
-  }
-
-  return new Response(JSON.stringify(result));
 };
