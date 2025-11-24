@@ -6,12 +6,12 @@ import MonthlyBook from "../components/MonthlyBook.astro";
 import NextMontlyBook from "../components/NextMontlyBook.astro";
 import Comment from "../components/Comment.astro";
 import FormerMonthlyBook from "../components/FormerMonthlyBook.astro";
-import { getSession } from "auth-astro/server";
 
-const session = await getSession(Astro.request);
-const userId = session?.user?.id || null;
+const res = await fetch("http://localhost:4321/api/monthlyBook");
+const book = await res.json();
 
-
+const resComm = await fetch("http://localhost:4321/api/comments/comments");
+const commentData = await resComm.json();
 ---
 
 <Layout title="Libro del Mes">
@@ -82,7 +82,7 @@ const userId = session?.user?.id || null;
 
             <h2 class="font-medium text-3xl">Libro del Mes Actual</h2>
 
-            <MonthlyBook />
+            <MonthlyBook title={book.title} votes={book.votes} autor={book.author.name + " "  + book.author.lastName}/>
         </section>
         <section class="font-medium w-full mt-16">
             <div class="text-center">
@@ -127,15 +127,18 @@ const userId = session?.user?.id || null;
                 ></textarea>
 
                 <button
-                    class="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1"
+                    class="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1" onclick=""
+                    id="btnComentarios"
                     >Publicar Comentario</button
                 >
             </div>
 
             <div class="flex flex-col gap-4 mt-8 mb-16">
-                <Comment />
-                <Comment />
-                <Comment />
+                {
+                    commentData.map((comm: any) => (
+                        <Comment comment={comm} key={comm.id} />
+                    ))
+                }
             </div>
         </section>
 
@@ -154,7 +157,21 @@ const userId = session?.user?.id || null;
 
 <script>
     import { actions } from "astro:actions";
+    import { getSession } from "auth-astro/server";
 
-    const response = await actions.monthlyBook.getBooks();
-    console.log(response);
+    const session = await getSession(Astro.request);
+    const userId = session?.user?.id || null;
+
+    const botonComentarios = (document.getElementById("btnComentarios") as HTMLInputElement);
+    
+    botonComentarios?.addEventListener("click", () => {
+        const inputTitle = (document.getElementById("title") as HTMLInputElement).value;
+        const inputDescription = (document.getElementById("comment") as HTMLInputElement).value;
+
+        const data = {
+            title: inputTitle,
+            description: inputDescription,
+            userId: userId,
+        }
+    })
 </script>

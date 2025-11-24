@@ -1,16 +1,15 @@
 ---
-
+const {title, description, user} = Astro.props;
 ---
 
 <div
     class="w-full max-w-375 bg-[#F9FCFF] border border-[#DFEBF4] rounded-3xl flex flex-col items-centers font-medium py-8 sm:py-10 px-6"
 >
-    <p>Mario Gonzaless</p>
+    <p>{user}</p>
     <p class="text-xs text-[#5B748E]">Hace 3 dias</p>
-    <p class="mt-4 text-lg">Titulo de Ejemplo</p>
+    <p class="mt-4 text-lg">{title}</p>
     <p class="md:text-xl mt-4 text-[#5B748E]">
-        El mejor libro de fantasía que he leído en años. Kvothe es un personaje
-        inolvidable.
+        {description}
     </p>
 
     <div>

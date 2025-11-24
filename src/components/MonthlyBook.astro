@@ -1,5 +1,5 @@
 ---
-
+const {title, autor, votes} = Astro.props;
 ---
 
 <article
@@ -12,8 +12,8 @@
     />
 
     <div class="font-medium">
-        <p class="text-xl md:text-3xl mb-3 mt-3">El Nombre del Viento</p>
-        <p class="text-[#5B748E] md:text-lg">por Patrick Rothfus</p>
+        <p class="text-xl md:text-3xl mb-3 mt-3">{title}</p>
+        <p class="text-[#5B748E] md:text-lg">por {autor}</p>
 
         <div class="flex flex-row mt-6">
             {
@@ -45,7 +45,7 @@
         <div class="mt-6">
             <div class="w-full flex flex-row justify-between">
                 <p class="text-sm">Total de Votos</p>
-                <p class="text-[#0056A4] text-sm">342 Votos</p>
+                <p class="text-[#0056A4] text-sm">{votes}</p>
             </div>
             <div class="h-3 w-full bg-[#BED6ED] rounded-md mt-2">
                 <div class="h-3 w-20 bg-[#0056A4] rounded-md"></div>

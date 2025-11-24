@@ -47,12 +47,5 @@ export const monthlyBook = {
     },
   }),
 
-  getBooks: defineAction({
-    accept: "json",
-    handler: async () => {
-      const books = await prisma.book.findMany();
-      return books;
-    },
-  }),
 };
 
