@@ -1,5 +1,5 @@
 ---
-const {title, autor, votes} = Astro.props;
+const {title, autor, votes, description, rating} = Astro.props;
 ---
 
 <article
@@ -34,12 +34,11 @@ const {title, autor, votes} = Astro.props;
                 ))
             }
 
-            <span class="ml-2">5.0</span>
+            <span class="ml-2">{rating}</span>
         </div>
 
-        <p class="text-[#5B748E] text-sm md:text-base mt-6">
-            Kvothe, conocido como Reshi por los pocos que conocen su verdadero
-            nombre, es el protagonista de su propia leyenda.
+        <p class="text-[#5B748E] md:min-w-100 text-sm md:text-base mt-6">
+            {description}
         </p>
 
         <div class="mt-6">

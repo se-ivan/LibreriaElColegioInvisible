@@ -15,7 +15,7 @@ const commentData = await resComm.json();
 ---
 
 <Layout title="Libro del Mes">
-    <Header/>
+    <Header />
     <header
         class="w-full bg-texto-resaltado py-10 text-white flex flex-col items-center justify-center font-medium mb-11"
     >
@@ -82,7 +82,13 @@ const commentData = await resComm.json();
 
             <h2 class="font-medium text-3xl">Libro del Mes Actual</h2>
 
-            <MonthlyBook title={book.title} votes={book.votes} autor={book.author.name + " "  + book.author.lastName}/>
+            <MonthlyBook
+                title={book.title}
+                votes={book.votes}
+                autor={book.author.name + " " + book.author.lastName}
+                description={book.description}
+                rating={book.raiting}
+            />
         </section>
         <section class="font-medium w-full mt-16">
             <div class="text-center">
@@ -127,9 +133,9 @@ const commentData = await resComm.json();
                 ></textarea>
 
                 <button
-                    class="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1" onclick=""
-                    id="btnComentarios"
-                    >Publicar Comentario</button
+                    class="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1"
+                    onclick=""
+                    id="btnComentarios">Publicar Comentario</button
                 >
             </div>
 
@@ -162,16 +168,22 @@ const commentData = await resComm.json();
     const session = await getSession(Astro.request);
     const userId = session?.user?.id || null;
 
-    const botonComentarios = (document.getElementById("btnComentarios") as HTMLInputElement);
-    
+    const botonComentarios = document.getElementById(
+        "btnComentarios",
+    ) as HTMLInputElement;
+
     botonComentarios?.addEventListener("click", () => {
-        const inputTitle = (document.getElementById("title") as HTMLInputElement).value;
-        const inputDescription = (document.getElementById("comment") as HTMLInputElement).value;
+        const inputTitle = (
+            document.getElementById("title") as HTMLInputElement
+        ).value;
+        const inputDescription = (
+            document.getElementById("comment") as HTMLInputElement
+        ).value;
 
         const data = {
             title: inputTitle,
             description: inputDescription,
             userId: userId,
-        }
-    })
+        };
+    });
 </script>

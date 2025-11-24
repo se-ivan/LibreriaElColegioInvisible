@@ -30,6 +30,7 @@ export const monthlyBook = {
         publicationyear: z.number().min(0),
         authoId: z.number().min(1),
         votes: z.number().min(0).optional(),
+        description: z.string()
     }),
     handler: async (data) => {
       const newBook = await prisma.book.create({
