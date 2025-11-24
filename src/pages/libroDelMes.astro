@@ -6,6 +6,7 @@ import MonthlyBook from "../components/MonthlyBook.astro";
 import NextMontlyBook from "../components/NextMontlyBook.astro";
 import Comment from "../components/Comment.astro";
 import FormerMonthlyBook from "../components/FormerMonthlyBook.astro";
+import { CreateComments } from "../components/CreateComments";
 
 const res = await fetch("http://localhost:4321/api/monthlyBook");
 const book = await res.json();
@@ -107,46 +108,7 @@ const commentData = await resComm.json();
             </div>
         </section>
 
-        <section class="w-full font-medium">
-            <h2 class="text-3xl mt-12">Reseñas y Comentarios</h2>
-
-            <div
-                class="flex flex-col w-full bg-[#F9FCFF] border border-[#BFD6EC] rounded-2xl px-6 py-6 mt-6"
-            >
-                <p><span></span>Comparte tu Opinion</p>
-
-                <label class="mt-6" for="title">Titulo</label>
-                <input
-                    id="title"
-                    name="title"
-                    type="text"
-                    class="border border-[#7DA9D2] rounded-lg mt-2 px-3 py-2"
-                    placeholder="Escribe un titulo para tu reseña"
-                />
-
-                <label for="comment" class="mt-4">Tu Comentario</label>
-                <textarea
-                    name="comment"
-                    id="comment"
-                    class="border border-[#7DA9D2] rounded-lg mt-2 px-3 py-2"
-                    placeholder="Comparte tu experiencia con este libro..."
-                ></textarea>
-
-                <button
-                    class="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1"
-                    onclick=""
-                    id="btnComentarios">Publicar Comentario</button
-                >
-            </div>
-
-            <div class="flex flex-col gap-4 mt-8 mb-16">
-                {
-                    commentData.map((comm: any) => (
-                        <Comment comment={comm} key={comm.id} />
-                    ))
-                }
-            </div>
-        </section>
+        <CreateComments server:defer/>
 
         <section class="w-full font-medium">
             <h1 class="text-3xl mt-12">Ganadores Anteriores</h1>
