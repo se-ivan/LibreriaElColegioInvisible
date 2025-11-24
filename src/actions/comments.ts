@@ -1,8 +1,8 @@
-import prisma from '../lib/prisma';
+import prisma from '../pages/lib/prisma';
 import { defineAction } from 'astro:actions';
 import z from "zod";
 
-export const server = {
+export const comment = {
   addComment: defineAction({
     accept: "json",
     input: z.object({

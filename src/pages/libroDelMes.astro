@@ -151,3 +151,10 @@ const userId = session?.user?.id || null;
     </main>
     <Footer />
 </Layout>
+
+<script>
+    import { actions } from "astro:actions";
+
+    const response = await actions.monthlyBook.getBooks();
+    console.log(response);
+</script>
