@@ -2,16 +2,16 @@
 import InputText from "./InputText.astro";
 ---
 
-<article class="rounded-3xl py-7 px-13 bg-white w-250">
+<article class="rounded-3xl py-7 px-13 bg-white w-full max-w-250">
     <div class="flex flex-col gap-4 text-center mb-8">
-        <h4 class="text-3xl font-medium">Formulario de Donacion</h4>
-        <p class="text-[#617992] text-xl">
+        <h4 class="text-xl md:text-3xl font-medium">Formulario de Donacion</h4>
+        <p class="text-texto-claro text-sm sm:text-base md:text-xl">
             Completa este formulario y nos pondremos en contacto contigo
         </p>
     </div>
 
     <form action="" class="w-full">
-        <div class="grid grid-cols-2 gap-7 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-7 mb-8">
             <InputText
                 label="Nombre Completo*"
                 id="fullName"
@@ -39,7 +39,7 @@ import InputText from "./InputText.astro";
         </div>
 
         <fieldset class="mb-8">
-            <legend class="text-lg font-medium mb-2">Tipo de Donacion*</legend>
+            <legend class="md:text-lg font-medium mb-2">Tipo de Donacion*</legend>
 
             <div>
                 <input
@@ -48,7 +48,7 @@ import InputText from "./InputText.astro";
                     name="radio"
                     value="sucursal"
                 />
-                <label for="sucursal" class="text-lg font-light"
+                <label for="sucursal" class="text-sm md:text-lg font-light"
                     >Llevare libros a sucursal</label
                 >
             </div>
@@ -60,14 +60,14 @@ import InputText from "./InputText.astro";
                     name="radio"
                     value="domicilio"
                 />
-                <label for="domicilio" class="text-lg font-light"
+                <label for="domicilio" class="text-sm md:text-lg font-light"
                     >Solicito recolección a domicilio (más de 20 libros)</label
                 >
             </div>
         </fieldset>
 
         <div class="flex flex-col gap-2 mb-4">
-            <label class="text-lg font-medium" for="direccion"
+            <label class="md:text-lg font-medium" for="direccion"
                 >Dirección (si solicitas recolección)</label
             >
             <input
@@ -75,24 +75,24 @@ import InputText from "./InputText.astro";
                 name="direccion"
                 type="text"
                 placeholder="Calle, número, colonia, ciudad"
-                class="w-full h-10 px-3 py-2 border border-[#E8F1F7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00305D] focus:border-transparent"
+                class="w-full h-10 px-3 py-2 max-md:text-sm border border-[#E8F1F7] rounded-lg focus:outline-none focus:ring-2 focus:ring-texto-resaltado focus:border-transparent"
             />
         </div>
 
         <div class="flex flex-col gap-2">
-            <label class="text-lg font-medium" for="adicional"
+            <label class="md:text-lg font-medium" for="adicional"
                 >Mensaje Adicional</label
             >
             <textarea
                 id="adicional"
                 name="adicional"
                 placeholder="Cuéntanos sobre los libros que deseas donar ..."
-                class="w-full h-25 px-3 py-2 border border-[#E8F1F7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00305D] focus:border-transparent"
+                class="w-full h-25 px-3 py-2 max-md:text-sm border border-[#E8F1F7] rounded-lg focus:outline-none focus:ring-2 focus:ring-texto-resaltado focus:border-transparent"
             ></textarea>
         </div>
 
         <button
-            class="w-full h-12 bg-[#0096A2] text-white rounded-lg text-xl mt-8 flex flex-row gap-2 items-center justify-center hover:bg-[#007f87] transition-colors duration-300"
+            class="w-full max-md:max-w-80 m-auto h-12 bg-[#0096A2] text-white rounded-lg md:text-xl mt-8 flex flex-row gap-2 items-center justify-center hover:bg-[#007f87] transition-colors duration-300"
         >
             <span
                 ><svg
@@ -105,7 +105,7 @@ import InputText from "./InputText.astro";
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-heart"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-heart hidden md:inline-block"
                     ><path stroke="none" d="M0 0h24v24H0z" fill="none"
                     ></path><path
                         d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"

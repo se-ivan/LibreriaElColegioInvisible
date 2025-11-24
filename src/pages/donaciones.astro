@@ -13,20 +13,19 @@ import "../styles/global.css";
 ---
 
 <Layout title="Donaciones">
-    <Header />
-    <main class="font-geist mx-auto">
-        
+    <main class="font-geist mx-auto container">
+        <Header />
         <section
             class="font-geist text-center mt-20 flex justify-between items-center flex-col mb-14"
         >
-            <h1 class="font-bold text-6xl mb-4">Dona un Libro, Cambia una Vida</h1>
-            <p class="text-xl text-[#617992] w-165">
+            <h1 class="font-bold text-3xl md:text-4xl lg:text-6xl mb-4">Dona un Libro, Cambia una Vida</h1>
+            <p class="md:text-xl text-texto-claro w-full  max-w-165 mx-2">
                 Tus libros pueden abrir puertas a nuevos mundos para quienes más lo
                 necesitan
             </p>
 
             <div
-                class="w-full flex flex-row items-center justify-center gap-15 mt-10"
+                class="w-full flex flex-wrap items-center justify-center gap-15 mt-10"
             >
                 <DonatingHeroCard number="5,000+" description="Libros Donados">
                     <svg
@@ -89,9 +88,9 @@ import "../styles/global.css";
             </div>
         </section>
 
-        <section class="w-full bg-[#00305D] text-white flex flex-col items-center py-15">
+        <section class="w-full bg-texto-resaltado text-white flex flex-col items-center py-15">
             <h2 class="text-3xl font-bold">¿Como Funciona?</h2>
-            <div class="w-full flex flex-row items-center justify-center gap-15 mt-10">
+            <div class="w-full flex flex-row flex-wrap items-center justify-center gap-15 mt-10">
                 <DonatingHowWorks
                     title="1.- Prepara tus libros"
                     description="Selecciona los libros que deseas donar y asegúrate de que estén en buen estado"
@@ -103,7 +102,7 @@ import "../styles/global.css";
                     description="Visita cualquiera de nuestras sucursales o solicita recolección a domicilio"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00305D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-map-pin"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
-                </DonatingHowWorks>
+                </DonatingHowWorks> 
                 <DonatingHowWorks
                     title="3.- Hacemos la Entrega"
                     description="Distribuimos tus libros a escuelas, bibliotecas y organizaciones comunitarias"
@@ -116,7 +115,7 @@ import "../styles/global.css";
         <section class="text-black flex flex-col items-center justify-between bg-[#FAFDFF] py-15">
             <h2 class="text-3xl font-medium mb-10">Guia de Donacion</h2>
 
-            <div class="flex flex-row gap-10">
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-10">
                 <DonatingAceptedBook />
                 <DonatingRejectedBook />
             </div>
@@ -126,10 +125,10 @@ import "../styles/global.css";
         <section class="flex flex-col py-15 items-center justify-center bg-[#EDF4FD]">
             <div class="flex flex-col gap-5 text-center mb-6">
                 <h2 class="text-3xl font-semibold">¿A donde Van Tus Libros?</h2>
-                <p class="text-xl text-[#617992]">Transparencia total: conoce las organizaciones que reciben tus donaciones</p>
+                <p class="text-xl text-texto-claro">Transparencia total: conoce las organizaciones que reciben tus donaciones</p>
             </div>
             
-            <div class="flex flex-row gap-8">
+            <div class="flex flex-row flex-wrap justify-center items-center gap-8">
                 <DonatingBook 
                     img="/imgPrueba.png"
                     title="Centro Juvenil 'Horizontes'"
@@ -152,22 +151,22 @@ import "../styles/global.css";
 
         </section>
 
-        <section class="bg-[#E5EFF6] flex items-center justify-center py-15">
+        <section class="bg-[#E5EFF6] flex items-center justify-center py-15 px-4">
             <FormDonation />
         </section>
 
-        <section class="bg-[#00305D] py-15 text-center flex flex-col items-center justify-center">
-            <div class="w-250 h-95 flex flex-col items-center justify-center bg-white border-2 border-[#F1C86E]/50 rounded-3xl">
+        <section class="bg-texto-resaltado py-15 px-4 text-center flex items-center justify-center">
+            <div class="w-full max-w-250 h-95 flex flex-col items-center justify-center bg-white border-2 border-[#F1C86E]/50 rounded-3xl">
                 <div class="mb-8">
                     <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00305D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-heart"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
                 </div>
 
                 <div class="flex flex-col gap-4 mb-5">
-                    <p class="text-3xl font-medium">Donación Monetaria</p>
-                    <p class="text-[#617992] text-xl">También puedes ayudarnos con una donación monetaria para comprar libros nuevos</p>
+                    <p class="text-xl lg:text-3xl font-medium">Donación Monetaria</p>
+                    <p class="text-texto-claro lg:text-xl">También puedes ayudarnos con una donación monetaria para comprar libros nuevos</p>
                 </div>
 
-                <button class="rounded-lg h-12 w-88 bg-[#0096A2] text-xl text-white hover:bg-[#007f87] transition-colors duration-300">Hacer una Donación Monetaria</button>
+                <button class="rounded-lg h-12 sm:w-88 w-65 bg-[#0096A2] lg:text-xl text-white hover:bg-[#007f87] transition-colors duration-300">Hacer una Donación Monetaria</button>
             </div>
         </section>
     </main>

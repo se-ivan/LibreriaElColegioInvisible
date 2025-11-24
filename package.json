@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@astrojs/markdoc": "^0.15.8",
-    "@astrojs/react": "^4.4.0",
+    "@astrojs/react": "^4.4.2",
     "@astrojs/vercel": "^8.2.10",
     "@auth/core": "^0.37.4",
     "@auth/prisma-adapter": "^2.11.0",
@@ -19,10 +19,14 @@
     "@prisma/adapter-libsql": "^6.16.3",
     "@prisma/client": "^6.16.3",
     "@tailwindcss/vite": "^4.1.16",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "astro": "^5.14.1",
     "auth-astro": "^4.2.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.16",
     "zod": "^3.25.76"
   },
