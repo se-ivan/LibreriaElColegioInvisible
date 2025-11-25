@@ -4,15 +4,15 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import MonthlyBook from "../components/MonthlyBook.astro";
 import NextMontlyBook from "../components/NextMontlyBook.astro";
-import Comment from "../components/Comment.astro";
 import FormerMonthlyBook from "../components/FormerMonthlyBook.astro";
 import { CreateComments } from "../components/CreateComments";
+import { getSession } from "auth-astro/server";
+
+const session = await getSession(Astro.request);
+const userId = session?.user.id || "cmh2ekh300000szsg3z480swa"; // Para pruebas puse mi ID, porque lel getSession no me devolvia nadota
 
 const res = await fetch("http://localhost:4321/api/monthlyBook");
 const book = await res.json();
-
-const resComm = await fetch("http://localhost:4321/api/comments/comments");
-const commentData = await resComm.json();
 ---
 
 <Layout title="Libro del Mes">
@@ -108,7 +108,7 @@ const commentData = await resComm.json();
             </div>
         </section>
 
-        <CreateComments server:defer/>
+        <CreateComments client:only="react" bookId={book.id} userId={userId}/>
 
         <section class="w-full font-medium">
             <h1 class="text-3xl mt-12">Ganadores Anteriores</h1>
@@ -123,29 +123,3 @@ const commentData = await resComm.json();
     <Footer />
 </Layout>
 
-<script>
-    import { actions } from "astro:actions";
-    import { getSession } from "auth-astro/server";
-
-    const session = await getSession(Astro.request);
-    const userId = session?.user?.id || null;
-
-    const botonComentarios = document.getElementById(
-        "btnComentarios",
-    ) as HTMLInputElement;
-
-    botonComentarios?.addEventListener("click", () => {
-        const inputTitle = (
-            document.getElementById("title") as HTMLInputElement
-        ).value;
-        const inputDescription = (
-            document.getElementById("comment") as HTMLInputElement
-        ).value;
-
-        const data = {
-            title: inputTitle,
-            description: inputDescription,
-            userId: userId,
-        };
-    });
-</script>
