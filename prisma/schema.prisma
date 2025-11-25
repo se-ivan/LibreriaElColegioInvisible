@@ -87,6 +87,8 @@ model Author {
   biography   String
   birthdate   DateTime
   imageUrl    String?  @map("url_image")
+  nationality String?
+  genre       String   @default("Unknown")
   
   // Relación con Book
   books       Book[]

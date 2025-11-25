@@ -1,37 +1,42 @@
 ---
-const autor = {
-  name: "Elena Martínez",
-  genre: "Fantasía España",
-  description: "Con 12 Libros publicados, Elena Martínez se ha convertido en una de las voces más influyentes en la literatura contemporánea. Su estilo único y cautivador ha conquistado a miles de lectores.",
-  imageUrl: "https://via.placeholder.com/250x300", 
-};
+interface Props {
+  name: string;
+  nationality: string | null;
+  genre: string;
+  description: string;
+  imageUrl: string;
+}
+
+const { name, nationality, genre, description, imageUrl } = Astro.props;
+
+const urlSlug = name.toLowerCase().replace(/\s+/g, '-');
 ---
 
 <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col lg:flex-row relative">
-  <div class="lg:w-1/3 p-6 flex items-center justify-center">
-    <img
-      src={autor.imageUrl}
-      alt={`Foto de ${autor.name}`}
-      class="rounded-full w-60 h-60 object-cover border-4 border-white shadow-md"
-    />
-  </div>
-  <div class="lg:w-2/3 p-6 lg:p-10 flex flex-col justify-center">
-    <span class="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mb-4 self-start">
-      <svg class="w-2.5 h-2.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.381-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z"></path>
-      </svg>
-      Autor Destacado
-    </span>
-    <h2 class="text-4xl font-bold text-gray-900 mb-2">{autor.name}</h2>
-    <p class="text-lg text-gray-700 mb-4">{autor.genre}</p>
-    <p class="text-gray-600 leading-relaxed mb-6">
-      {autor.description}
-    </p>
-    <a href="/autores/elena-martinez" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#01ada4] hover:bg-emerald-500 transition duration-300 ease-in-out self-start">
-      Ver Autor Destacado
-      <svg class="ml-3 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-      </svg>
-    </a>
-  </div>
+  <div class="lg:w-1/3 p-6 flex items-center justify-center">
+    <img
+      src={imageUrl}
+      alt={`Foto de ${name}`}
+      class="rounded-full w-60 h-60 object-cover border-4 border-white shadow-md"
+    />
+  </div>
+  <div class="lg:w-2/3 p-6 lg:p-10 flex flex-col justify-center">
+    <span class="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mb-4 self-start">
+      <svg class="w-2.5 h-2.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.538 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.381-1.81.588-1.81h3.462a1 1 0 00.95-.69l1.07-3.292z"></path>
+      </svg>
+      Autor Destacado
+    </span>
+    <h2 class="text-4xl font-bold text-gray-900 mb-2">{name}</h2>
+    <p class="text-lg text-gray-700 mb-4">{genre} | {nationality}</p>
+    <p class="text-gray-600 leading-relaxed mb-6">
+      {description}
+    </p>
+    <a href={`/autores/${urlSlug}`} class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#01ada4] hover:bg-emerald-500 transition duration-300 ease-in-out self-start">
+      Ver Perfil
+      <svg class="ml-3 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+      </svg>
+    </a>
+  </div>
 </div>
