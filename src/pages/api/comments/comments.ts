@@ -1,29 +1,24 @@
 import type { APIRoute } from 'astro';
 import prisma from '../../lib/prisma'; 
+import type { Comment } from '../../../data/mock-db';
 
 export const GET: APIRoute = async () => {
     try {
-        const comments = await prisma.comment.findMany({
-            
+        const comments = await prisma.comment.findMany({      
             include: {
                 user: {
                     select: {
                         id: true,
                         name: true,
                         lastName: true,
-                        image: true,
-                    },
-                },
-                book: {
-                    select: {
-                        id: true,
-                        title: true,
-                        isbn: true,
                     },
                 },
                 replies: true, 
             },
-            
+            where: {
+                
+            },
+
             orderBy: {
                 id: 'desc',
             }
@@ -54,16 +49,11 @@ export const GET: APIRoute = async () => {
 
 
 
-interface CommentBody {
-    title: string;
-    description: string;
-    userId: string; 
-    bookId: number; 
-}
+type CreateCommentPayload = Omit<Comment, 'id' | 'user' | 'replies' | 'like'>;
 
 export const POST: APIRoute = async ({ request }) => {
     try {
-        const body: CommentBody = await request.json();
+        const body: CreateCommentPayload = await request.json();
         
         if (!body.title || !body.description || !body.userId || !body.bookId) {
             return new Response(JSON.stringify({ error: 'Faltan campos obligatorios (title, description, userId, bookId).' }),{ status: 400, headers: { 'Content-Type': 'application/json' } }

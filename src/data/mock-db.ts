@@ -18,18 +18,25 @@ export interface Author {
 }
 
 export interface Comment {
-  id: string;
-  bookId: string; 
-  username: string;
-  title: string;
-  text: string;
-  likes: number;
-  timestamp: Date;
+  id:number     
+  title:string
+  description:string    
+  like:number      
+  bookId:number
+  userId: string
+  user: User   
+  replies:Reply[]
 }
 
 export interface Reply {
     commentId: string; 
     replyId: string;  
+}
+
+export interface User {
+  id:number
+  name: string
+  lastName: string
 }
 
 
