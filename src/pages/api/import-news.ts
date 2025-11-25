@@ -3,6 +3,7 @@ import prisma from '../lib/prisma';
 import { getCollection } from "astro:content";
 import Markdoc from "@markdoc/markdoc";
 
+
 export const POST: APIRoute = async () => {
     try{
 const user = await prisma.user.findFirst();

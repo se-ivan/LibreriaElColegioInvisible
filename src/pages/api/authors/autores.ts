@@ -11,7 +11,9 @@ export const POST: APIRoute = async ({ request }) => {
       lastName, 
       biography, 
       birthdate, 
-      imageUrl 
+      imageUrl,
+      nationality,
+      genre 
     } = body;
 
     if (!name || !lastName || !biography || !birthdate) {
@@ -40,6 +42,8 @@ export const POST: APIRoute = async ({ request }) => {
         biography,
         birthdate: birthdateDate,
         imageUrl: imageUrl || null, 
+        nationality: nationality || null,
+        genre 
       },
     });
 

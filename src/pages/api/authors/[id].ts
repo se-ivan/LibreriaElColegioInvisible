@@ -52,7 +52,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
     
     const updateData: { [key: string]: any } = {};
     
-    const validFields = ['name', 'lastName', 'biography', 'birthdate', 'imageUrl'];
+    const validFields = ['name', 'lastName', 'biography', 'birthdate', 'imageUrl', 'nationality', 'genre'];
 
     for (const field of validFields) {
         if (body[field] !== undefined) {
