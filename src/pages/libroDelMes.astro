@@ -89,6 +89,7 @@ const book = await res.json();
                 autor={book.author.name + " " + book.author.lastName}
                 description={book.description}
                 rating={book.raiting}
+                bookId = {book.id}
             />
         </section>
         <section class="font-medium w-full mt-16">

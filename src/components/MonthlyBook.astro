@@ -1,15 +1,17 @@
 ---
-const {title, autor, votes, description, rating} = Astro.props;
+const {title, autor, votes, description, rating, bookId} = Astro.props;
 ---
 
 <article
     class="w-full max-w-375 bg-[#F9FCFF] border border-[#BFD6EC] rounded-2xl mt-6 grid grid-cols-1 lg:grid-cols-2 place-items-center px-10 py-12"
->
-    <img
-        src="/images/home/descubrimientodelmes.png"
-        alt="Imagen del Libro del Mes"
-        class="rounded-xl"
-    />
+>   
+    <div class="hover:scale-105 transition-all duration-300">
+        <img
+            src="/images/home/descubrimientodelmes.png"
+            alt="Imagen del Libro del Mes"
+            class="rounded-xl"
+        />
+    </div>
 
     <div class="font-medium">
         <p class="text-xl md:text-3xl mb-3 mt-3">{title}</p>
@@ -52,10 +54,9 @@ const {title, autor, votes, description, rating} = Astro.props;
         </div>
 
         <div class="flex flex-row justify-center gap-5 mt-6">
-            <button
-                type="button"
-                class="text-white text-sm md:text-lg w-full max-w-125 h-10 bg-[#01ACA5] rounded-lg"
-                >Ver Detalles del Libro</button
+            <a  href={`/books/${bookId}`}
+                class="text-white text-sm md:text-lg w-full flex justify-center items-center max-w-125 h-10 bg-[#01ACA5] rounded-lg hover:bg-[#0f8b87] transition-colors duration-300 hover:cursor-pointer"
+                >Ver Detalles del Libro</a
             >
             <button
                 type="button"

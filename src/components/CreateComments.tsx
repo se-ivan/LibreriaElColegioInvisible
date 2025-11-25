@@ -87,7 +87,7 @@ export function CreateComments({ bookId, userId }: CreateCommentsProps) {
 
                 <button
                     disabled={isMutating}
-                    className="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1 hover:bg-[#0f8b87] transition-colors duration-300"
+                    className="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1 hover:bg-[#0f8b87] transition-colors duration-300 hover:cursor-pointer"
                     onClick={() => handleEvent()}
                 >
                     Publicar Comentario
