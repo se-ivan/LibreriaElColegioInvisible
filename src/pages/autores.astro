@@ -34,7 +34,7 @@ let initialTotalPages = 1;
 try {
     const url = new URL(Astro.request.url);
     const currentPage = parseInt(url.searchParams.get('p') || '1');
-    const PAGE_SIZE = 10; 
+    const PAGE_SIZE = 3; 
 
     const apiUrl = `${Astro.url.origin}/api/authors?p=${currentPage}&limit=${PAGE_SIZE}`; 
     const response = await fetch(apiUrl); 
@@ -93,6 +93,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
         <div id="authors-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {autoresRejilla.map(autor => (
               <AutorCard
+                id={autor.id}
                 name={`${autor.name} ${autor.lastName}`}
                 nationality={autor.nationality || 'Desconocida'}
                 genre={autor.genre}
@@ -145,7 +146,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
 
 <script>
     const API_URL = '/api/authors';
-    const PAGE_SIZE = 10; 
+    const PAGE_SIZE = 3; 
 
     let currentPage = 1;
     let totalPages = Number(document.getElementById('pagination')?.dataset.totalPages) || 1;
@@ -209,14 +210,14 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
         authorsToRender.forEach(autor => {
             const clone = template.content.cloneNode(true) as DocumentFragment;
             const fullName = `${autor.name} ${autor.lastName || ''}`;
-            const urlSlug = `/autores/${fullName.toLowerCase().replace(/\s+/g, '-')}`;
+            const url = `/autores/${autor.id}`;
 
             const img = clone.querySelector('.card-img') as HTMLImageElement;
             img.src = autor.imageUrl || "/default.jpg";
             img.alt = `Foto de ${fullName}`;
 
             const link = clone.querySelector('.card-link') as HTMLAnchorElement;
-            link.href = urlSlug;
+            link.href = url;
             
             clone.querySelector('.card-name')!.textContent = fullName;
             clone.querySelector('.card-nationality')!.textContent = autor.nationality || 'Desconocida';
