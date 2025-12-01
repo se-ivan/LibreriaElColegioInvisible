@@ -1,5 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro"
 
 const { id } = Astro.params;
 
@@ -54,12 +56,13 @@ const imagenPerfil = autor.imageUrl || "https://via.placeholder.com/300x300?text
 ---
 
 <Layout title={autor ? `Perfil de ${autor.name}` : "Autor no encontrado"}>
+    <Header />
   <main class="bg-white min-h-screen pb-20">
     
-    <div class="bg-gray-100 py-16 mb-12">
+    <div class="bg-[#00305d] py-10 mb-12">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold text-[#00305d]">Perfil del Autor</h1>
-            <p class="text-gray-500 mt-2">Home &gt; {autor.name} {autor.lastName}</p>
+            <h1 class="text-4xl font-bold text-white">Perfil del Autor</h1>
+            <!--  <p class="text-gray-500 mt-2">Home &gt; {autor.name} {autor.lastName}</p>-->
         </div>
     </div>
 
@@ -70,19 +73,19 @@ const imagenPerfil = autor.imageUrl || "https://via.placeholder.com/300x300?text
     ) : (
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="bg-[#EAF4F8] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 shadow-sm mb-16">
+        <div class="bg-[#EAF4F8] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-15 shadow-sm mb-16">
             
             <div class="relative flex-shrink-0">
-                <div class="w-48 h-48 md:w-56 md:h-56 rounded-full p-1 border-4 border-white shadow-lg overflow-hidden bg-white">
+                <div class="w-48 h-48 md:w-56 md:h-56 rounded-full p-1 border-1 border-white shadow-lg overflow-hidden bg-white ">
                     <img 
                         src={imagenPerfil} 
                         alt={`Foto de ${autor.name}`} 
-                        class="w-full h-full object-cover"
+                        class="w-full h-full object-cover rounded-full"
                     />
                 </div>
             </div>
 
-            <div class="flex-1 text-center md:text-left space-y-4">
+            <div class="flex-1 text-center md:text-center space-y-4">
                 <div>
                     <h2 class="text-3xl md:text-4xl font-bold text-[#00305d] mb-2">
                         {autor.name} {autor.lastName}
@@ -90,7 +93,7 @@ const imagenPerfil = autor.imageUrl || "https://via.placeholder.com/300x300?text
                     <p class="text-lg text-gray-600 font-medium">{autor.nationality}</p>
                 </div>
 
-                <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
+                <div class="flex flex-wrap justify-center md:justify-center gap-3 mt-4">
                     <span class="px-4 py-1 bg-white text-[#00305d] border border-blue-100 rounded-full text-sm font-semibold shadow-sm">
                         {autor.genre}
                     </span>
@@ -108,8 +111,8 @@ const imagenPerfil = autor.imageUrl || "https://via.placeholder.com/300x300?text
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div class="lg:col-span-2">
+        <div class="grid grid-cols-3 lg:grid-cols-3 gap-12">
+            <div class="lg:col-span-3 col-span-3">
                 <h3 class="text-2xl font-bold text-[#00305d] mb-6 border-l-4 border-[#01ada4] pl-4">
                     Biografía
                 </h3>
@@ -119,23 +122,11 @@ const imagenPerfil = autor.imageUrl || "https://via.placeholder.com/300x300?text
                 </div>
             </div>
 
-            <div class="bg-gray-50 rounded-2xl p-6 h-fit">
-                <h4 class="text-lg font-bold text-gray-800 mb-4">Detalles Rápidos</h4>
-                <ul class="space-y-3 text-gray-600">
-                    <li class="flex justify-between border-b pb-2">
-                        <span>Género:</span> <span class="font-medium text-[#00305d]">{autor.genre}</span>
-                    </li>
-                    <li class="flex justify-between border-b pb-2">
-                        <span>País:</span> <span class="font-medium text-[#00305d]">{autor.nationality}</span>
-                    </li>
-                    <li class="flex justify-between border-b pb-2">
-                        <span>Estatus:</span> <span class="font-medium text-green-600">Activo</span>
-                    </li>
-                </ul>
-            </div>
+            
         </div>
 
       </div>
     )}
   </main>
+  <Footer />
 </Layout>

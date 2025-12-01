@@ -34,7 +34,7 @@ let initialTotalPages = 1;
 try {
     const url = new URL(Astro.request.url);
     const currentPage = parseInt(url.searchParams.get('p') || '1');
-    const PAGE_SIZE = 3; 
+    const PAGE_SIZE = 4; 
 
     const apiUrl = `${Astro.url.origin}/api/authors?p=${currentPage}&limit=${PAGE_SIZE}`; 
     const response = await fetch(apiUrl); 
@@ -77,10 +77,23 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
 <Layout title="autores">
   <Header />
 <main>
+
+    <div class="bg-[#00305d] text-white py-16">
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+        <h1 class="text-5xl font-bold mb-4">Nuestros Autores</h1>
+
+        <p class="text-xl">Conoce a los escritores que dan vida a las historias que amas</p>
+
+      </div>
+
+    </div>
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
                 {autorDestacado ? (
             <AutorDestacado 
+                id={autorDestacado.id}
                 name={`${autorDestacado.name} ${autorDestacado.lastName}`}
                 nationality={autorDestacado.nationality}
                 genre={autorDestacado.genre}
@@ -103,11 +116,16 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
           ))}
         </div>
         
-        <nav id="pagination" class="flex justify-center mt-12 gap-2" data-total-pages={initialTotalPages}>
-            <button id="btn-prev" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Anterior</button>
-            <span id="page-indicator" class="px-4 py-2 text-gray-600 bg-white border rounded-lg">Página 1 de {initialTotalPages}</span>
-            <button id="btn-next" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Siguiente</button>
-        </nav>
+        <nav id="pagination" class="flex justify-center mt-12 gap-2" data-total-pages={initialTotalPages} data-current-page={parseInt(new URL(Astro.request.url).searchParams.get('p') || '1')}>
+            <button id="btn-prev" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Anterior</button>
+    
+            <div id="page-buttons" class="flex gap-2 items-center">
+            </div>
+
+                <span id="page-indicator" class="hidden px-4 py-2 text-gray-600 bg-white border rounded-lg">Página 1 de {initialTotalPages}</span>
+
+            <button id="btn-next" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Siguiente</button>
+        </nav>
         
         <div id="loader" class="hidden text-center mt-4">
             <span class="text-gray-600 font-semibold animate-pulse">Cargando autores...</span>
@@ -146,7 +164,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
 
 <script>
     const API_URL = '/api/authors';
-    const PAGE_SIZE = 3; 
+    const PAGE_SIZE = 4; 
 
     let currentPage = 1;
     let totalPages = Number(document.getElementById('pagination')?.dataset.totalPages) || 1;
@@ -155,6 +173,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
     const loader = document.getElementById('loader');
     const btnPrev = document.getElementById('btn-prev') as HTMLButtonElement;
     const btnNext = document.getElementById('btn-next') as HTMLButtonElement;
+    const pageButtonsContainer = document.getElementById('page-buttons');
     const pageIndicator = document.getElementById('page-indicator');
     const template = document.getElementById('card-template') as HTMLTemplateElement;
 
@@ -173,7 +192,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
             const response = await fetch(`${API_URL}?p=${page}&limit=${PAGE_SIZE}`);
             const data = await response.json();
 
-            if (data.error) throw new Error(data.error);
+            if (!response.ok || data.error) throw new Error(data.error || 'Error en la respuesta del API');
 
             currentPage = data.currentPage;
             totalPages = data.totalPages;
@@ -189,6 +208,30 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
         } finally {
             loader?.classList.add('hidden');
             container!.style.opacity = '1';
+        }
+    }
+
+    function renderPageButtons() {
+        if (!pageButtonsContainer) return;
+
+        pageButtonsContainer.innerHTML = ''; 
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i.toString();
+            button.className = 'page-number-btn px-4 h-10 border rounded-lg transition-colors';
+            
+            if (i === currentPage) {
+                button.classList.add('bg-[#01ada4]', 'text-white', 'border-[#01ada4]');
+            } else {
+                button.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+            }
+
+            button.addEventListener('click', () => {
+                fetchAuthors(i); 
+            });
+
+            pageButtonsContainer.appendChild(button);
         }
     }
 
@@ -231,6 +274,8 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
         if(pageIndicator) pageIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
         if(btnPrev) btnPrev.disabled = currentPage <= 1;
         if(btnNext) btnNext.disabled = currentPage >= totalPages;
+
+        renderPageButtons();
     }
 
     btnPrev?.addEventListener('click', () => {
