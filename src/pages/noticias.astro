@@ -1,52 +1,100 @@
 ---
-import NewsCard from "../components/NewsCard.astro";
-import EventCard from "../components/EventCard.astro";
-import EventFilter from "../components/EventFilter.astro";
-import prisma from "../lib/prisma";
+
 import Layout from "../layouts/Layout.astro";
-import "../styles/global.css";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro"
+import NewsCard from "../components/NewsCard.astro";
 
-const news = await prisma.new.findMany({
-  orderBy: { date: "desc" },
-});
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_API_URL;
+const COLLECTION_ENDPOINT = `${STRAPI_URL}/api/noticas`; 
+
+const apiEndpoint = `${COLLECTION_ENDPOINT}?populate=imageUrl`;
+
+interface NoticiaProps {
+    id: number;
+    title: string;
+    pretitle: string;
+    date: string;
+    image: string; 
+}
+
+let noticias: NoticiaProps[] = [];
+
+try {
+    const response = await fetch(apiEndpoint);
+
+    if (!response.ok) {
+        throw new Error(`Error al obtener datos de Strapi: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    noticias = result.data.map((item: any) => {
+        
+        const imageObject = item.imageUrl;
+        
+        let imageUrlFinal = '';
+        if (imageObject && imageObject.url) {
+            imageUrlFinal = imageObject.url; 
+        }
+        else if (imageObject && imageObject.formats && imageObject.formats.small) {
+            imageUrlFinal = imageObject.formats.small.url;
+        }
+
+
+        const dateString = item.publishedAt || item.date;
+        
+        let formattedDate = 'Fecha no disponible';
+        
+        if (dateString) {
+            const rawDate = new Date(dateString);
+            
+            if (!isNaN(rawDate.getTime())) { 
+                formattedDate = rawDate.toLocaleDateString('es-ES', { 
+                    year: 'numeric', month: 'long', day: 'numeric' 
+                });
+            }
+        }
+        
+        return {
+            id: item.documentId, 
+            title: item.title || 'Título sin especificar',
+            pretitle: item.pretitle || '',
+            date: formattedDate,
+            image: imageUrlFinal,
+        };
+    });
+
+} catch (error) {
+    console.error("Error al cargar noticias de Strapi:", error);
+    noticias = []; 
+}
 ---
-<Layout title="Noticias y eventos">
-     <Header />
-    <section class="bg-[#002B5B] py-12 text-white text-center">
-        <h1 class="text-4xl text-white font-bold">Noticias y Eventos</h1>
-        <p class="text-gray-200 mt-2">Mantente al día con las últimas novedades.</p>
-    </section>
 
+<Layout title="Noticias">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-4xl font-extrabold text-[#002B5B] mb-10">
+            📰 Últimas Noticias
+        </h1>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {noticias.length > 0 ? (
+                noticias.map((noticia) => (
+                    <NewsCard 
+                        id={noticia.id}
+                        title={noticia.title}
+                        pretitle={noticia.pretitle}
+                        date={noticia.date}
+                        image={noticia.image}
+                       
+                        
+                    />
+                ))
+            ) : (
+                <div class="col-span-full text-center py-20 bg-gray-50 rounded-lg">
+                    <p class="text-xl text-gray-500">No se pudieron cargar noticias o no hay contenido disponible.</p>
+                    <p class="text-sm text-gray-400 mt-2">Verifica que tu servidor Strapi esté corriendo en Render y que los permisos 'Public' estén habilitados para la colección 'noticia'.</p>
+                </div>
+            )}
+        </div>
 
-  <div class="flex justify-center mt-10 mb-6">
-    <EventFilter currentCategory="todos" />
-  </div>
-
-   <div class="px-4 mb-10">
-    <EventCard />
-  </div>
-
-  <section class="max-w-6xl mx-auto px-4 py-12">
-
-    {news.length === 0 && (
-      <p class="mt-10 text-center text-gray-500">No hay noticias disponibles.</p>
-    )}
-
-    <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mt-6">
-      {news.map(item => (
-        <NewsCard
-          id={item.id}
-          title={item.title}
-          pretitle={item.pretitle ?? ""}
-          date={new Date(item.date).toLocaleDateString("es-MX")}
-          image={item.imageUrl}
-        />
-      ))}
-    </div>
-
-  </section>
-  <Footer />
+    </main>
 </Layout>
-
