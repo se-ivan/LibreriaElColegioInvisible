@@ -2,7 +2,10 @@ import type { APIRoute } from 'astro';
 import prisma from '../../lib/prisma'; 
 import type { Comment } from '../../../data/mock-db';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ url }) => {
+    const page = Number(url.searchParams.get('page')) || 1; 
+    const pageSize = 5;
+
     try {
         const comments = await prisma.comment.findMany({      
             include: {
@@ -16,12 +19,14 @@ export const GET: APIRoute = async () => {
                 replies: true, 
             },
             where: {
-                
+                bookId: Number(url.searchParams.get('bookId')) || undefined,
             },
 
             orderBy: {
                 id: 'desc',
-            }
+            },
+            take:pageSize,
+            skip: (page - 1) * pageSize,
         });
 
         return new Response(JSON.stringify(comments),
