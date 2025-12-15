@@ -2,36 +2,52 @@
 import Layout from "../../layouts/Layout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
+import { actions } from 'astro:actions';
+import prisma from "../../lib/prisma";
+import BookComments from "../../components/BookComments";
+import AddCommentForm from "../../components/AddCommentForm";
 
 const { id } = Astro.params;
-
-let book: any = null;
-let relatedBooks: any[] = [];
-
-if (id) {
-    try {
-        const response = await fetch(`http://localhost:4321/api/books/${id}`);
-        
-        if (response.ok) {
-            const data = await response.json();
-            book = data.book;
-            relatedBooks = data.relatedBooks || [];
-        }
-    } catch (error) {
-        console.error("Error fetching book:", error);
-    }
+if (!id || isNaN(Number(id))) {
+    return Astro.redirect('/404');
 }
+const result = await Astro.callAction(actions.getBook, { 
+    id: Number(id) 
+});
 
-const fullStars = Math.floor(book.rating || 4.8);
+if (result.error || !result.data) {
+    console.error("Error cargando libro:", result.error);
+    return Astro.redirect('/404');
+}
+const dbUser = await prisma.user.findFirst();
+const currentUser = dbUser ? { 
+    id: dbUser.id, 
+    name: dbUser.name || "Usuario Registrado", 
+    image: dbUser.image || null 
+} : null; 
+const book = result.data.book as any;
+const relatedBooks = (result.data.relatedBooks || []) as any[];
+
+const imageSrc = book.coverImage || "/logoColegio.jpg";
+const fullStars = Math.floor(book.rating || 0); 
 const emptyStars = 5 - fullStars;
-const precio = Number(book.price || 19.99).toFixed(2);
-const imageSrc = book.coverImage || book.imageSrc || "/logoColegio.jpg";
-const genre = book.genre || "Fantasía";
-const specs = book.specs || { isbn: book.isbn || "N/A", editorial: book.editorial || "N/A", pages: 300, year: book.publicationYear || 2024, language: "Español" };
-const highlights = book.highlights || ["Bestseller internacional", "Edición especial", "Lectura recomendada"];
-const reviewsList = book.reviewsList || [
-    { user: "Lector Anónimo", date: "Hace 2 días", comment: "Me encantó la historia, muy recomendada.", rating: 5 }
+const genre = book.genre || "General";
+const price = Number(book.price).toFixed(2);
+const description = book.description || "Sin descripción disponible para este libro.";
+
+const highlights = [
+    "Envío gratis en pedidos superiores a $50",
+    "Devolución garantizada por 30 días",
+    "Disponible para retiro en tienda"
 ];
+
+const specs = {
+    isbn: book.isbn || "N/A",
+    editorial: book.editorial || "N/A",
+    pages: 350, 
+    year: book.publicationYear || 2024,
+    language: "Español"
+};
 ---
 
 <Layout title={`${book.title} | Librería`}>
@@ -39,6 +55,7 @@ const reviewsList = book.reviewsList || [
 
     <main class="bg-gray-50 min-h-screen py-8">
         <div class="container mx-auto px-4">
+            
             <nav class="text-sm text-gray-500 mb-8">
                 <a href="/BookList" class="hover:text-blue-700">Libros</a>
                 <span class="mx-2">/</span>
@@ -47,6 +64,7 @@ const reviewsList = book.reviewsList || [
 
             <div class="bg-white rounded-xl shadow-sm p-6 md:p-10">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
+                    
                     <div class="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
                         <div class="relative rounded-lg overflow-hidden shadow-lg border border-gray-100">
                             <img
@@ -61,7 +79,7 @@ const reviewsList = book.reviewsList || [
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
-                                Agregar al Carrito - ${precio}
+                                Agregar al Carrito - ${price}
                             </button>
 
                             <div class="grid grid-cols-2 gap-3">
@@ -98,12 +116,11 @@ const reviewsList = book.reviewsList || [
                             <div class="flex items-center text-yellow-400">
                                 {Array(fullStars).fill(null).map(() => <span>★</span>)}
                                 {Array(emptyStars).fill(null).map(() => <span class="text-gray-300">★</span>)}
-                                <span class="ml-2 text-slate-600 font-medium text-base">{book.rating || 4.8}</span>
-                                <span class="ml-1 text-gray-400">({book.reviews || 0} reseñas)</span>
                             </div>
+                            <span class="ml-2 text-slate-600 font-medium text-base">{book.rating || 0}</span>
                             <div class="h-4 w-px bg-gray-300"></div>
                             <span class="flex items-center text-green-600 font-medium gap-1">
-                                <span class="text-lg">•</span> {book.stock ? "En stock" : "Agotado"}
+                                <span class="text-lg">•</span> En stock
                             </span>
                         </div>
 
@@ -112,22 +129,20 @@ const reviewsList = book.reviewsList || [
                         <div class="mb-8">
                             <h3 class="text-lg font-bold text-slate-900 mb-3">Descripción</h3>
                             <p class="text-slate-600 leading-relaxed">
-                                {book.description || "Sin descripción disponible."}
+                                {description}
                             </p>
                         </div>
 
                         <div class="mb-8">
                             <h3 class="text-lg font-bold text-slate-900 mb-3">Características Destacadas</h3>
                             <ul class="list-disc list-inside text-slate-600 space-y-1">
-                                {highlights.map((item: string) => <li>{item}</li>)}
+                                {highlights.map((item) => (
+                                    <li>{item}</li>
+                                ))}
                             </ul>
                         </div>
 
                         <div class="bg-slate-50 border border-slate-200 rounded-xl p-6">
-                            <h3 class="flex items-center gap-2 font-bold text-slate-900 mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                Especificaciones
-                            </h3>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-y-6 gap-x-4 text-sm">
                                 <div>
                                     <p class="text-gray-400 mb-1">ISBN</p>
@@ -160,43 +175,17 @@ const reviewsList = book.reviewsList || [
                     </div>
                 </div>
 
-                <div class="mt-16">
+                <div class="mt-16 pt-10 border-t border-gray-100">
                     <h2 class="text-2xl font-bold text-slate-900 mb-6">Reseñas de Clientes</h2>
-                    <div class="space-y-4">
-                        {reviewsList.map((review: any) => {
-                            const rFull = Math.floor(review.rating);
-                            const rEmpty = 5 - rFull;
-                            return (
-                                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-                                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                                        <div>
-                                            <h4 class="font-bold text-slate-900 text-base">{review.user}</h4>
-                                            <p class="text-xs text-gray-500 mt-0.5">{review.date}</p>
-                                        </div>
-                                        <div class="flex text-blue-700 text-sm mt-2 sm:mt-0">
-                                            {Array(rFull).fill(null).map(() => <span>★</span>)}
-                                            {Array(rEmpty).fill(null).map(() => <span class="text-gray-300">★</span>)}
-                                        </div>
-                                    </div>
-                                    <p class="text-slate-600 text-sm leading-relaxed border-t border-gray-50 pt-3 mt-2 sm:border-0 sm:pt-0 sm:mt-0">
-                                        {review.comment}
-                                    </p>
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <div class="mt-8">
-                        <button class="bg-white border border-gray-300 text-slate-700 font-medium py-2 px-6 rounded-lg hover:bg-gray-50 hover:text-blue-700 transition-colors text-sm shadow-sm">
-                            Ver Todas las Reseñas
-                        </button>
-                    </div>
+                    <AddCommentForm client:visible bookId={book.id} user={currentUser} />
+                    <BookComments client:visible bookId={String(book.id)} />
                 </div>
 
                 {relatedBooks.length > 0 && (
                     <div class="mt-16 pt-10 border-t border-gray-100">
                         <h2 class="text-2xl font-bold text-slate-900 mb-6">Libros Relacionados</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                            {relatedBooks.map((related) => {
+                            {relatedBooks.map((related: any) => {
                                 const rImage = related.coverImage || related.imageSrc || "/logoColegio.jpg";
                                 return (
                                     <a href={`/books/${related.id}`} class="group block bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
@@ -224,6 +213,7 @@ const reviewsList = book.reviewsList || [
                         </div>
                     </div>
                 )}
+
             </div>
         </div>
     </main>

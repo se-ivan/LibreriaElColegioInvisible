@@ -2,48 +2,35 @@ import type { APIRoute } from 'astro';
 import prisma from '../../lib/prisma'; 
 import type { Comment } from '../../../data/mock-db';
 
-export const GET: APIRoute = async () => {
-    try {
-        const comments = await prisma.comment.findMany({      
-            include: {
-                user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        lastName: true,
-                    },
-                },
-                replies: true, 
-            },
-            where: {
-                
-            },
+export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
+  const bookId = url.searchParams.get("bookId");
 
-            orderBy: {
-                id: 'desc',
-            }
-        });
+  if (!bookId) {
+    return new Response(JSON.stringify({ error: "Falta el parámetro bookId" }), { status: 400 });
+  }
 
-        return new Response(JSON.stringify(comments),
-            { 
-                status: 200, 
-                headers: { 
-                    'Content-Type': 'application/json' 
-                } 
-            }
-        );
-    } catch (error) {
-        console.error('Error al obtener los comentarios:', error);
-        
-        return new Response(JSON.stringify({ error: 'Error interno del servidor al obtener comentarios.' }),
-            { 
-                status: 500, 
-                headers: { 
-                    'Content-Type': 'application/json' 
-                } 
-            }
-        );
-    }
+  try {
+    const comments = await prisma.comment.findMany({
+      where: { 
+        bookId: Number(bookId) 
+      },
+      include: {
+        user: {
+          select: { name: true, lastName: true, image: true }
+        }
+      }
+    });
+
+    return new Response(JSON.stringify(comments), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
+
+  } catch (error) {
+    console.error("Error cargando comentarios:", error);
+    return new Response(JSON.stringify({ error: "Error interno" }), { status: 500 });
+  }
 };
 
 
