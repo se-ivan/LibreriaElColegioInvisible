@@ -9,10 +9,29 @@ import { CreateComments } from "../components/CreateComments";
 import { getSession } from "auth-astro/server";
 
 const session = await getSession(Astro.request);
-const userId = session?.user.id || "cmh2ekh300000szsg3z480swa"; // Para pruebas puse mi ID, porque lel getSession no me devolvia nadota
+const userId = session?.user.id || "";
 
 const res = await fetch("http://localhost:4321/api/monthlyBook");
+
+if (!res.ok) {
+  const text = await res.text();
+  console.error("monthlyBook ERROR:", text);
+  throw new Error("monthlyBook no devolvió JSON");
+}
+
 const book = await res.json();
+
+const nextMonthRes = await fetch(
+  `http://localhost:4321/api/nextMonthly/${book.id}`
+);
+
+if (!nextMonthRes.ok) {
+  const text = await nextMonthRes.text();
+  console.error("nextMonthly ERROR:", text);
+  throw new Error("nextMonthly no devolvió JSON");
+}
+
+const nextMonthBooks = await nextMonthRes.json();
 ---
 
 <Layout title="Libro del Mes">
@@ -65,7 +84,7 @@ const book = await res.json();
                     </li>
                     <li>
                         <span class="text-black">Comenta:</span> Comparte tu opinión
-                        y califica el libro ganador con estrellas.
+                        y califica el libro ganador con votos.
                     </li>
                     <li>
                         <span class="text-black">Descubre:</span> El libro con más
@@ -75,7 +94,7 @@ const book = await res.json();
             </div>
         </article>
         <section class="flex flex-col items-center justify-center mt-12">
-            <div class="bg-[#01ACA5] rounded-xl px-1 py-2 mb-4">
+            <div class="bg-[#01ACA5] rounded-xl px-3 py-2 mb-4">
                 <h2 class="font-medium md:text-lg text-white">
                     Ganador de Marzo 2024
                 </h2>
@@ -103,9 +122,13 @@ const book = await res.json();
             <div
                 class="flex items-center justify-center lg:justify-between flex-wrap gap-6 mt-8"
             >
-                <NextMontlyBook />
-                <NextMontlyBook />
-                <NextMontlyBook />
+                {nextMonthBooks.map((nextBook: any) => (
+                    <NextMontlyBook 
+                        title={nextBook.title}
+                        votes={nextBook.votes}
+                        autor={nextBook.author.name + " " + nextBook.author.lastName}
+                        rating={nextBook.raiting} />
+                ))}
             </div>
         </section>
 

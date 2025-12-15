@@ -94,7 +94,7 @@ export function CreateComments({ bookId, userId }: CreateCommentsProps) {
                 </button>
             </div>
 
-            <div className="flex flex-col gap-4 mt-8 mb-16">
+            <div className="flex flex-col gap-4 mt-8 mb-16 max-h-200 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
                 {
                     data?.map((comentItem: Comment, idx: number) => (
                         <div
