@@ -14,7 +14,6 @@
     "@astrojs/vercel": "^8.2.10",
     "@auth/core": "^0.37.4",
     "@auth/prisma-adapter": "^2.11.0",
-    "@keystatic/astro": "^5.0.6",
     "@libsql/client": "^0.15.15",
     "@prisma/adapter-libsql": "^6.16.3",
     "@prisma/client": "^6.16.3",

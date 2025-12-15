@@ -1,12 +1,14 @@
 import { comment } from "./comments";
 import { monthlyBook } from "./book-month";
 import { defineAction } from 'astro:actions';
+import { authorActions } from "./authors.ts";
 import { z } from 'astro:schema';
 import prisma from '../lib/prisma';
 
 export const server = {
   monthlyBook,
   comment,
+  authorActions,
   getBooks: defineAction({
     input: z.object({
       page: z.number(),

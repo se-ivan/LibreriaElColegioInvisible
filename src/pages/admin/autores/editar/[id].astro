@@ -1,0 +1,130 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { actions } from 'astro:actions'; 
+
+const autorId = Astro.params.id;
+const updateAuthorAction = actions.authorActions.update; 
+
+interface Author {
+    id: number; 
+    name: string;
+    lastName: string; 
+    biography: string;
+    birthdate: string | Date;
+    imageUrl?: string | null;
+    nationality?: string | null;
+    genre?: string | null;
+}
+
+let autor: Author | null = null;
+let error: string | null = null;
+let defaultValues: Partial<Author> = {};
+const idForFetch = autorId ? parseInt(autorId, 10) : null; 
+
+if (idForFetch) {
+    try {
+        const res = await fetch(`${Astro.url.origin}/api/admin/authors/${idForFetch}`); 
+        
+        if (res.ok) {
+            autor = await res.json() as Author;
+            defaultValues = autor;
+        } else {
+            error = `Error ${res.status}: Autor no encontrado.`;
+        }
+    } catch (e) {
+        error = 'Error de conexión al obtener el autor.';
+    }
+} else {
+    error = 'ID de autor no proporcionado.';
+}
+
+
+if (Astro.locals.action && !error) {
+    const actionResult = await Astro.locals.action;
+
+    if (actionResult.success) {
+        return Astro.redirect('/admin/autores');
+    } else {
+        error = actionResult.error?.message || "Ocurrió un error desconocido al actualizar el autor.";
+    }
+}
+
+if (defaultValues.birthdate) {
+    const dateValue = typeof defaultValues.birthdate === 'string' 
+        ? new Date(defaultValues.birthdate) 
+        : defaultValues.birthdate;
+        
+    defaultValues.birthdate = dateValue.toISOString().substring(0, 10);
+}
+---
+
+<AdminLayout title={`Editar Autor: ${defaultValues.name || autorId}`}>
+    <div class="bg-white p-8 rounded-lg shadow-xl max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-slate-800 mb-6">Editar Autor</h1>
+        
+        {error && (
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+                <p class="font-bold">Error:</p>
+                <p class="text-sm">{error}</p>
+            </div>
+        )}
+
+        {autor ? (
+            <form method="POST" action={updateAuthorAction} class="space-y-6">
+                
+                <input type="hidden" name="id" value={defaultValues.id} />
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
+                        <input type="text" name="name" id="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.name} />
+                    </div>
+                    <div>
+                        <label for="lastName" class="block text-sm font-medium text-gray-700">Apellido</label>
+                        <input type="text" name="lastName" id="lastName" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.lastName} />
+                    </div>
+                </div>
+
+                {}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="birthdate" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+                        <input type="date" name="birthdate" id="birthdate" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.birthdate} />
+                    </div>
+                    <div>
+                        <label for="nationality" class="block text-sm font-medium text-gray-700">Nacionalidad (Opcional)</label>
+                        <input type="text" name="nationality" id="nationality" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.nationality || ''} />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="genre" class="block text-sm font-medium text-gray-700">Género (Opcional)</label>
+                        <input type="text" name="genre" id="genre" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.genre || ''} />
+                    </div>
+                    <div>
+                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">URL de Imagen (Opcional)</label>
+                        <input type="url" name="imageUrl" id="imageUrl" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.imageUrl || ''} />
+                    </div>
+                </div>
+                {/* ------------------------------------------- */}
+
+                <div>
+                    <label for="biography" class="block text-sm font-medium text-gray-700">Biografía</label>
+                    <textarea name="biography" id="biography" rows={4} required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">{defaultValues.biography}</textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4">
+                    <a href="/admin/autores" class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition shadow">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition shadow">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        ) : (
+            <p class="text-lg text-gray-600">No se pudo cargar la información del autor para edición.</p>
+        )}
+    </div>
+</AdminLayout>
