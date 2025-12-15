@@ -20,7 +20,6 @@ interface Author {
     biography: string;
     [key: string]: any; 
 }
-// --------------------
 
 let autores: Author[] = [];
 let error: string | null = null;
@@ -102,7 +101,6 @@ try {
 <script>
     import { actions } from 'astro:actions';
 
-    // 🚨 Definimos la Action de eliminación en el cliente
     const deleteAction = actions.authorActions.delete;
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -119,25 +117,21 @@ try {
                     return;
                 }
 
-                // Confirmación del usuario
                 if (!confirm(`¿Estás seguro de que quieres eliminar al autor ${name} (ID: ${id})? Esta acción es irreversible.`)) {
                     return;
                 }
 
                 try {
-                    // Llamamos a la Action DELETE con el ID
+                   
                     const result = await deleteAction({ id: id });
 
-                    // 🚨 CAMBIOS AQUÍ: Verifica si result.data existe y luego accede a result.data.success
-                    if (result.data?.success) { // <--- CORRECCIÓN CLAVE
+                    if (result.data?.success) { 
                         alert(`Autor ${name} eliminado correctamente.`);
-                        // Recargar la página para actualizar la lista
+                       
                         window.location.reload(); 
                     } else if (result.error) {
-                        // result.error existe si la acción lanzó un error (throw new Error("..."))
                         alert(`Error al eliminar: ${result.error.message}`);
                     } else {
-                        // Esto captura casos inesperados donde 'data' no tiene 'success' (aunque debería tenerlo)
                         alert("Ocurrió un error desconocido durante la operación.");
                     }
                 } catch (e) {
