@@ -1,4 +1,3 @@
-// src/pages/api/register.ts
 import type { APIRoute } from "astro";
 import prisma from "../../lib/prisma";
 import bcrypt from "bcryptjs";

@@ -4,9 +4,8 @@ import "../styles/global.css";
 let csrfToken = "";
 
 try {
-  // Hacemos fetch al endpoint de CSRF, pero pasamos las cabeceras del request original
   const response = await fetch(`${Astro.url.origin}/api/auth/csrf`, {
-    headers: Astro.request.headers, // <-- Esta es la línea clave
+    headers: Astro.request.headers,
   });
 
   if (response.ok) {
@@ -254,26 +253,22 @@ const error = Astro.url.searchParams.get("error");
     try {
       const res = await fetch("/api/auth/csrf", {
         method: "GET",
-        credentials: "same-origin", // explícito para que use cookies
+        credentials: "same-origin",
       });
       if (!res.ok) throw new Error("No se obtuvo CSRF");
       const json = await res.json();
       const token = json?.csrfToken ?? "";
 
-      // Actualiza los inputs con el token fresco del cliente
       if (csrfInput) csrfInput.value = token;
       if (csrfInputGoogle) csrfInputGoogle.value = token;
     } catch (err) {
-      console.warn("Could not refresh csrf token on client:", err);
+      console.warn("Error en el CSRF del Cliente:", err);
     }
   }
 
-  // Llama al fetchCsrf en carga para asegurar que el token esté fresco
   fetchCsrf();
 
-  
 
-  // El resto de la lógica para cambiar entre formularios
   const showLoginBtn = document.getElementById("show-login-btn");
   const showRegisterBtn = document.getElementById("show-register-btn");
   const loginForm = document.getElementById("login-form");

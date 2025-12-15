@@ -1,0 +1,50 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Colaboradores">
+    <Header />
+    <hero class="bg-texto-resaltado w-full py-20">
+        <div
+            class="bg-texto-resaltado w-full h-full flex flex-col justify-center items-center gap-6 p-20"
+        >
+            <h1 class="text-white font-geist text-6xl">Publica con Nosotros</h1>
+            <p class="text-white font-geist text-xl w-165 text-center">
+                Apoyamos a autores locales e independientes si tienes un libro y
+                lo quieres vender con nosotros, contactanos
+            </p>
+            <div class="flex gap-6 mt-5">
+                <button
+                    class="rounded-xl hover:cursor-pointer hover:bg-[#09BDCC] bg-azul-turquesa flex flex-row items-center gap-2 text-white px-6 py-3"
+                >
+                    <span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="white"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="icon icon-tabler icons-tabler-outline icon-tabler-book-2"
+                            ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                            ></path><path
+                                d="M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12z"
+                            ></path><path d="M19 16h-12a2 2 0 0 0 -2 2"
+                            ></path><path d="M9 8h6"></path></svg
+                        >
+                    </span>
+                    Enviar Propuesta
+                </button>
+                <button class="hover:bg-cyan-50 rounded-xl hover:cursor-pointer bg-azul-blanco px-6 py-4">
+                    Conocer Términos
+                </button>
+            </div>
+        </div>
+    </hero>
+    <Footer />
+</Layout>

@@ -1,0 +1,290 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro"
+import AutorDestacado from "../components/AutorDestac.astro";
+import AutorCard from "../components/AuthorCard.astro";
+
+interface AuthorData {
+    id: number;
+    name: string;
+    lastName: string;
+    biography: string;
+    nationality: string | null;
+    genre: string;
+    imageUrl: string | null;
+    birthdate: Date;
+    _count: {
+        books: number;
+    };
+}
+
+const truncate = (text: string, maxLength: number): string => {
+    if (!text) return '';
+    if (text.length <= maxLength) {
+        return text;
+    }
+    return text.substring(0, maxLength) + '...';
+};
+
+let initialAuthors: AuthorData[] = [];
+let initialTotalPages = 1;
+
+try {
+    const url = new URL(Astro.request.url);
+    const currentPage = parseInt(url.searchParams.get('p') || '1');
+    const PAGE_SIZE = 4; 
+
+    const apiUrl = `${Astro.url.origin}/api/authors?p=${currentPage}&limit=${PAGE_SIZE}`; 
+    const response = await fetch(apiUrl); 
+    
+    if (!response.ok) {
+        throw new Error(`Fallo de red o servidor: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    if (result.error) {
+         throw new Error(result.error);
+    }
+
+    initialAuthors = result.authors as AuthorData[];
+    initialTotalPages = result.totalPages;
+
+} catch (e) {
+    console.error("Error al obtener autores en SSR:", e);
+
+}
+
+const autorDestacado = initialAuthors.length > 0 && 
+                       (parseInt(new URL(Astro.request.url).searchParams.get('p') || '1') === 1) 
+                       ? initialAuthors[0] : null;
+
+const TRUNCATE_LENGTH = 35; 
+let truncatedDescription = '';
+
+if (autorDestacado) {
+    const fullBio = autorDestacado.biography || 'Sin biografía disponible.';
+    truncatedDescription = truncate(fullBio, TRUNCATE_LENGTH);
+
+}
+
+const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors;
+
+---
+
+<Layout title="autores">
+  <Header />
+<main>
+
+    <div class="bg-[#00305d] text-white py-16">
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+        <h1 class="text-5xl font-bold mb-4">Nuestros Autores</h1>
+
+        <p class="text-xl">Conoce a los escritores que dan vida a las historias que amas</p>
+
+      </div>
+
+    </div>
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+                {autorDestacado ? (
+            <AutorDestacado 
+                id={autorDestacado.id}
+                name={`${autorDestacado.name} ${autorDestacado.lastName}`}
+                nationality={autorDestacado.nationality}
+                genre={autorDestacado.genre}
+                imageUrl={autorDestacado.imageUrl || 'default.jpg'}
+                description={autorDestacado.biography} 
+            />
+        ) : null}
+
+
+        <div id="authors-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {autoresRejilla.map(autor => (
+              <AutorCard
+                id={autor.id}
+                name={`${autor.name} ${autor.lastName}`}
+                nationality={autor.nationality || 'Desconocida'}
+                genre={autor.genre}
+                imageUrl={autor.imageUrl || 'default.jpg'}
+                totalBooks={autor._count.books}
+              />
+          ))}
+        </div>
+        
+        <nav id="pagination" class="flex justify-center mt-12 gap-2" data-total-pages={initialTotalPages} data-current-page={parseInt(new URL(Astro.request.url).searchParams.get('p') || '1')}>
+            <button id="btn-prev" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Anterior</button>
+    
+            <div id="page-buttons" class="flex gap-2 items-center">
+            </div>
+
+                <span id="page-indicator" class="hidden px-4 py-2 text-gray-600 bg-white border rounded-lg">Página 1 de {initialTotalPages}</span>
+
+            <button id="btn-next" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Siguiente</button>
+        </nav>
+        
+        <div id="loader" class="hidden text-center mt-4">
+            <span class="text-gray-600 font-semibold animate-pulse">Cargando autores...</span>
+        </div>
+
+    </section>
+
+  </main>
+  <Footer />
+</Layout>
+
+<template id="card-template">
+  <div class="bg-[#f9fcfe] rounded-lg shadow-md overflow-hidden transition duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02]">
+    <div class="h-60 overflow-hidden">
+      <img
+        src=""
+        alt=""
+        class="card-img w-full h-full object-cover"
+      />
+    </div>
+    <div class="p-4">
+      <h3 class="card-name text-xl font-bold text-gray-900 mb-1"></h3>
+      <div class="flex flex-wrap gap-2 text-sm mb-3">
+        <span class="card-nationality bg-blue-100 text-[#354a6a] font-medium px-2 py-0.5 rounded-full"></span>
+        <span class="card-genre bg-white text-black border-2 border-blue-100 font-medium px-2 py-0.5 rounded-full"></span>
+      </div>
+      <a href="" class="card-link text-black hover:text-[#007bff] font-semibold text-sm flex items-center transition duration-300">
+        Ver Perfil
+        <svg class="ml-1 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</template>
+
+<script>
+    const API_URL = '/api/authors';
+    const PAGE_SIZE = 4; 
+
+    let currentPage = 1;
+    let totalPages = Number(document.getElementById('pagination')?.dataset.totalPages) || 1;
+    
+    const container = document.getElementById('authors-container');
+    const loader = document.getElementById('loader');
+    const btnPrev = document.getElementById('btn-prev') as HTMLButtonElement;
+    const btnNext = document.getElementById('btn-next') as HTMLButtonElement;
+    const pageButtonsContainer = document.getElementById('page-buttons');
+    const pageIndicator = document.getElementById('page-indicator');
+    const template = document.getElementById('card-template') as HTMLTemplateElement;
+
+    const initialUrl = new URL(window.location.href);
+    currentPage = parseInt(initialUrl.searchParams.get('p') || '1');
+
+
+    async function fetchAuthors(page: number) {
+        if (page < 1 || page > totalPages) return;
+        
+
+        loader?.classList.remove('hidden');
+        container!.style.opacity = '0.3';
+        
+        try {
+            const response = await fetch(`${API_URL}?p=${page}&limit=${PAGE_SIZE}`);
+            const data = await response.json();
+
+            if (!response.ok || data.error) throw new Error(data.error || 'Error en la respuesta del API');
+
+            currentPage = data.currentPage;
+            totalPages = data.totalPages;
+            
+            window.history.pushState({}, '', `/autores?p=${currentPage}`);
+            
+            renderAuthors(data.authors);
+            updatePagination();
+
+        } catch (error) {
+            console.error('Error al cargar autores:', error);
+            alert('Error al cargar la siguiente página de autores.');
+        } finally {
+            loader?.classList.add('hidden');
+            container!.style.opacity = '1';
+        }
+    }
+
+    function renderPageButtons() {
+        if (!pageButtonsContainer) return;
+
+        pageButtonsContainer.innerHTML = ''; 
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i.toString();
+            button.className = 'page-number-btn px-4 h-10 border rounded-lg transition-colors';
+            
+            if (i === currentPage) {
+                button.classList.add('bg-[#01ada4]', 'text-white', 'border-[#01ada4]');
+            } else {
+                button.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+            }
+
+            button.addEventListener('click', () => {
+                fetchAuthors(i); 
+            });
+
+            pageButtonsContainer.appendChild(button);
+        }
+    }
+
+    function renderAuthors(authors: any[]) {
+        container!.innerHTML = '';
+
+        if (authors.length === 0) {
+            container!.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500">No se encontraron autores en esta página.</div>';
+            return;
+        }
+
+        let authorsToRender = authors;
+        
+        if (currentPage === 1) {
+             authorsToRender = authors.slice(1);
+        }
+
+
+        authorsToRender.forEach(autor => {
+            const clone = template.content.cloneNode(true) as DocumentFragment;
+            const fullName = `${autor.name} ${autor.lastName || ''}`;
+            const url = `/autores/${autor.id}`;
+
+            const img = clone.querySelector('.card-img') as HTMLImageElement;
+            img.src = autor.imageUrl || "/default.jpg";
+            img.alt = `Foto de ${fullName}`;
+
+            const link = clone.querySelector('.card-link') as HTMLAnchorElement;
+            link.href = url;
+            
+            clone.querySelector('.card-name')!.textContent = fullName;
+            clone.querySelector('.card-nationality')!.textContent = autor.nationality || 'Desconocida';
+            clone.querySelector('.card-genre')!.textContent = autor.genre;
+
+            container?.appendChild(clone);
+        });
+    }
+
+    function updatePagination() {
+        if(pageIndicator) pageIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
+        if(btnPrev) btnPrev.disabled = currentPage <= 1;
+        if(btnNext) btnNext.disabled = currentPage >= totalPages;
+
+        renderPageButtons();
+    }
+
+    btnPrev?.addEventListener('click', () => {
+        fetchAuthors(currentPage - 1);
+    });
+
+    btnNext?.addEventListener('click', () => {
+        fetchAuthors(currentPage + 1);
+    });
+
+    updatePagination();
+</script>

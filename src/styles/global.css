@@ -1,1 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Lobster&display=swap');
+
 @import "tailwindcss";
+
+@theme {
+  --color-texto-claro: #617992;
+  --color-texto-resaltado: #00305D;
+  --color-background-light: #EBF4FF;
+  --color-azul-turquesa: #0096A2;
+  --color-azul-blanco: #DEE8F2;
+
+  --font-lobster: "Lobster";
+  --font-geist: "Geist";
+}

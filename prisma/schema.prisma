@@ -1,6 +1,7 @@
 // prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
@@ -8,16 +9,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id            String          @id @default(cuid())
   name          String?
-  lastName      String?         @map("last_name") // Tu campo personalizado
+  lastName      String?         @map("last_name") 
   email         String?         @unique
   emailVerified DateTime?
   image         String?
-  password      String?         // Necesario para el login con contraseña
-  isUser        Boolean         @default(true) @map("is_user") // Tu campo
+  password      String?      
+  isUser        Boolean         @default(true) @map("is_user") 
   
   accounts      Account[]
   sessions      Session[]
@@ -25,6 +25,7 @@ model User {
   news          New[]
   events        Event[]
   comments      Comment[]
+  donations     Donation[]
   
   @@map("user")
 }
@@ -69,13 +70,17 @@ model Book {
   id              Int       @id @default(autoincrement())
   isbn            String    @unique
   title           String
-  price           Decimal
+  price           Float
   editorial       String
   publicationYear Int       @map("anio_publicacion")
   authorId        Int       @map("author_id_author")
   author          Author    @relation(fields: [authorId], references: [id])
   comments        Comment[]
-
+  votes           Int       @default(0)
+  raiting         Float     @default(0.0)  
+  imageUrl        String?   @map("url_image")
+  description     String?
+  
   @@map("book")
 }
 
@@ -86,7 +91,8 @@ model Author {
   biography   String
   birthdate   DateTime
   imageUrl    String?  @map("url_image")
-  
+  nationality String?
+  genre       String   @default("Unknown")
   // Relación con Book
   books       Book[]
 
@@ -114,7 +120,7 @@ model Event {
   date        DateTime
   startTime   DateTime  @map("start_time")
   endTime     DateTime  @map("end_time")
-  cost        Decimal
+  cost        Float
   guest       String?
 
   userId      String    @map("user_id_user")
@@ -141,4 +147,20 @@ model Reply {
   commentId Int      @map("id_comment")
   comment   Comment  @relation(fields: [commentId], references: [id])
   @@map("reply")
+}
+
+model Donation {
+  id           Int      @id @default(autoincrement()) @map("id_Donaciones")
+  name         String  
+  email        String  
+  phone        String   
+  quantityBook Int      @map("quantity_book")
+  type         Int
+  address      String 
+  message      String?
+
+  userId       String   @map("User_id_user")
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@map("donaciones")
 }

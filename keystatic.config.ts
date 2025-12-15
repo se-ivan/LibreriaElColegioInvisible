@@ -17,7 +17,7 @@ export default config({
         
         quote: fields.text({label: 'Pretitle',multiline: true}),
 
-        avatar: fields.image({label: 'Imagen'}),
+        avatar: fields.image({label: 'Imagen', directory:'public/posts', publicPath: '/posts'}),
 
       },
     }),

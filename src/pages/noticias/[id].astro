@@ -1,0 +1,123 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { marked } from 'marked'; // Librería para renderizar Markdown (Description)
+
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_API_URL;
+const COLLECTION_ENDPOINT = `${STRAPI_URL}/api/noticas`; 
+
+// captura el id de la url
+const { id } = Astro.params;
+
+// Hace el fetch para una sola noticia
+const apiEndpoint = `${COLLECTION_ENDPOINT}/${id}?populate=imageUrl`;
+
+let noticia = null;
+let errorFetching = false;
+
+try {
+    const response = await fetch(apiEndpoint);
+
+    if (!response.ok) {
+        throw new Error(`Error ${response.status}: No se encontró la noticia con ID ${id}`);
+    }
+
+    const result = await response.json();
+    
+    
+    if (result.data) {
+        const item = result.data;
+        
+        // Imagen 
+        const imageObject = item.imageUrl;
+        let imageUrlFinal = '';
+        if (imageObject && imageObject.url) {
+            imageUrlFinal = imageObject.url;
+        }
+
+        // Fecha 
+        const dateString = item.publishedAt; 
+        let formattedDate = 'Fecha no disponible';
+        if (dateString) {
+            const rawDate = new Date(dateString);
+            if (!isNaN(rawDate.getTime())) { 
+                formattedDate = rawDate.toLocaleDateString('es-ES', { 
+                    year: 'numeric', month: 'long', day: 'numeric' 
+                });
+            }
+        }
+
+        //'marked' para convertir el Rich Text (Markdown) a HTML
+        const contentHTML = item.description ? marked.parse(item.description) : '<p>Contenido no disponible.</p>';
+
+
+        noticia = {
+            title: item.title || 'Título Desconocido',
+            date: formattedDate,
+            image: imageUrlFinal,
+            content: contentHTML,
+            pretitle: item.pretitle || '',
+        };
+    }
+
+} catch (error) {
+    console.error(`Error al cargar la noticia con ID ${id}:`, error);
+    errorFetching = true;
+}
+
+if (!noticia || errorFetching) {
+    return Astro.redirect('/404'); 
+}
+---
+
+<Layout title={`Noticia: ${noticia.title}`}>
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <article class="bg-white rounded-xl shadow-lg overflow-hidden">
+            {noticia.image ? (
+                <img 
+                    src={noticia.image} 
+                    alt={`Imagen principal de ${noticia.title}`} 
+                    class="w-full h-80 object-cover"
+                />
+            ) : (
+                <div class="w-full h-80 bg-gray-200 flex items-center justify-center text-gray-500 text-lg">
+                    Sin Imagen Principal
+                </div>
+            )}
+            
+            <div class="p-6 md:p-10">
+                <div class="mb-8 border-b pb-4">
+                    {noticia.pretitle && (
+                        <p class="text-indigo-600 font-semibold text-sm mb-1 uppercase tracking-wider">
+                            {noticia.pretitle}
+                        </p>
+                    )}
+                    <h1 class="text-4xl font-extrabold text-[#002B5B] leading-tight mb-2">
+                        {noticia.title}
+                    </h1>
+                    <p class="text-gray-500 text-sm">
+                        Publicado el <time datetime={noticia.date}>{noticia.date}</time>
+                    </p>
+                </div>
+
+                <div 
+                    class="prose prose-lg max-w-none text-gray-800 leading-relaxed space-y-6"
+                    set:html={noticia.content}
+                >
+                    </div>
+
+                <div class="mt-12 pt-6 border-t">
+                    <a href="/noticias" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition duration-150">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Volver a la lista de noticias
+                    </a>
+                </div>
+            </div>
+        </article>
+
+    </main>
+</Layout>
+
+<script>
+    
+</script>

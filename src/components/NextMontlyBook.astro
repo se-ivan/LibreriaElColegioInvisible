@@ -1,0 +1,49 @@
+---
+import StarRating from "./StarRating.astro"
+const {title, author, rating, votes} = Astro.props;
+---
+
+<article class="border border-[#C1CDD7] bg-[#F9FCFF] rounded-3xl py-8 w-100 hover:scale-105 transition-all duration-300 shadow-lg">
+    <img src="/images/home/libroDelMes.png" alt="" class="w-full h-125" />
+
+    <div class="px-6 mt-8">
+        <p>{title}</p>
+        <p class="text-xs text-[#5B748E] mt-2">{author}</p>
+
+        <div class="mt-4 flex flex-row">
+            <StarRating score={rating} />
+            <p class="ml-4">{rating}</p>
+        </div>
+
+        <div class="mt-4">
+            <div class="w-full flex flex-row justify-between">
+                <p class="text-sm">Total de Votos</p>
+                <p class="text-[#0056A4] text-sm">{votes}</p>
+            </div>
+            <div class="h-2 w-full bg-white rounded-md mt-2 border border-[#C1CDD7]">
+                <div class="h-2 w-20 bg-[#0056A4] rounded-md"></div>
+            </div>
+        </div>
+
+        <button class="mt-4 w-full h-9 border border-[#C1CDD7] flex flex-row gap-2 items-center justify-center rounded-md"
+            ><span
+                ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-thumb-up"
+                    ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                    ></path><path
+                        d="M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3"
+                    ></path></svg
+                ></span
+            >Vota por este Libro</button
+        >
+    </div>
+</article>
