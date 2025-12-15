@@ -1,6 +1,7 @@
 ---
 import AdminLayout from '../../../../layouts/AdminLayout.astro';
 import { actions } from 'astro:actions'; 
+import prisma from '../../../../pages/lib/prisma'; 
 
 const autorId = Astro.params.id;
 const updateAuthorAction = actions.authorActions.update; 
@@ -19,20 +20,19 @@ interface Author {
 let autor: Author | null = null;
 let error: string | null = null;
 let defaultValues: Partial<Author> = {};
-const idForFetch = autorId ? parseInt(autorId, 10) : null; 
 
-if (idForFetch) {
+if (autorId) {
     try {
-        const res = await fetch(`${Astro.url.origin}/api/admin/authors/${idForFetch}`); 
+        const idInt = parseInt(autorId, 10);
+        autor = await prisma.author.findUnique({ where: { id: idInt } });
         
-        if (res.ok) {
-            autor = await res.json() as Author;
+        if (autor) {
             defaultValues = autor;
         } else {
-            error = `Error ${res.status}: Autor no encontrado.`;
+            error = "Autor no encontrado.";
         }
     } catch (e) {
-        error = 'Error de conexión al obtener el autor.';
+        error = 'Error de base de datos al obtener el autor.';
     }
 } else {
     error = 'ID de autor no proporcionado.';
@@ -70,7 +70,7 @@ if (defaultValues.birthdate) {
         )}
 
         {autor ? (
-            <form method="POST" action={updateAuthorAction} class="space-y-6">
+            <form method="POST" action={updateAuthorAction} enctype="multipart/form-data" class="space-y-6">
                 
                 <input type="hidden" name="id" value={defaultValues.id} />
                 
@@ -85,7 +85,6 @@ if (defaultValues.birthdate) {
                     </div>
                 </div>
 
-                {}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="birthdate" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
@@ -102,12 +101,21 @@ if (defaultValues.birthdate) {
                         <label for="genre" class="block text-sm font-medium text-gray-700">Género (Opcional)</label>
                         <input type="text" name="genre" id="genre" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.genre || ''} />
                     </div>
+                    
                     <div>
-                        <label for="imageUrl" class="block text-sm font-medium text-gray-700">URL de Imagen (Opcional)</label>
-                        <input type="url" name="imageUrl" id="imageUrl" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value={defaultValues.imageUrl || ''} />
+                        <label for="imageFile" class="block text-sm font-medium text-gray-700">Imagen de Perfil</label>
+                        
+                        {defaultValues.imageUrl && (
+                            <div class="mb-2 mt-1">
+                                <p class="text-xs text-gray-500 mb-1">Imagen actual:</p>
+                                <img src={defaultValues.imageUrl} alt="Actual" class="h-16 w-16 object-cover rounded-full border border-gray-300" />
+                            </div>
+                        )}
+                        
+                        <input type="file" name="imageFile" id="imageFile" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                        <p class="text-xs text-gray-500 mt-1">Deja esto vacío para mantener la imagen actual.</p>
                     </div>
                 </div>
-                {/* ------------------------------------------- */}
 
                 <div>
                     <label for="biography" class="block text-sm font-medium text-gray-700">Biografía</label>
