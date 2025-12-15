@@ -1,7 +1,7 @@
-import useSWR from 'swr'
-import type { Comment } from '../data/mock-db';
+import useSWRInfinite from 'swr/infinite'; 
 import useSWRMutation from 'swr/mutation';
 import { useState } from 'react';
+import type { Comment } from '../data/mock-db';
 
 interface CreateCommentsProps {
     bookId: number;
@@ -9,30 +9,43 @@ interface CreateCommentsProps {
 }
 
 type CreateCommentPayload = Omit<Comment, 'id' | 'user' | 'replies' | 'like'>;
-const fetcher = (url: string) => fetch(url).then(res => res.json())
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 async function sendComment(url: string, { arg }: { arg: CreateCommentPayload }) {
-    
     const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(arg)
-    })
+    });
 
-    if (!res.ok) throw new Error("Error al crear libro");
+    if (!res.ok) throw new Error("Error al crear comentario");
     return res.json();
 }
 
 export function CreateComments({ bookId, userId }: CreateCommentsProps) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    
+    const apiBase = "/api/comments/comments"; 
 
-    console.log(userId + "Buenas" + bookId)
 
-    const apiURL = "http://localhost:4321/api/comments/comments";
+    const getKey = (pageIndex: number, previousPageData: Comment[]) => {
 
-    const { data, error } = useSWR<Comment[]>(apiURL, fetcher);
-    const { trigger, isMutating } = useSWRMutation(apiURL, sendComment);
+        if (previousPageData && !previousPageData.length) return null;
+        
+        return `${apiBase}?bookId=${bookId}&page=${pageIndex + 1}`;
+    };
+
+    const { data, size, setSize, isLoading, mutate: refreshList } = useSWRInfinite<Comment[]>(getKey, fetcher);
+
+    const isEmpty = data?.[0]?.length === 0;
+    const isReachingEnd = isEmpty || (data && data[data.length - 1]?.length < 5);
+    const isLoadingMore = isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
+
+    const allComments = data ? data.flat() : [];
+
+    const { trigger, isMutating } = useSWRMutation(apiBase, sendComment);
 
     const handleEvent = async () => {
         try {
@@ -40,29 +53,27 @@ export function CreateComments({ bookId, userId }: CreateCommentsProps) {
                 title: title,
                 description: description,
                 bookId: bookId,
-                userId: userId
-            })
+                userId: userId,
+                createdAt: new Date(), 
+            } as any);
+
             setTitle("");
             setDescription("");
+            
+            refreshList(); 
         } catch (e) {
             console.error(e);
         }
     };
 
-    if (error) return <div className='self-center m-auto'>🚨 Error al cargar: {error.message}</div>;
-
-    console.log(data);
-
     return (
         <section className="w-full font-medium">
             <h2 className="text-3xl mt-12">Reseñas y Comentarios</h2>
 
-            <div
-                className="flex flex-col w-full bg-[#F9FCFF] border border-[#BFD6EC] rounded-2xl px-6 py-6 mt-6"
-            >
-                <p>Comparte tu Opinion</p>
+            <div className="flex flex-col w-full bg-[#F9FCFF] border border-[#BFD6EC] rounded-2xl px-6 py-6 mt-6">
+                <p>Comparte tu Opinión</p>
 
-                <label className="mt-6" htmlFor="title">Titulo</label>
+                <label className="mt-6" htmlFor="title">Título</label>
                 <input
                     disabled={isMutating}
                     value={title}
@@ -71,7 +82,7 @@ export function CreateComments({ bookId, userId }: CreateCommentsProps) {
                     onChange={e => setTitle(e.target.value)}
                     type="text"
                     className="border border-[#7DA9D2] rounded-lg mt-2 px-3 py-2"
-                    placeholder="Escribe un titulo para tu reseña"
+                    placeholder="Escribe un título..."
                 />
 
                 <label htmlFor="comment" className="mt-4">Tu Comentario</label>
@@ -82,57 +93,44 @@ export function CreateComments({ bookId, userId }: CreateCommentsProps) {
                     name="comment"
                     id="comment"
                     className="border border-[#7DA9D2] rounded-lg mt-2 px-3 py-2"
-                    placeholder="Comparte tu experiencia con este libro..."
+                    placeholder="Comparte tu experiencia..."
                 ></textarea>
 
                 <button
                     disabled={isMutating}
-                    className="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1 hover:bg-[#0f8b87] transition-colors duration-300 hover:cursor-pointer"
+                    className="bg-[#01ACA5] text-white rounded-xl h-10 w-45 mt-4 px-2 py-1 hover:bg-[#0f8b87] transition-colors duration-300 hover:cursor-pointer disabled:opacity-50"
                     onClick={() => handleEvent()}
                 >
-                    Publicar Comentario
+                    {isMutating ? 'Enviando...' : 'Publicar Comentario'}
                 </button>
             </div>
 
-            <div className="flex flex-col gap-4 mt-8 mb-16 max-h-200 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300">
-                {
-                    data?.map((comentItem: Comment, idx: number) => (
-                        <div
-                            className="w-full max-w-375 bg-[#F9FCFF] border border-[#DFEBF4] rounded-3xl flex flex-col items-centers font-medium py-8 sm:py-10 px-6"
-                        >
-                            <p>{comentItem.user.name + " " + comentItem.user.lastName}</p>
-                            <p className="text-xs text-[#5B748E]">Hace 3 dias</p>
-                            <p className="mt-4 text-lg">{comentItem.title}</p>
-                            <p className="md:text-xl mt-4 text-[#5B748E]">
-                                {comentItem.description}
-                            </p>
+            <div className="flex flex-col gap-4 mt-8 mb-16">
+                {allComments.map((comentItem: Comment, idx: number) => (
+                    <div key={`${comentItem.id}-${idx}`} className="w-full bg-[#F9FCFF] border border-[#DFEBF4] rounded-3xl flex flex-col items-centers font-medium py-8 sm:py-10 px-6 fade-in">
+                        <p>{comentItem.user?.name} {comentItem.user?.lastName}</p>
+                        <p className="mt-4 text-lg font-bold">{comentItem.title}</p>
+                        <p className="md:text-xl mt-4 text-[#5B748E]">
+                            {comentItem.description}
+                        </p>
+                    </div>
+                ))}
+            </div>
 
-                            <div>
-                                <button className="bg-[#E0F2FF] text-texto-resaltado rounded-full px-3 py-2 mt-4 flex flex-row items-center justify-center"
-                                ><span
-                                ><svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    className="icon icon-tabler icons-tabler-outline icon-tabler-thumb-up"
-                                ><path stroke="none" d="M0 0h24v24H0z" fill="none"
-                                ></path><path
-                                    d="M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3"
-                                ></path></svg
-                                        ></span
-                                    >12</button
-                                >
-                            </div>
-                        </div>
-
-                    ))
-                }
+            <div className="flex justify-center mb-12">
+                {!isReachingEnd && (
+                    <button
+                        className="bg-azul-blanco text-azul-turquesa px-6 py-2 rounded-full hover:bg-[#00839729] transition-all duration-300 cursor-pointer  disabled:opacity-50"
+                        onClick={() => setSize(size + 1)}
+                        disabled={isLoadingMore}
+                    >
+                        {isLoadingMore ? "Cargando..." : "Cargar más comentarios"}
+                    </button>
+                )}
+                
+                {isReachingEnd && allComments.length > 0 && (
+                    <p className="text-gray-400">No hay más comentarios.</p>
+                )}
             </div>
         </section>
     );

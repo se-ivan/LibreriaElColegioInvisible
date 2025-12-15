@@ -9,7 +9,7 @@ import { CreateComments } from "../components/CreateComments";
 import { getSession } from "auth-astro/server";
 
 const session = await getSession(Astro.request);
-const userId = session?.user.id || "";
+const userId = session?.user.id || "cmh2ekh300000szsg3z480swa";
 
 const res = await fetch("http://localhost:4321/api/monthlyBook");
 
@@ -123,11 +123,11 @@ const nextMonthBooks = await nextMonthRes.json();
                 class="flex items-center justify-center lg:justify-between flex-wrap gap-6 mt-8"
             >
                 {nextMonthBooks.map((nextBook: any) => (
-                    <NextMontlyBook 
-                        title={nextBook.title}
+                    <NextMontlyBook title={nextBook.title}
                         votes={nextBook.votes}
                         autor={nextBook.author.name + " " + nextBook.author.lastName}
-                        rating={nextBook.raiting} />
+                        rating={nextBook.raiting}
+                        bookId = {nextBook.id} />
                 ))}
             </div>
         </section>
