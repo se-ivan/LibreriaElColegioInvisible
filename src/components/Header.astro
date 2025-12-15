@@ -1,23 +1,232 @@
 ---
 import "../styles/global.css";
 ---
-<header class="sticky z-50 top-0 left-0 h-16 w-full flex flex-row items-center justify-between bg-[#00305d] text-white font-medium text-sm px-25">
-    <div class="flex flex-row items-center justify-center gap-4">
-        <img src="/logoHeader.svg" alt="Logo" class="h-12 w-12"/>
+
+<header
+    class="sticky z-50 top-0 left-0 h-16 w-full flex flex-row items-center justify-between bg-[#00305d] text-white font-medium text-sm px-4 lg:px-25 relative"
+>
+    <div class="flex flex-row items-center justify-center gap-4 z-10">
+        <img src="/logoHeader.svg" alt="Logo" class="h-12 w-12" />
         <span class="text-xl font-semibold">El Colegio Invisible</span>
     </div>
-    <nav>
-        <ul class="flex flex-row justify-center items-center gap-6">
-            <li class="hover:scale-120 transition-all duration-300"><a href="/">Autores</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/BookList">Libros</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/">Libros del Mes</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/noticias">Noticias</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/Services">Servicios</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/">Eventos</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/donaciones">Donaciones</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/">Colaboradores</a></li>
-            <li class="hover:scale-120 transition-all duration-300"><a href="/">Contacto</a></li>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden lg:block relative">
+        <ul
+            class="flex flex-row justify-center items-center gap-2 relative z-10"
+            id="nav-list"
+        >
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/" class="block w-full h-full">Autores</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/BookList" class="block w-full h-full">Libros</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/" class="block w-full h-full">Libros del Mes</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/noticias" class="block w-full h-full">Noticias</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/Services" class="block w-full h-full">Servicios</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/eventos" class="block w-full h-full">Eventos</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/donaciones" class="block w-full h-full">Donaciones</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/" class="block w-full h-full">Colaboradores</a>
+            </li>
+            <li
+                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
+            >
+                <a href="/" class="block w-full h-full">Contacto</a>
+            </li>
         </ul>
+        <!-- Sliding Underline -->
+        <div
+            id="nav-indicator"
+            class="absolute bottom-0 h-1 bg-white/80 rounded-full transition-all duration-300 ease-out opacity-0 pointer-events-none"
+        >
+        </div>
     </nav>
-    <input class="rounded-md h-9 w-60 border-2 border-[#C6DBEA] bg-white text-[#7C7C7C] px-2" placeholder="Buscar..." type="text">
+
+    <div class="hidden lg:block z-10">
+        <input
+            class="rounded-md h-9 w-60 border-2 border-[#C6DBEA] bg-white text-[#7C7C7C] px-2 focus:outline-none focus:border-white transition-colors duration-300"
+            placeholder="Buscar..."
+            type="text"
+        />
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="menu-toggle" class="lg:hidden p-2 focus:outline-none z-10">
+        <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
+
+    <!-- Mobile Menu -->
+    <div
+        id="mobile-menu"
+        class="absolute top-16 left-0 w-full bg-[#00305d] flex flex-col items-center gap-4 lg:hidden shadow-lg overflow-hidden max-h-0 opacity-0 transition-all duration-500 ease-in-out"
+    >
+        <ul class="flex flex-col justify-center items-center gap-2 w-full py-4">
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/" class="block py-3 w-full">Autores</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/BookList" class="block py-3 w-full">Libros</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/" class="block py-3 w-full">Libros del Mes</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/noticias" class="block py-3 w-full">Noticias</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/Services" class="block py-3 w-full">Servicios</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/eventos" class="block py-3 w-full">Eventos</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/donaciones" class="block py-3 w-full">Donaciones</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/" class="block py-3 w-full">Colaboradores</a>
+            </li>
+            <li
+                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
+            >
+                <a href="/" class="block py-3 w-full">Contacto</a>
+            </li>
+        </ul>
+        <div class="pb-6">
+            <input
+                class="rounded-md h-9 w-60 border-2 border-[#C6DBEA] bg-white text-[#7C7C7C] px-2 focus:outline-none focus:border-white transition-colors duration-300"
+                placeholder="Buscar..."
+                type="text"
+            />
+        </div>
+    </div>
 </header>
+
+<script>
+    // Mobile Menu Logic
+    const menuToggle = document.getElementById("menu-toggle");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener("click", () => {
+            if (mobileMenu.classList.contains("max-h-0")) {
+                // Open menu
+                mobileMenu.classList.remove("max-h-0", "opacity-0");
+                mobileMenu.classList.add("max-h-[600px]", "opacity-100");
+            } else {
+                // Close menu
+                mobileMenu.classList.remove("max-h-[600px]", "opacity-100");
+                mobileMenu.classList.add("max-h-0", "opacity-0");
+            }
+        });
+    }
+
+    // Sliding Underline Logic
+    const navList = document.getElementById("nav-list");
+    const indicator = document.getElementById("nav-indicator");
+    const navItems = document.querySelectorAll(".nav-item");
+    const currentPath = window.location.pathname;
+
+    function moveIndicator(element) {
+        if (!indicator || !element) return;
+
+        const width = element.offsetWidth;
+        const left = element.offsetLeft;
+
+        indicator.style.width = `${width}px`;
+        indicator.style.transform = `translateX(${left}px)`;
+        indicator.style.opacity = "1";
+    }
+
+    // Initialize position based on current URL
+    let activeItem = null;
+
+    // Only set active item if we are NOT on the home page
+    if (currentPath !== "/") {
+        navItems.forEach((item) => {
+            const link = item.querySelector("a");
+            if (link && link.getAttribute("href") === currentPath) {
+                activeItem = item;
+                moveIndicator(item);
+            }
+        });
+    }
+
+    navItems.forEach((item) => {
+        item.addEventListener("mouseenter", () => {
+            moveIndicator(item);
+        });
+    });
+
+    if (navList) {
+        navList.addEventListener("mouseleave", () => {
+            if (activeItem) {
+                moveIndicator(activeItem);
+            } else if (indicator) {
+                indicator.style.opacity = "0";
+            }
+        });
+    }
+
+    // Handle window resize to adjust indicator position
+    window.addEventListener("resize", () => {
+        if (activeItem) {
+            moveIndicator(activeItem);
+        }
+    });
+</script>

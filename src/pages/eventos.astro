@@ -1,0 +1,146 @@
+---
+import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
+import EventCard from "../components/EventCard.astro";
+import Footer from "../components/Footer.astro";
+
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_API_URL;
+const COLLECTION_ENDPOINT = `${STRAPI_URL}/api/eventos`;
+
+const apiEndpoint = `${COLLECTION_ENDPOINT}?populate=imageUrl`;
+
+interface EventoProps {
+    id: number;
+    title: string;
+    description: string;
+    date: string;
+    location: string;
+    price: number;
+    image: string;
+}
+
+let eventos: EventoProps[] = [];
+
+try {
+    const response = await fetch(apiEndpoint);
+
+    if (!response.ok) {
+        throw new Error(`Error al obtener datos de Strapi: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    eventos = result.data.map((item: any) => {
+        const imageObject = item.imageUrl;
+
+        let imageUrlFinal = "";
+        if (imageObject && imageObject.url) {
+            imageUrlFinal = imageObject.url;
+        } else if (
+            imageObject &&
+            imageObject.formats &&
+            imageObject.formats.small
+        ) {
+            imageUrlFinal = imageObject.formats.small.url;
+        }
+
+        const dateString = item.date;
+        let formattedDate = "Fecha por confirmar";
+
+        if (dateString) {
+            const rawDate = new Date(dateString);
+
+            if (!isNaN(rawDate.getTime())) {
+                formattedDate = rawDate.toLocaleDateString("es-ES", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
+            }
+        }
+
+        // Extract plain text from description rich text if possible, or just use a fallback
+        let descriptionText = "";
+        if (Array.isArray(item.description)) {
+            item.description.forEach((block: any) => {
+                if (block.children) {
+                    block.children.forEach((child: any) => {
+                        if (child.text) descriptionText += child.text + " ";
+                    });
+                }
+            });
+        } else {
+            descriptionText = item.description || "Sin descripción";
+        }
+
+        return {
+            id: item.documentId,
+            title: item.title || "Evento sin título",
+            description:
+                descriptionText.substring(0, 100) +
+                (descriptionText.length > 100 ? "..." : ""),
+            date: formattedDate,
+            location: item.location || "Ubicación por confirmar",
+            price: item.price !== undefined ? Number(item.price) : 0,
+            image: imageUrlFinal,
+        };
+    });
+} catch (error) {
+    console.error("Error al cargar eventos de Strapi:", error);
+    eventos = [];
+}
+---
+
+<Layout title="Eventos | El Colegio Invisible">
+    <Header />
+    <main class="bg-gray-50 min-h-screen">
+        <!-- Hero Section -->
+        <section class="bg-[#00305d] text-white py-16 px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 font-geist">
+                Próximos Eventos
+            </h1>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                Participa en nuestras actividades culturales, talleres y
+                encuentros con autores.
+            </p>
+        </section>
+
+        <!-- Events List -->
+        <section class="max-w-6xl mx-auto px-4 pb-20 pt-12 space-y-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {
+                    eventos.length > 0 ? (
+                        eventos.map((evento) => (
+                            <div class="event-item">
+                                <EventCard
+                                    id={evento.id}
+                                    title={evento.title}
+                                    description={evento.description}
+                                    date={evento.date}
+                                    location={evento.location}
+                                    price={evento.price}
+                                    image={evento.image}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <div class="col-span-full">
+                            <div id="no-events" class="text-center py-12">
+                                <p class="text-gray-500 text-lg">
+                                    No hay eventos programados próximamente.
+                                </p>
+                                <p class="text-sm text-gray-400 mt-2">
+                                    Mantente atento a nuestras redes sociales
+                                    para nuevas actualizaciones.
+                                </p>
+                            </div>
+                        </div>
+                    )
+                }
+            </div>
+        </section>
+    </main>
+    <Footer />
+</Layout>
