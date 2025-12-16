@@ -7,6 +7,24 @@ import { uploadImage, deleteImageByUrl } from '../utils/cloudinary'; // Ruta par
 const cleanOptional = (value: string | null | undefined) => 
     (value === '' || value === null) ? undefined : value;
 
+
+const logServerEvent = (level: 'INFO' | 'ERROR' | 'WARN', module: string, message: string, meta?: any) => {
+    const logPayload = JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level,
+        service: 'author-service',
+        module,
+        message,
+        ...meta 
+    });
+
+    if (level === 'ERROR') {
+        console.error(logPayload);
+    } else {
+        console.log(logPayload);
+    }
+};
+
 const authorSchema = z.object({
     id: z.coerce.number().int().optional(), 
     name: z.string().min(1, "El nombre es obligatorio."),
@@ -35,7 +53,8 @@ export const authorActions = {
                 try {
                     imageUrl = await uploadImage(imageFile);
                 } catch (error) {
-                    console.error(error);
+                    // LOG DE ERROR (IMAGEN)
+                    logServerEvent('ERROR', 'AUTHORS:CREATE:IMAGE', 'Fallo al subir imagen a Cloudinary', { error: String(error) });
                     throw new Error("Error al subir la imagen a Cloudinary.");
                 }
             }
@@ -49,9 +68,14 @@ export const authorActions = {
                         genre: cleanOptional(authorData.genre),
                     },
                 });
+
+                // LOG DE ÉXITO
+                logServerEvent('INFO', 'AUTHORS:CREATE', 'Autor creado exitosamente', { authorId: newAuthor.id, authorName: newAuthor.name });
+                
                 return { success: true, author: newAuthor };
             } catch (e) {
-                console.error("Error al crear autor:", e);
+                //  LOG DE ERROR (DB)
+                logServerEvent('ERROR', 'AUTHORS:CREATE:DB', 'Error de base de datos al crear autor', { errorDetail: e instanceof Error ? e.message : e });
                 throw new Error("Error de base de datos al crear el autor.");
             }
         },
@@ -71,31 +95,39 @@ export const authorActions = {
                 genre: cleanOptional(originalUpdateData.genre),
             };
 
-            // Solo se sube imagen si el usuario seleccionó una nueva
             if (imageFile && imageFile.size > 0) {
                 try {
                     const newImageUrl = await uploadImage(imageFile);
-                    updateData.imageUrl = newImageUrl; // Sobrescribimos la URL anterior
+                    updateData.imageUrl = newImageUrl; 
                 } catch (error) {
-                    console.error(error);
+                    // LOG DE ERROR (IMAGEN)
+                    logServerEvent('ERROR', 'AUTHORS:UPDATE:IMAGE', 'Fallo al subir nueva imagen', { authorId: id, error: String(error) });
                     throw new Error("Error al subir la nueva imagen.");
                 }
             }
-            // Si no hay imageFile, no tocamos el campo imageUrl en la BD entonces se queda el anterior
+            // Si no hay imageFile, no tocamos el campo imageUrl en la BD
 
             try {
                 const updatedAuthor = await prisma.author.update({
                     where: { id: id },
                     data: updateData,
                 });
+
+                // LOG DE ÉXITO
+                logServerEvent('INFO', 'AUTHORS:UPDATE', 'Autor actualizado exitosamente', { authorId: id });
+
                 return { success: true, author: updatedAuthor };
             } catch (e) {
                 if (e instanceof Error) {
                       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2025') {
+                        // LOG DE WARNING
+                        logServerEvent('WARN', 'AUTHORS:UPDATE', 'Intento de actualizar autor inexistente', { authorId: id });
                         throw new Error("Autor no encontrado para actualizar.");
                     }
                 }
-                console.error("Error al actualizar autor:", e);
+                
+                // LOG DE ERROR
+                logServerEvent('ERROR', 'AUTHORS:UPDATE:DB', 'Error crítico al actualizar autor', { authorId: id, errorDetail: String(e) });
                 throw new Error("Error de base de datos al actualizar el autor.");
             }
         },
@@ -107,46 +139,51 @@ export const authorActions = {
             id: z.number().int({ message: "El ID debe ser un número entero." }),
         }),
         handler: async ({ id }) => {
-            // Busca el autor antes de intentar borrarlo
+           
             const authorToDelete = await prisma.author.findUnique({
-                where: { id: id },
-                select: { imageUrl: true } // Solo necesitamos la URL
-            });
-            
-            if (!authorToDelete) {
-                throw new Error("Autor no encontrado para eliminar.");
-            }
+                where: { id: id },
+                select: { imageUrl: true } 
+            });
+            
+            if (!authorToDelete) {
+                logServerEvent('WARN', 'AUTHORS:DELETE', 'Intento de eliminar autor inexistente', { authorId: id });
+                throw new Error("Autor no encontrado para eliminar.");
+            }
 
-            try {
-                // Verificar si tiene libros antes de borrar
-                const hasBooks = await prisma.book.count({
-                    where: { authorId: id },
-                });
+            try {
+                const hasBooks = await prisma.book.count({
+                    where: { authorId: id },
+                });
 
-                if (hasBooks > 0) {
-                    throw new Error("No se puede eliminar el autor porque tiene libros asignados.");
-                }
-                
-                // Elimina la imagen de Cloudinary si existe
-                if (authorToDelete.imageUrl) {
-                    await deleteImageByUrl(authorToDelete.imageUrl); 
+                if (hasBooks > 0) {
+                    logServerEvent('WARN', 'AUTHORS:DELETE', 'Bloqueo de eliminación: Autor tiene libros', { authorId: id, bookCount: hasBooks });
+                    throw new Error("No se puede eliminar el autor porque tiene libros asignados.");
                 }
                 
-                // Elimina el registro de la DB
-                await prisma.author.delete({
-                    where: { id: id },
-                });
+                if (authorToDelete.imageUrl) {
+                    await deleteImageByUrl(authorToDelete.imageUrl); 
+                    logServerEvent('INFO', 'AUTHORS:DELETE:IMAGE', 'Imagen eliminada de Cloudinary', { authorId: id });
+                }
+                
+                await prisma.author.delete({
+                    where: { id: id },
+                });
 
-                return { success: true, message: `Autor ID ${id} eliminado.` };
-            } catch (e) {
+                // LOG DE ÉXITO
+                logServerEvent('INFO', 'AUTHORS:DELETE', 'Autor eliminado permanentemente', { authorId: id });
+
+                return { success: true, message: `Autor ID ${id} eliminado.` };
+            } catch (e) {
                 if (e instanceof Error) {
                     if (e.message.includes("libros asignados")) {
                         throw new Error(e.message);
                     }
                 }
-                console.error("Error al eliminar autor:", e);
-                throw new Error("Error interno al eliminar el autor.");
-            }
-        },
-    }),
+                
+                // LOG DE ERROR
+                logServerEvent('ERROR', 'AUTHORS:DELETE:DB', 'Fallo al eliminar autor', { authorId: id, errorDetail: String(e) });
+                throw new Error("Error interno al eliminar el autor.");
+            }
+        },
+    }),
 };
