@@ -1,26 +1,28 @@
 import { defineAction } from 'astro:actions';
-import { authorActions } from "./authors.ts";
 import { z } from 'astro:schema';
 import prisma from '../lib/prisma';
 
 export const server = {
   
+  // 1. OBTENER LISTA DE AUTORES (Para el select del modal)
   getAuthors: defineAction({
     handler: async () => {
       try {
-        return await prisma.author.findMany({
+        // Obtenemos autores ordenados alfabéticamente
+        const authors = await prisma.author.findMany({
           orderBy: { name: 'asc' },
+          // Seleccionamos solo lo necesario para el dropdown
           select: { id: true, name: true, lastName: true }
         });
-      } catch (e) {
-        throw new Error("Error al cargar autores");
+        return authors;
+      } catch (e: any) {
+        console.error("Error getAuthors:", e);
+        throw new Error("Error al cargar la lista de autores");
       }
     }
   }),
 
-  monthlyBook,
-  comment,
-  authorActions,
+  // 2. OBTENER CATÁLOGO DE LIBROS (Paginado y con búsqueda)
   getBooks: defineAction({
     input: z.object({
       page: z.number(),
@@ -43,10 +45,12 @@ export const server = {
           prisma.book.count({ where }),
         ]);
 
+        // 🔥 FIX: (booksRaw as any[])
+        // Usamos 'any' para evitar errores si TS cree que 'imageUrl' no existe
         const books = (booksRaw as any[]).map(book => ({
             ...book,
-            price: Number(book.price),
-            coverImage: book.imageUrl || null 
+            price: Number(book.price), // Convertimos Decimal a Number
+            coverImage: book.imageUrl || null // Mapeamos imageUrl a coverImage
         }));
 
         return {
@@ -56,11 +60,13 @@ export const server = {
           currentPage: input.page
         };
       } catch (e) {
-        throw new Error("Error de base de datos");
+        console.error("Error getBooks:", e);
+        throw new Error("Error al obtener el catálogo");
       }
     },
   }),
 
+  // 3. OBTENER DETALLE DE UN LIBRO
   getBook: defineAction({
     input: z.object({
       id: z.number(),
@@ -82,6 +88,7 @@ export const server = {
             include: { author: true } 
         });
         
+        // 🔥 FIX: 'bookRaw as any' para leer description e imageUrl libremente
         const bookAny = bookRaw as any;
 
         const book = { 
@@ -91,6 +98,7 @@ export const server = {
             description: bookAny.description || null
         };
         
+        // Mapeamos también los relacionados
         const relatedBooks = (relatedRaw as any[]).map(b => ({ 
             ...b, 
             price: Number(b.price), 
@@ -99,78 +107,109 @@ export const server = {
 
         return { book, relatedBooks };
       } catch (error) {
-        throw new Error("Error al cargar libro");
+        console.error("Error getBook:", error);
+        throw new Error("No se pudo cargar el detalle del libro");
       }
     },
   }),
 
+  // 4. AGREGAR COMENTARIO (Sin Rating, con Title y Description)
   addComment: defineAction({
     input: z.object({
-      bookId: z.number(), userId: z.string(), title: z.string().min(3), description: z.string().min(5), 
+      bookId: z.number(), 
+      userId: z.string(), 
+      title: z.string().min(3), 
+      description: z.string().min(5), 
     }),
     handler: async (input) => {
       try {
-        const existing = await prisma.comment.findFirst({ where: { bookId: input.bookId, userId: input.userId } });
-        if (existing) throw new Error("Ya comentaste.");
+        const existing = await prisma.comment.findFirst({ 
+            where: { bookId: input.bookId, userId: input.userId } 
+        });
 
-        const dataToSave = {
-            title: input.title, 
+        if (existing) {
+            throw new Error("Ya has publicado una reseña para este libro.");
+        }
+        
+        // 🔥 FIX: 'dataToSave: any' para saltarnos validación estricta de TS
+        const dataToSave: any = {
+            title: input.title,             
             description: input.description, 
             bookId: input.bookId, 
             userId: input.userId, 
             like: 0 
-        } as any;
+        };
 
-        return await prisma.comment.create({ data: dataToSave });
+        const newComment = await prisma.comment.create({ data: dataToSave });
+        return newComment;
+
       } catch (error: any) {
-        throw new Error(error.message);
+        console.error("Error addComment:", error);
+        throw new Error(error.message || "Error al guardar comentario");
       }
     },
   }),
 
+  // 5. CREAR LIBRO (Admin) - Sin Genre, con imageUrl y description
   createBook: defineAction({
     input: z.object({
-      title: z.string().min(1), isbn: z.string().min(1), price: z.number().min(0), authorId: z.number().min(1),
-      editorial: z.string().optional(), publicationYear: z.number().optional(),
-      description: z.string().optional(), imageUrl: z.string().optional(),    
+      title: z.string().min(1), 
+      isbn: z.string().min(1), 
+      price: z.number().min(0), 
+      authorId: z.number().min(1),
+      editorial: z.string().optional(), 
+      publicationYear: z.number().optional(),
+      description: z.string().optional(), 
+      imageUrl: z.string().optional(),    
     }),
     handler: async (input) => {
       try {
         const authorExists = await prisma.author.findUnique({ where: { id: input.authorId } });
         if (!authorExists) throw new Error("Autor no existe");
 
-        const dataToCreate = {
+        // 🔥 FIX: 'dataToCreate: any'
+        const dataToCreate: any = {
             title: input.title,
             isbn: input.isbn,
             price: input.price,
             authorId: input.authorId,
             editorial: input.editorial || "General",
-            publicationYear: input.publicationYear || 2024,
+            publicationYear: input.publicationYear || new Date().getFullYear(),
             description: input.description || null,
             imageUrl: input.imageUrl || null,
-        } as any;
+        };
 
         const newBook = await prisma.book.create({ data: dataToCreate });
         
         const bookAny = newBook as any;
+        // Devolvemos el precio como número para que el frontend no falle
         return { ...bookAny, price: Number(bookAny.price) };
+
       } catch (error: any) {
-        if (error.code === 'P2002') throw new Error("ISBN duplicado.");
-        throw new Error(error.message);
+        console.error("Error createBook:", error);
+        if (error.code === 'P2002') throw new Error("El ISBN ya existe.");
+        throw new Error(error.message || "Error al crear libro");
       }
     },
   }),
 
+  // 6. ACTUALIZAR LIBRO (Admin)
   updateBook: defineAction({
     input: z.object({
       id: z.number(), 
-      title: z.string().min(1), isbn: z.string().min(1), price: z.number(), authorId: z.number(),
-      editorial: z.string().optional(), publicationYear: z.number().optional(),
-      description: z.string().optional(), imageUrl: z.string().optional(),
+      title: z.string().min(1), 
+      isbn: z.string().min(1), 
+      price: z.number(), 
+      authorId: z.number().min(1),
+      editorial: z.string().optional(), 
+      publicationYear: z.number().optional(),
+      description: z.string().optional(), 
+      imageUrl: z.string().optional(),
     }),
     handler: async (input) => {
       try {
-        const dataToUpdate = {
+        // 🔥 FIX: 'dataToUpdate: any'
+        const dataToUpdate: any = {
             title: input.title, 
             isbn: input.isbn, 
             price: input.price, 
@@ -179,7 +218,7 @@ export const server = {
             publicationYear: input.publicationYear,
             description: input.description, 
             imageUrl: input.imageUrl,
-        } as any;
+        };
 
         const updatedBook = await prisma.book.update({
           where: { id: input.id },
@@ -189,19 +228,25 @@ export const server = {
         const bookAny = updatedBook as any;
         return { ...bookAny, price: Number(bookAny.price) };
       } catch (error) {
+        console.error("Error updateBook:", error);
         throw new Error("Error al actualizar libro.");
       }
     },
   }),
   
+  // 7. ELIMINAR LIBRO (Admin)
   deleteBook: defineAction({
     input: z.object({ id: z.number() }),
     handler: async (input) => {
       try {
+        // Borrado en cascada manual (primero comentarios, luego libro)
         await prisma.comment.deleteMany({ where: { bookId: input.id } });
         await prisma.book.delete({ where: { id: input.id } });
         return { success: true };
-      } catch (error) { throw new Error("No se pudo eliminar."); }
+      } catch (error) { 
+        console.error("Error deleteBook:", error);
+        throw new Error("No se pudo eliminar el libro."); 
+      }
     },
   }),
 };
