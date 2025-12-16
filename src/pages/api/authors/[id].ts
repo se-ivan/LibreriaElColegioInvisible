@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-//import { authors } from '../../../data/mock-db';
 import prisma from '../../lib/prisma'; 
 import { Prisma } from '@prisma/client';
 
