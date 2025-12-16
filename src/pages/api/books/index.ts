@@ -1,34 +1,23 @@
 import type { APIRoute } from "astro";
-import prisma from "../../../lib/prisma"; // Ajusta la ruta según tu estructura
+import prisma from "../../../lib/prisma"; 
 
-export const GET: APIRoute = async ({ request }) => {
-  const url = new URL(request.url);
-  const query = url.searchParams.get("q");
-
+export const GET: APIRoute = async () => {
   try {
-    const whereClause = query
-      ? {
-          OR: [
-            { title: { contains: query } },
-          ],
-        }
-      : {};
-
     const books = await prisma.book.findMany({
-      where: whereClause,
       include: { author: true },
-      take: 5, 
     });
 
-    return new Response(JSON.stringify(books), {
+    return new Response(JSON.stringify({
+      books,
+      total,
+      totalPages: Math.ceil(total / pageSize),
+      currentPage: page
+    }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error al obtener libros:", error);
-    return new Response(
-      JSON.stringify({ error: "Error al leer la base de datos" }),
-      { status: 500 }
-    );
+    console.error("API Error en /api/books:", error);
+    return new Response(JSON.stringify({ error: "Error interno al obtener libros" }), { status: 500 });
   }
 };

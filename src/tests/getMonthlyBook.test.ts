@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("../pages/lib/prisma", () => ({
-  default: {
+
+vi.mock("../lib/prisma", () => ({
+  prisma: {
     book: {
       findFirst: vi.fn().mockResolvedValue({
         title: "Libro del mes",
         author: "Autor",
         description: "Descripción",
-        coverImage: "/cover.jpg",
       }),
     },
   },
@@ -16,11 +16,13 @@ vi.mock("../pages/lib/prisma", () => ({
 import { GET } from "../pages/api/monthlyBook";
 
 describe("GET /api/monthlyBook", () => {
-  it("devuelve el libro del mes", async () => {
-    const res = await GET({} as any);
-    const data = await res.json();
+  it("retorna el libro del mes", async () => {
+    const response = await GET({} as any);
 
-    expect(res.status).toBe(200);
+    expect(response.status).toBe(200);
+
+    const data = await response.json();
+
     expect(data.title).toBe("Libro del mes");
   });
 });
