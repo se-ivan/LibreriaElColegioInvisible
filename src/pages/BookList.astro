@@ -2,17 +2,48 @@
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import { actions } from 'astro:actions';
+import prisma from "../lib/prisma";
+
+import AdminBookModal from "../components/AdminBookModal";
+import BookAdminControls from "../components/BookAdminControls";
 
 const pageTitle = "Catálogo de Libros";
 
-const initialResult = await Astro.callAction(actions.getBooks, { 
-    page: 1, 
-    pageSize: 8 
-});
+const pageSize = 8;
+const currentPage = Number(Astro.url.searchParams.get("page") || 1);
+const searchParam = Astro.url.searchParams.get("search") || "";
+const skip = (currentPage - 1) * pageSize;
 
-const initialBooks = initialResult.data?.books || [];
-const initialTotalPages = initialResult.data?.totalPages || 1;
+let initialBooks: any[] = [];
+let totalBooks = 0;
+
+const where = searchParam ? { title: { contains: searchParam } } : undefined;
+
+try {
+    const [booksRaw, count] = await Promise.all([
+        prisma.book.findMany({
+            where,
+            include: { author: true },
+            skip,
+            take: pageSize,
+            orderBy: { id: 'desc' }
+        }),
+        prisma.book.count({ where })
+    ]);
+
+    totalBooks = count;
+    
+    initialBooks = booksRaw.map(b => ({
+        ...b,
+        price: Number(b.price),
+        imageUrl: b.imageUrl || null
+    }));
+
+} catch (error) {
+    console.error("Error SSR:", error);
+}
+
+let initialTotalPages = Math.ceil(totalBooks / pageSize);
 ---
 
 <Layout title={pageTitle}>
@@ -20,11 +51,24 @@ const initialTotalPages = initialResult.data?.totalPages || 1;
     <main class="bg-gray-50 min-h-screen">
         <div class="container mx-auto px-4 py-12">
             
+            <AdminBookModal client:only="react" />
+
             <div class="text-center mb-12">
                 <h1 class="text-4xl font-extrabold text-slate-900 mb-2">{pageTitle}</h1>
                 <p class="text-lg text-slate-600">
                     Explora nuestra colección de historias que te transportarán a mundos extraordinarios
                 </p>
+                
+                <div class="mt-6 flex justify-center">
+                    <button id="btn-add-book" class="flex items-center gap-2 bg-white text-slate-700 font-semibold py-2 px-5 rounded-full border border-slate-200 shadow-sm hover:shadow-md hover:border-teal-500 hover:text-teal-600 transition-all duration-300">
+                        <span class="bg-teal-50 text-teal-600 rounded-full w-6 h-6 flex items-center justify-center text-lg font-bold leading-none">+</span>
+                        <span>Registrar Libro</span>
+                    </button>
+                </div>
+                
+                <div id="loader" class="hidden mt-2 text-teal-600 font-semibold animate-pulse">
+                    ⏳ Actualizando...
+                </div>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
@@ -35,7 +79,8 @@ const initialTotalPages = initialResult.data?.totalPages || 1;
                             type="text"
                             id="search"
                             name="search"
-                            placeholder="Busca por título..."
+                            value={searchParam}
+                            placeholder="Busca por título o autor"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                     </div>
@@ -48,94 +93,157 @@ const initialTotalPages = initialResult.data?.totalPages || 1;
                         </select>
                     </div>
                     <div>
-                        <label for="sucursal" class="block text-sm font-medium text-gray-700 mb-1">Sucursales</label>
-                        <select id="sucursal" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <label for="subgenero" class="block text-sm font-medium text-gray-700 mb-1">Sucursales</label>
+                        <select id="subgenero" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
                             <option value="">Todas las sucursales</option>
                         </select>
                     </div>
                     <button type="submit" class="hidden">Buscar</button>
                 </form>
-                
-                <div id="loader" class="hidden text-center mt-4">
-                    <span class="text-teal-600 font-semibold animate-pulse">Buscando libros...</span>
+
+                <div class="mt-4 flex items-center gap-6 text-sm">
+                    <a href="#" class="font-semibold text-teal-600 border-b-2 border-teal-600 pb-1">Más vendidos</a>
+                    <a href="#" class="text-gray-500 hover:text-teal-600">Más nuevos</a>
+                    <a href="#" class="text-gray-500 hover:text-teal-600">De Oferta</a>
                 </div>
             </div>
 
-            <div id="books-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {initialBooks.map((book: any) => {
-                    const imagen = book.coverImage || book.imageSrc || "/logoColegio.jpg";
-                    const fullStars = Math.floor(book.rating || 0);
-                    const emptyStars = 5 - fullStars;
-                    
-                    return (
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
-                            <a href={`/books/${book.id}`} class="block overflow-hidden relative aspect-[2/3]">
-                                <img
-                                    src={imagen}
-                                    alt={book.title}
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            </a>
-                            <div class="p-4 flex-grow flex flex-col">
-                                <a href={`/books/${book.id}`} class="hover:text-teal-600 transition-colors block">
-                                    <h3 class="text-lg font-bold text-slate-900 mb-1 leading-tight line-clamp-2">{book.title}</h3>
+            <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 transition-opacity duration-200">
+                {initialBooks.length > 0 ? (
+                    initialBooks.map((book: any) => {
+                        const imagen = book.imageUrl || book.coverImage || "/logoColegio.jpg";
+                        const rating = book.raiting || book.rating || 4.8;
+                        const genre = book.genre || "General";
+                        const stock = book.stock || "En stock";
+                        const authorName = book.author ? `${book.author.name} ${book.author.lastName || ''}` : "Autor Desconocido";
+                        const fullStars = Math.floor(rating);
+                        const emptyStars = 5 - fullStars;
+
+                        return (
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden transition-shadow duration-300 hover:shadow-xl flex flex-col group">
+                                <a href={`/books/${book.id}`} class="block overflow-hidden relative aspect-[2/3]">
+                                    <img
+                                        src={imagen}
+                                        alt={`Portada de ${book.title}`}
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
                                 </a>
-                                <p class="text-sm text-slate-500 mb-2 font-medium">
-                                    {book.author ? `${book.author.name} ${book.author.lastName || ''}` : "Autor Desconocido"}
-                                </p>
-                                <div class="flex items-center mb-2 text-yellow-400 text-sm">
-                                    {Array(fullStars).fill(null).map(() => <span>★</span>)}
-                                    {Array(emptyStars).fill(null).map(() => <span class="text-gray-300">★</span>)}
-                                    <span class="text-xs text-gray-400 ml-2">({book.rating || 0})</span>
-                                </div>
-                                <div class="flex flex-wrap gap-2 mb-3">
-                                    <span class="text-xs font-semibold bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-                                        {book.genre || "General"}
-                                    </span>
-                                </div>
-                                <p class="text-sm text-gray-500 mb-4">
-                                    {book.stock || "En Stock"}
-                                </p>
-                                <div class="mt-auto flex justify-between items-center pt-3 border-t border-gray-100">
-                                    <span class="text-2xl font-bold text-slate-900">${Number(book.price || 19.99).toFixed(2)}</span>
-                                    <button class="bg-teal-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-teal-600 transition-colors">
-                                        Agregar
-                                    </button>
+                                <div class="p-4 flex-grow flex flex-col">
+                                    <a href={`/books/${book.id}`} class="hover:text-teal-600 transition-colors block">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate">
+                                            {book.title}
+                                        </h3>
+                                    </a>
+                                    <p class="text-sm text-slate-500 mb-2 font-medium">
+                                        {authorName}
+                                    </p>
+                                    <div class="flex items-center mb-1 text-yellow-400 text-sm">
+                                        {Array(fullStars).fill(null).map(() => <span>★</span>)}
+                                        {Array(emptyStars).fill(null).map(() => <span class="text-gray-300">★</span>)}
+                                        <span class="text-xs text-gray-500 ml-2">({Number(rating).toFixed(1)})</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        <span class="text-xs font-medium bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full">
+                                            {genre}
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mb-4">
+                                        {stock}
+                                    </p>
+                                    
+                                    <div class="mt-auto flex justify-between items-center mb-3">
+                                        <span class="text-2xl font-bold text-gray-900">
+                                            ${Number(book.price || 0).toFixed(2)}
+                                        </span>
+                                        <a href={`/books/${book.id}`} class="bg-teal-600 text-white font-semibold px-5 py-2 rounded-lg transition-colors duration-200 hover:bg-teal-700 focus:outline-none">
+                                            Ver
+                                        </a>
+                                    </div>
+
+                                    <div class="border-t border-gray-100 pt-3">
+                                        <BookAdminControls client:visible book={book} />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })
+                ) : (
+                    <div class="col-span-full text-center py-20 bg-white rounded-lg shadow-sm">
+                        <p class="text-gray-500 text-lg">No se encontraron libros disponibles.</p>
+                    </div>
+                )}
             </div>
 
-            <nav id="pagination" class="flex justify-center mt-12 gap-2" data-total-pages={initialTotalPages}>
-                <button id="btn-prev" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Anterior</button>
-                <span id="page-indicator" class="px-4 py-2 text-gray-600 bg-white border rounded-lg">Página 1 de {initialTotalPages}</span>
-                <button id="btn-next" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Siguiente</button>
+            <nav id="pagination-nav" class={`flex justify-center mt-12 ${initialTotalPages <= 1 ? 'hidden' : ''}`}>
+                <ul id="pagination-list" class="flex items-center gap-2">
+                    <li>
+                        <button 
+                            data-page={currentPage - 1} 
+                            disabled={currentPage <= 1}
+                            class={`pagination-btn inline-flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                            Anterior
+                        </button>
+                    </li>
+
+                    {Array.from({ length: initialTotalPages }, (_, i) => i + 1).map((pageNumber) => (
+                        <li>
+                            <button
+                                data-page={pageNumber}
+                                class={`pagination-btn inline-flex items-center justify-center px-4 h-10 rounded-lg ${
+                                    pageNumber === currentPage
+                                        ? "text-white bg-teal-500 border border-teal-500 hover:bg-teal-600"
+                                        : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 hover:text-teal-600"
+                                }`}
+                            >
+                                {pageNumber}
+                            </button>
+                        </li>
+                    ))}
+
+                    <li>
+                        <button 
+                            data-page={currentPage + 1}
+                            disabled={currentPage >= initialTotalPages}
+                            class={`pagination-btn inline-flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed`}
+                        >
+                            Siguiente
+                        </button>
+                    </li>
+                </ul>
             </nav>
 
         </div>
     </main>
     <Footer />
 
-    <template id="card-template">
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
+    <template id="book-template">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all flex flex-col group">
             <a href="" class="link-img block overflow-hidden relative aspect-[2/3]">
-                <img src="" alt="" class="card-img w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img src="" alt="" class="book-img w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
             </a>
             <div class="p-4 flex-grow flex flex-col">
                 <a href="" class="link-title hover:text-teal-600 transition-colors block">
-                    <h3 class="card-title text-lg font-bold text-slate-900 mb-1 leading-tight line-clamp-2"></h3>
+                    <h3 class="book-title text-lg font-semibold text-gray-900 mb-1 truncate"></h3>
                 </a>
-                <p class="card-author text-sm text-slate-500 mb-2 font-medium"></p>
-                <div class="card-rating flex items-center mb-2 text-yellow-400 text-sm"></div>
-                <div class="flex flex-wrap gap-2 mb-3">
-                    <span class="card-genre text-xs font-semibold bg-gray-100 text-gray-700 px-2 py-1 rounded-full"></span>
+                <p class="book-author text-sm text-slate-500 mb-2 font-medium"></p>
+                <div class="book-rating flex items-center mb-1 text-yellow-400 text-sm"></div>
+                <div class="flex flex-wrap gap-2 mb-2">
+                    <span class="book-genre text-xs font-medium bg-gray-100 text-gray-700 px-2.5 py-0.5 rounded-full"></span>
                 </div>
-                <p class="card-stock text-sm text-gray-500 mb-4"></p>
-                <div class="mt-auto flex justify-between items-center pt-3 border-t border-gray-100">
-                    <span class="card-price text-2xl font-bold text-slate-900"></span>
-                    <button class="bg-teal-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-teal-600 transition-colors">Agregar</button>
+                <p class="book-stock text-sm text-gray-500 mb-4"></p>
+                <div class="mt-auto flex justify-between items-center mb-3">
+                    <span class="book-price text-2xl font-bold text-gray-900"></span>
+                    <a href="" class="link-btn bg-teal-600 text-white px-5 py-2 rounded-lg hover:bg-teal-700 transition-colors font-semibold">Ver</a>
+                </div>
+                
+                <div class="mt-auto pt-3 border-t border-gray-100 flex items-center gap-2">
+                    <button class="btn-edit flex-1 flex items-center justify-center gap-1 bg-blue-50 text-blue-600 py-2 rounded-lg hover:bg-blue-100 text-sm font-medium transition-colors">
+                        <span class="text-lg">✏️</span> <span class="text-sm">Editar</span>
+                    </button>
+                    <button class="btn-delete p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors" title="Eliminar">
+                        <span class="text-lg">🗑️</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -146,115 +254,216 @@ const initialTotalPages = initialResult.data?.totalPages || 1;
     import { actions } from 'astro:actions';
 
     let currentPage = 1;
-    let totalPages = Number(document.getElementById('pagination')?.dataset.totalPages) || 1;
-    
+    let currentSearch = '';
+
     const form = document.getElementById('filter-form');
     const searchInput = document.getElementById('search') as HTMLInputElement;
-    const container = document.getElementById('books-container');
+    const container = document.getElementById('books-grid');
     const loader = document.getElementById('loader');
-    const btnPrev = document.getElementById('btn-prev') as HTMLButtonElement;
-    const btnNext = document.getElementById('btn-next') as HTMLButtonElement;
-    const pageIndicator = document.getElementById('page-indicator');
-    const template = document.getElementById('card-template') as HTMLTemplateElement;
+    const paginationNav = document.getElementById('pagination-nav');
+    const paginationList = document.getElementById('pagination-list');
+    const template = document.getElementById('book-template') as HTMLTemplateElement;
 
-    async function fetchBooks(page: number) {
-        loader?.classList.remove('hidden');
-        container!.style.opacity = '0.5';
-        
-        const { data, error } = await actions.getBooks({
-            page: page,
-            pageSize: 8,
-            search: searchInput.value || undefined
-        });
+    document.getElementById('btn-add-book')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('open-book-create'));
+    });
 
-        loader?.classList.add('hidden');
-        container!.style.opacity = '1';
+    addPaginationEvents();
 
-        if (error) {
-            console.error(error);
-            alert('Error al cargar libros');
-            return;
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            fetchBooks(1, searchInput.value);
+        } else {
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = Number(urlParams.get('page')) || 1;
+            const search = urlParams.get('search') || '';
+            if (page !== 1 || search !== '') {
+                 fetchBooks(page, search);
+            }
         }
+    });
 
-        currentPage = data.currentPage;
-        totalPages = data.totalPages;
-        renderBooks(data.books);
-        updatePagination();
+    async function fetchBooks(page: number, search: string) {
+        if(!container || !loader) return;
+
+        loader.classList.remove('hidden');
+        container.style.opacity = '0.5';
+
+        try {
+            const params = new URLSearchParams();
+            params.append('page', page.toString());
+            params.append('pageSize', '8');
+            if (search) params.append('search', search);
+            
+            const newUrl = `${window.location.pathname}?${params.toString()}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+
+            const res = await fetch(`/api/books?${params.toString()}`);
+            if(!res.ok) throw new Error('Error API');
+            
+            const data = await res.json();
+
+            currentPage = data.currentPage;
+            currentSearch = search;
+            renderBooks(data.books);
+            renderPagination(data.totalPages, data.currentPage);
+
+        } catch (e) {
+            console.error(e);
+            alert('Error al actualizar el catálogo.');
+        } finally {
+            loader.classList.add('hidden');
+            container.style.opacity = '1';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }
 
     function renderBooks(books: any[]) {
-        container!.innerHTML = '';
-
+        container!.innerHTML = ''; 
         if (books.length === 0) {
-            container!.innerHTML = '<div class="col-span-full text-center py-10 text-gray-500">No se encontraron resultados.</div>';
+            container!.innerHTML = '<div class="col-span-full text-center py-20 bg-white rounded-lg shadow-sm"><p class="text-gray-500 text-lg">No se encontraron libros disponibles.</p></div>';
             return;
         }
 
         books.forEach(book => {
             const clone = template.content.cloneNode(true) as DocumentFragment;
             
-            const img = clone.querySelector('.card-img') as HTMLImageElement;
-            img.src = book.coverImage || book.imageSrc || "/logoColegio.jpg";
-            img.alt = book.title;
+            const img = clone.querySelector('.book-img') as HTMLImageElement;
+            img.src = book.imageUrl || book.coverImage || "/logoColegio.jpg";
+            img.onerror = () => { img.src = 'https://placehold.co/400x600?text=Sin+Portada'; };
             
-            const linkImg = clone.querySelector('.link-img') as HTMLAnchorElement;
-            const linkTitle = clone.querySelector('.link-title') as HTMLAnchorElement;
             const url = `/books/${book.id}`;
-            linkImg.href = url;
-            linkTitle.href = url;
+            (clone.querySelector('.link-img') as HTMLAnchorElement).href = url;
+            (clone.querySelector('.link-title') as HTMLAnchorElement).href = url;
+            (clone.querySelector('.link-btn') as HTMLAnchorElement).href = url;
 
-            clone.querySelector('.card-title')!.textContent = book.title;
-            
+            clone.querySelector('.book-title')!.textContent = book.title;
             const author = book.author ? `${book.author.name} ${book.author.lastName || ''}` : "Autor Desconocido";
-            clone.querySelector('.card-author')!.textContent = author;
+            clone.querySelector('.book-author')!.textContent = author;
+            clone.querySelector('.book-price')!.textContent = `$${Number(book.price).toFixed(2)}`;
 
-            const rating = book.rating || 0;
+            const rating = book.raiting || 0; 
             const full = Math.floor(rating);
             const empty = 5 - full;
-            let starsHtml = '';
-            for(let i=0; i<full; i++) starsHtml += '<span>★</span>';
-            for(let i=0; i<empty; i++) starsHtml += '<span class="text-gray-300">★</span>';
-            starsHtml += `<span class="text-xs text-gray-400 ml-2">(${rating})</span>`;
-            clone.querySelector('.card-rating')!.innerHTML = starsHtml;
+            let stars = '';
+            for(let i=0; i<full; i++) stars += '<span class="text-yellow-400">★</span>';
+            for(let i=0; i<empty; i++) stars += '<span class="text-gray-300">★</span>';
+            clone.querySelector('.book-rating')!.innerHTML = `${stars} <span class="text-xs text-gray-400 ml-2">(${Number(rating).toFixed(1)})</span>`;
 
-            clone.querySelector('.card-genre')!.textContent = book.genre || "General";
-            clone.querySelector('.card-stock')!.textContent = book.stock || "En Stock";
+            clone.querySelector('.book-genre')!.textContent = book.genre || "General";
+            clone.querySelector('.book-stock')!.textContent = book.stock || "En Stock";
+
+            const editBtn = clone.querySelector('.btn-edit') as HTMLElement;
+            editBtn.dataset.book = JSON.stringify(book);
             
-            const price = Number(book.price || 19.99).toFixed(2);
-            clone.querySelector('.card-price')!.textContent = `$${price}`;
+            const deleteBtn = clone.querySelector('.btn-delete') as HTMLElement;
+            deleteBtn.dataset.id = book.id;
 
             container?.appendChild(clone);
         });
+
+        attachCardEvents();
     }
 
-    function updatePagination() {
-        if(pageIndicator) pageIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
-        if(btnPrev) btnPrev.disabled = currentPage <= 1;
-        if(btnNext) btnNext.disabled = currentPage >= totalPages;
+    function renderPagination(total: number, current: number) {
+        if (!paginationList || !paginationNav) return;
+        paginationList.innerHTML = '';
+
+        if (total <= 1) {
+            paginationNav.classList.add('hidden');
+            return;
+        }
+        paginationNav.classList.remove('hidden');
+
+        const prevLi = document.createElement('li');
+        prevLi.innerHTML = `
+            <button 
+                class="pagination-btn inline-flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                ${current <= 1 ? 'disabled' : ''}
+                data-page="${current - 1}"
+            >
+                Anterior
+            </button>`;
+        paginationList.appendChild(prevLi);
+
+        for (let i = 1; i <= total; i++) {
+             const li = document.createElement('li');
+             const isActive = i === current;
+             const activeClass = "text-white bg-teal-500 border border-teal-500 hover:bg-teal-600";
+             const normalClass = "text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 hover:text-teal-600";
+             
+             li.innerHTML = `
+                <button 
+                    class="pagination-btn inline-flex items-center justify-center px-4 h-10 rounded-lg ${isActive ? activeClass : normalClass}"
+                    data-page="${i}"
+                >
+                    ${i}
+                </button>`;
+             paginationList.appendChild(li);
+        }
+
+        const nextLi = document.createElement('li');
+        nextLi.innerHTML = `
+            <button 
+                class="pagination-btn inline-flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                ${current >= total ? 'disabled' : ''}
+                data-page="${current + 1}"
+            >
+                Siguiente
+            </button>`;
+        paginationList.appendChild(nextLi);
+
+        addPaginationEvents();
     }
 
+    function addPaginationEvents() {
+        document.querySelectorAll('.pagination-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const page = Number((e.currentTarget as HTMLButtonElement).dataset.page);
+                if (page && page !== currentPage) {
+                    fetchBooks(page, currentSearch);
+                }
+            });
+        });
+    }
+
+    function attachCardEvents() {
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                try {
+                    const rawData = (e.currentTarget as HTMLElement).dataset.book || '{}';
+                    const bookData = JSON.parse(rawData);
+                    window.dispatchEvent(new CustomEvent('open-book-edit', { detail: bookData }));
+                } catch (err) { console.error(err); }
+            });
+        });
+
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = Number((e.currentTarget as HTMLElement).dataset.id);
+                if(confirm('¿Seguro que quieres eliminar este libro?')) {
+                    const { error } = await actions.deleteBook({ id });
+                    if(error) alert(error.message);
+                    else {
+                        alert('Libro eliminado');
+                        fetchBooks(currentPage, currentSearch);
+                    }
+                }
+            });
+        });
+    }
     form?.addEventListener('submit', (e) => {
         e.preventDefault();
-        currentPage = 1;
-        fetchBooks(1);
+        currentSearch = searchInput.value;
+        fetchBooks(1, currentSearch);
     });
 
     let timeout: any;
     searchInput?.addEventListener('input', () => {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            currentPage = 1;
-            fetchBooks(1);
-        }, 200);
+            currentSearch = searchInput.value;
+            fetchBooks(1, currentSearch);
+        }, 500);
     });
-
-    btnPrev?.addEventListener('click', () => {
-        if(currentPage > 1) fetchBooks(currentPage - 1);
-    });
-
-    btnNext?.addEventListener('click', () => {
-        if(currentPage < totalPages) fetchBooks(currentPage + 1);
-    });
-
-    updatePagination();
 </script>

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import prisma from '../../../lib/prisma'; // Ajusta la ruta a tu prisma client
+import prisma from '../../../lib/prisma';
 
 export const prerender = false;
 
