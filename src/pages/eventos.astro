@@ -17,6 +17,10 @@ interface EventoProps {
     location: string;
     price: number;
     image: string;
+    category?: string;
+    duration?: string;
+    buttonText?: string;
+    registrationUrl?: string;
 }
 
 let eventos: EventoProps[] = [];
@@ -85,12 +89,24 @@ try {
             location: item.location || "Ubicación por confirmar",
             price: item.price !== undefined ? Number(item.price) : 0,
             image: imageUrlFinal,
+            category: item.category || "Evento",
+            duration: item.duration,
+            buttonText: item.buttonText,
+            registrationUrl: item.registrationUrl,
         };
     });
 } catch (error) {
     console.error("Error al cargar eventos de Strapi:", error);
     eventos = [];
 }
+
+const categories = [
+    "Todos",
+    "Firma de Libros",
+    "Club de Lectura",
+    "Taller",
+    "Infantil",
+];
 ---
 
 <Layout title="Eventos | El Colegio Invisible">
@@ -107,40 +123,108 @@ try {
             </p>
         </section>
 
-        <!-- Events List -->
-        <section class="max-w-6xl mx-auto px-4 pb-20 pt-12 space-y-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Filter Section -->
+        <div class="flex justify-center -mt-8 mb-12 relative z-10 px-4">
+            <div
+                class="bg-white p-2 rounded-full shadow-lg flex flex-wrap justify-center gap-2"
+            >
                 {
-                    eventos.length > 0 ? (
-                        eventos.map((evento) => (
-                            <div class="event-item">
-                                <EventCard
-                                    id={evento.id}
-                                    title={evento.title}
-                                    description={evento.description}
-                                    date={evento.date}
-                                    location={evento.location}
-                                    price={evento.price}
-                                    image={evento.image}
-                                />
-                            </div>
-                        ))
-                    ) : (
-                        <div class="col-span-full">
-                            <div id="no-events" class="text-center py-12">
-                                <p class="text-gray-500 text-lg">
-                                    No hay eventos programados próximamente.
-                                </p>
-                                <p class="text-sm text-gray-400 mt-2">
-                                    Mantente atento a nuestras redes sociales
-                                    para nuevas actualizaciones.
-                                </p>
-                            </div>
-                        </div>
-                    )
+                    categories.map((cat) => (
+                        <button
+                            class="px-6 py-2 rounded-full text-sm font-medium transition-colors hover:bg-teal-50 hover:text-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 category-filter"
+                            data-category={cat}
+                        >
+                            {cat}
+                        </button>
+                    ))
                 }
+            </div>
+        </div>
+
+        <!-- Events List -->
+        <section class="max-w-6xl mx-auto px-4 pb-20 space-y-8">
+            {
+                eventos.length > 0 ? (
+                    eventos.map((evento) => (
+                        <div class="event-item" data-category={evento.category}>
+                            <EventCard
+                                title={evento.title}
+                                description={evento.description}
+                                date={evento.date}
+                                location={evento.location}
+                                price={evento.price}
+                                image={evento.image}
+                                category={evento.category}
+                                duration={evento.duration}
+                                buttonText={evento.buttonText}
+                                registrationUrl={evento.registrationUrl}
+                            />
+                        </div>
+                    ))
+                ) : (
+                    <div id="no-events-api" class="text-center py-12">
+                        <p class="text-gray-500 text-lg">
+                            No hay eventos programados próximamente.
+                        </p>
+                    </div>
+                )
+            }
+
+            <div id="no-events-filter" class="hidden text-center py-12">
+                <p class="text-gray-500 text-lg">
+                    No hay eventos en esta categoría por el momento.
+                </p>
             </div>
         </section>
     </main>
     <Footer />
 </Layout>
+
+<script>
+    const filterButtons = document.querySelectorAll(".category-filter");
+    const eventItems = document.querySelectorAll(".event-item");
+    const noEventsMsg = document.getElementById("no-events-filter");
+
+    if (filterButtons.length > 0) {
+        // Set initial active state
+        filterButtons[0].classList.add("bg-teal-500", "text-white");
+        filterButtons[0].classList.remove(
+            "hover:bg-teal-50",
+            "hover:text-teal-700",
+        );
+
+        filterButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                // Update active state
+                filterButtons.forEach((b) => {
+                    b.classList.remove("bg-teal-500", "text-white");
+                    b.classList.add("hover:bg-teal-50", "hover:text-teal-700");
+                });
+                btn.classList.add("bg-teal-500", "text-white");
+                btn.classList.remove("hover:bg-teal-50", "hover:text-teal-700");
+
+                const selectedCategory = (btn as HTMLElement).dataset.category;
+                let visibleCount = 0;
+
+                eventItems.forEach((item) => {
+                    const itemCategory = (item as HTMLElement).dataset.category;
+                    if (
+                        selectedCategory === "Todos" ||
+                        itemCategory === selectedCategory
+                    ) {
+                        (item as HTMLElement).style.display = "block";
+                        visibleCount++;
+                    } else {
+                        (item as HTMLElement).style.display = "none";
+                    }
+                });
+
+                if (visibleCount === 0) {
+                    noEventsMsg?.classList.remove("hidden");
+                } else {
+                    noEventsMsg?.classList.add("hidden");
+                }
+            });
+        });
+    }
+</script>
