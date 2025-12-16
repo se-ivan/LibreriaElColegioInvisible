@@ -3,6 +3,16 @@
 declare namespace App {
   interface Locals {
     session: Promise<import("@auth/core/types").Session | null>;
+
+    action?: {
+        success: boolean;
+        data?: unknown;
+        error?: {
+            message: string;
+            code?: string;
+            issues?: any[];
+        };
+    };
   }
 }
 
