@@ -1,13 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 
 
-vi.mock("../lib/prisma", () => ({
-  prisma: {
+vi.mock("../pages/lib/prisma", () => ({
+  default: {
     book: {
       findFirst: vi.fn().mockResolvedValue({
         title: "Libro del mes",
         author: "Autor",
         description: "Descripción",
+        coverImage: "/cover.jpg",
       }),
     },
   },

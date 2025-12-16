@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatPrice, truncateText } from '../src/utils/bookHelpers';
+import { formatPrice, truncateText } from '../utils/bookHelpers';
 
 describe('Pruebas de Formato y Presentación', () => {
 

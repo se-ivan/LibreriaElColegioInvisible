@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateDiscount } from '../src/utils/bookHelpers';
+import { calculateDiscount } from '../utils/bookHelpers';
 
 describe('Pruebas de Cálculos Financieros', () => {
 
