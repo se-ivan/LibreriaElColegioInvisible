@@ -4,7 +4,6 @@ import NewsCard from '../components/NewsCard.astro';
 
 test("Renderiza el título, fecha y pre-título correctamente", async () => {
     const container = await AstroContainer.create();
-    
     // Renderizamos el componente con datos de prueba
     const result = await container.renderToString(NewsCard, {
         props: { 
@@ -16,7 +15,6 @@ test("Renderiza el título, fecha y pre-título correctamente", async () => {
         }
     });
 
-    // Verificamos que el texto aparezca en el HTML resultante
     expect(result).toContain("Gran Noticia");
     expect(result).toContain("Última hora");
     expect(result).toContain("10 de Octubre");
@@ -50,14 +48,12 @@ test("Muestra 'Sin imagen' cuando la propiedad image está vacía", async () => 
             title: "Noticia sin foto",
             pretitle: "",
             date: "Ayer",
-            image: "" // Simulamos que no hay imagen
+            image: "" 
         }
     });
 
-    // Verificamos que NO haya una etiqueta <img>
     expect(result).not.toContain('<img');
     
-    // Verificamos que aparezca el texto de fallback
     expect(result).toContain('Sin imagen');
 });
 
@@ -75,6 +71,5 @@ test("Genera el enlace (href) correcto basado en el ID", async () => {
         }
     });
 
-    // Verificamos que el enlace apunte a la ruta dinámica correcta
     expect(result).toContain(`href="/noticias/${testId}"`);
 });
