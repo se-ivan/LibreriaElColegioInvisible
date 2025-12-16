@@ -1,33 +1,43 @@
 ---
-const { title, pretitle, date, link, image, id } = Astro.props;
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+    title: string;
+    pretitle: string;
+    date: string;
+    image: string;
+    id: number; 
+}
+const { title, pretitle, date, image, id } = Astro.props;
 ---
 
 <div class="bg-[#002B5B] p-4 rounded-lg text-white flex flex-col gap-2 w-80 mx-auto">
     <div class="w-full h-40 rounded-lg overflow-hidden bg-gray-300">
-    {image ? (
-      <img
-        src={image}
-        alt={title}
-        class="w-full h-full object-cover"
-      />
-    ) : (
-      <div class="w-full h-full flex items-center justify-center text-gray-500 text-xs">
-        Sin imagen
-      </div>
+        {image ? (
+            <img
+              src={image}
+              alt={title}
+              class="w-full h-full object-cover"
+            />
+        ) : (
+            <div class="w-full h-full flex items-center justify-center text-gray-500 text-xs">
+              Sin imagen
+            </div>
+        )}
+    </div>
+
+    <h3 class="font-semibold text-sm">{title}</h3>
+
+    {pretitle && (
+        <p class="text-xs text-gray-200">{pretitle}</p>
     )}
-  </div>
 
-  <h3 class="font-semibold text-sm">{title}</h3>
+    <div class="flex justify-between text-xs text-gray-300 mt-auto">
+        <span>{date}</span>
+    </div>
 
-  {pretitle && (
-    <p class="text-xs text-gray-200">{pretitle}</p>
-  )}
-
-  <div class="flex justify-between text-xs text-gray-300 mt-auto">
-    <span>{date}</span>
-  </div>
-
-  <a href={`/noticias/${id}`} class="text-xs mt-2 text-cyan-400 hover:underline">
-    Leer Más →
-  </a>
+    <a href={`/noticias/${id}`} class="text-xs mt-2 text-cyan-400 hover:underline">
+        Leer Más →
+    </a>
 </div>

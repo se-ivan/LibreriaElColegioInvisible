@@ -1,0 +1,81 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { actions } from 'astro:actions'; 
+
+const createAuthorAction = actions.authorActions.create;
+
+let error: string | null = null;
+
+if (Astro.locals.action) {
+    const actionResult = await Astro.locals.action;
+    
+    if (actionResult.success) {
+        return Astro.redirect('/admin/autores');
+    } 
+    
+    error = actionResult.error?.message || "Ocurrió un error desconocido al crear el autor.";
+}
+---
+
+<AdminLayout title="Crear Nuevo Autor">
+    <div class="bg-white p-8 rounded-lg shadow-xl max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-slate-800 mb-6">Crear Nuevo Autor</h1>
+        
+        {error && (
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+                <p class="font-bold">Error de Creación:</p>
+                <p class="text-sm">{error}</p>
+            </div>
+        )}
+
+        <form method="POST" action={createAuthorAction} enctype="multipart/form-data" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
+                    <input type="text" name="name" id="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+                </div>
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-gray-700">Apellido</label>
+                    <input type="text" name="lastName" id="lastName" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="birthdate" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+                    <input type="date" name="birthdate" id="birthdate" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+                </div>
+                <div>
+                    <label for="nationality" class="block text-sm font-medium text-gray-700">Nacionalidad (Opcional)</label>
+                    <input type="text" name="nationality" id="nationality" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="genre" class="block text-sm font-medium text-gray-700">Género (Opcional)</label>
+                    <input type="text" name="genre" id="genre" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="Ej: Ficción" />
+                </div>
+                
+                <div>
+                    <label for="imageFile" class="block text-sm font-medium text-gray-700">Imagen de Perfil (Opcional)</label>
+                    <input type="file" name="imageFile" id="imageFile" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                </div>
+            </div>
+
+            <div>
+                <label for="biography" class="block text-sm font-medium text-gray-700">Biografía</label>
+                <textarea name="biography" id="biography" rows={4} required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"></textarea>
+            </div>
+
+            <div class="flex justify-end space-x-3 pt-4">
+                <a href="/admin/autores" class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition shadow">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition shadow">
+                    Crear Autor
+                </button>
+            </div>
+        </form>
+    </div>
+</AdminLayout>
