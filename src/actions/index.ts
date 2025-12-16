@@ -1,20 +1,17 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import prisma from '../lib/prisma';
-import logger from '../lib/logger'; 
 
 export const server = {
   
   getAuthors: defineAction({
     handler: async () => {
       try {
-        const authors = await prisma.author.findMany({
+        return await prisma.author.findMany({
           orderBy: { name: 'asc' },
           select: { id: true, name: true, lastName: true }
         });
-        return authors;
-      } catch (e: any) {
-        logger.error('Error al cargar autores', { error: e.message });
+      } catch (e) {
         throw new Error("Error al cargar autores");
       }
     }
@@ -31,8 +28,6 @@ export const server = {
       const where = input.search ? { OR: [{ title: { contains: input.search } }] } : undefined;
 
       try {
-        logger.info('Solicitud de catálogo', { page: input.page, search: input.search });
-
         const [booksRaw, total] = await Promise.all([
           prisma.book.findMany({
             skip,
@@ -56,8 +51,7 @@ export const server = {
           totalPages: Math.ceil(total / input.pageSize),
           currentPage: input.page
         };
-      } catch (e: any) {
-        logger.error('Error en getBooks', { error: e.message });
+      } catch (e) {
         throw new Error("Error de base de datos");
       }
     },
@@ -100,8 +94,7 @@ export const server = {
         }));
 
         return { book, relatedBooks };
-      } catch (error: any) {
-        logger.error('Error en getBook', { error: error.message, bookId: input.id });
+      } catch (error) {
         throw new Error("Error al cargar libro");
       }
     },
@@ -109,38 +102,23 @@ export const server = {
 
   addComment: defineAction({
     input: z.object({
-      bookId: z.number(),
-      userId: z.string(),
-      title: z.string().min(3), 
-      description: z.string().min(5), 
+      bookId: z.number(), userId: z.string(), title: z.string().min(3), description: z.string().min(5), 
     }),
     handler: async (input) => {
       try {
-        const existing = await prisma.comment.findFirst({
-            where: {
-                bookId: input.bookId,
-                userId: input.userId
-            }
-        });
+        const existing = await prisma.comment.findFirst({ where: { bookId: input.bookId, userId: input.userId } });
+        if (existing) throw new Error("Ya comentaste.");
 
-        if (existing) {
-            throw new Error("Ya has publicado una reseña para este libro.");
-        }
-        
-        const newComment = await prisma.comment.create({
-          data: { 
+        const dataToSave = {
             title: input.title, 
             description: input.description, 
             bookId: input.bookId, 
             userId: input.userId, 
             like: 0 
-          },
-        });
+        } as any;
 
-        logger.info('Nuevo comentario creado', { bookId: input.bookId });
-        return newComment;
+        return await prisma.comment.create({ data: dataToSave });
       } catch (error: any) {
-        logger.error('Error en addComment', { error: error.message });
         throw new Error(error.message);
       }
     },
@@ -148,25 +126,16 @@ export const server = {
 
   createBook: defineAction({
     input: z.object({
-      title: z.string().min(1),
-      isbn: z.string().min(1),
-      price: z.number().min(0),
-      authorId: z.number().min(1),
-      editorial: z.string().optional(),
-      publicationYear: z.number().optional(),
-      description: z.string().optional(),
-      imageUrl: z.string().optional(),    
+      title: z.string().min(1), isbn: z.string().min(1), price: z.number().min(0), authorId: z.number().min(1),
+      editorial: z.string().optional(), publicationYear: z.number().optional(),
+      description: z.string().optional(), imageUrl: z.string().optional(),    
     }),
     handler: async (input) => {
       try {
-        const authorExists = await prisma.author.findUnique({
-            where: { id: input.authorId }
-        });
-
+        const authorExists = await prisma.author.findUnique({ where: { id: input.authorId } });
         if (!authorExists) throw new Error("Autor no existe");
 
-        const newBook = await prisma.book.create({
-          data: {
+        const dataToCreate = {
             title: input.title,
             isbn: input.isbn,
             price: input.price,
@@ -175,15 +144,13 @@ export const server = {
             publicationYear: input.publicationYear || 2024,
             description: input.description || null,
             imageUrl: input.imageUrl || null,
-          },
-        });
+        } as any;
+
+        const newBook = await prisma.book.create({ data: dataToCreate });
         
         const bookAny = newBook as any;
-        logger.info('Libro creado', { title: input.title, isbn: input.isbn });
-        
         return { ...bookAny, price: Number(bookAny.price) };
       } catch (error: any) {
-        logger.error('Error creando libro', { error: error.message });
         if (error.code === 'P2002') throw new Error("ISBN duplicado.");
         throw new Error(error.message);
       }
@@ -193,37 +160,31 @@ export const server = {
   updateBook: defineAction({
     input: z.object({
       id: z.number(), 
-      title: z.string().min(1),
-      isbn: z.string().min(1),
-      price: z.number(),
-      authorId: z.number().min(1),
-      editorial: z.string().optional(),
-      publicationYear: z.number().optional(),
-      description: z.string().optional(),
-      imageUrl: z.string().optional(),
+      title: z.string().min(1), isbn: z.string().min(1), price: z.number(), authorId: z.number(),
+      editorial: z.string().optional(), publicationYear: z.number().optional(),
+      description: z.string().optional(), imageUrl: z.string().optional(),
     }),
     handler: async (input) => {
       try {
+        const dataToUpdate = {
+            title: input.title, 
+            isbn: input.isbn, 
+            price: input.price, 
+            authorId: input.authorId,
+            editorial: input.editorial, 
+            publicationYear: input.publicationYear,
+            description: input.description, 
+            imageUrl: input.imageUrl,
+        } as any;
+
         const updatedBook = await prisma.book.update({
           where: { id: input.id },
-          data: {
-            title: input.title,
-            isbn: input.isbn,
-            price: input.price,
-            authorId: input.authorId,
-            editorial: input.editorial,
-            publicationYear: input.publicationYear,
-            description: input.description,
-            imageUrl: input.imageUrl,
-          },
+          data: dataToUpdate,
         });
         
         const bookAny = updatedBook as any;
-        logger.info('Libro actualizado', { id: input.id });
-        
         return { ...bookAny, price: Number(bookAny.price) };
-      } catch (error: any) {
-        logger.error('Error actualizando libro', { error: error.message });
+      } catch (error) {
         throw new Error("Error al actualizar libro.");
       }
     },
@@ -235,13 +196,8 @@ export const server = {
       try {
         await prisma.comment.deleteMany({ where: { bookId: input.id } });
         await prisma.book.delete({ where: { id: input.id } });
-        
-        logger.info('Libro eliminado', { id: input.id });
         return { success: true };
-      } catch (error: any) {
-        logger.error('Error eliminando libro', { error: error.message });
-        throw new Error("No se pudo eliminar.");
-      }
+      } catch (error) { throw new Error("No se pudo eliminar."); }
     },
   }),
 };
