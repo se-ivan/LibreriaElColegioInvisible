@@ -2,231 +2,157 @@
 import "../styles/global.css";
 ---
 
-<header
-    class="sticky z-50 top-0 left-0 h-16 w-full flex flex-row items-center justify-between bg-[#00305d] text-white font-medium text-sm px-4 lg:px-25 relative"
->
-    <div class="flex flex-row items-center justify-center gap-4 z-10">
-        <img src="/logoHeader.svg" alt="Logo" class="h-12 w-12" />
-        <span class="text-xl font-semibold">El Colegio Invisible</span>
-    </div>
+<header class="sticky z-50 top-0 left-0 w-full bg-[#00305d] text-white shadow-md">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-row items-center justify-between h-16 gap-4">
+      
+      <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.location.href='/'">
+        <img src="/logoHeader.svg" alt="Logo" class="h-10 w-10 md:h-12 md:w-12" />
+        <span class="text-lg md:text-xl font-semibold truncate hidden sm:block">
+          El Colegio Invisible
+        </span>
+      </div>
 
-    <!-- Desktop Navigation -->
-    <nav class="hidden lg:block relative">
-        <ul
-            class="flex flex-row justify-center items-center gap-2 relative z-10"
-            id="nav-list"
-        >
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/" class="block w-full h-full">Autores</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/BookList" class="block w-full h-full">Libros</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/" class="block w-full h-full">Libros del Mes</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/noticias" class="block w-full h-full">Noticias</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/Services" class="block w-full h-full">Servicios</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/eventos" class="block w-full h-full">Eventos</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/donaciones" class="block w-full h-full">Donaciones</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/" class="block w-full h-full">Colaboradores</a>
-            </li>
-            <li
-                class="nav-item relative px-4 py-2 rounded-md hover:bg-white/10 transition-colors duration-300 cursor-pointer"
-            >
-                <a href="/" class="block w-full h-full">Contacto</a>
-            </li>
+      <nav class="hidden lg:block">
+        <ul class="flex space-x-6 text-sm font-medium">
+          <li class="hover:text-sky-300 transition-colors"><a href="/autores">Autores</a></li>
+          <li class="hover:text-sky-300 transition-colors"><a href="/BookList">Libros</a></li>
+          <li class="hover:text-sky-300 transition-colors"><a href="/libroDelMes">Libros del Mes</a></li>
+          <li class="hover:text-sky-300 transition-colors"><a href="/noticias">Noticias</a></li>
+          <li class="hover:text-sky-300 transition-colors"><a href="/Services">Servicios</a></li>
+          <li class="hover:text-sky-300 transition-colors"><a href="/donaciones">Donaciones</a></li>
+          <li class="hover:text-sky-300 transition-colors"><a href="/colaboradores">Colaboradores</a></li>
         </ul>
-        <!-- Sliding Underline -->
-        <div
-            id="nav-indicator"
-            class="absolute bottom-0 h-1 bg-white/80 rounded-full transition-all duration-300 ease-out opacity-0 pointer-events-none"
-        >
-        </div>
-    </nav>
+      </nav>
 
-    <div class="hidden lg:block z-10">
+      <div class="relative hidden sm:block w-64 group">
         <input
-            class="rounded-md h-9 w-60 border-2 border-[#C6DBEA] bg-white text-[#7C7C7C] px-2 focus:outline-none focus:border-white transition-colors duration-300"
-            placeholder="Buscar..."
-            type="text"
+          id="search-input-desktop"
+          class="w-full rounded-md h-9 border-2 border-[#C6DBEA] bg-white text-[#00305d] px-3 pr-8 focus:outline-none focus:border-sky-500 transition-colors placeholder-gray-400 text-sm"
+          placeholder="Buscar libro..."
+          type="text"
+          autocomplete="off"
         />
-    </div>
-
-    <!-- Mobile Menu Button -->
-    <button id="menu-toggle" class="lg:hidden p-2 focus:outline-none z-10">
-        <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-2 top-2 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-    </button>
 
-    <!-- Mobile Menu -->
-    <div
-        id="mobile-menu"
-        class="absolute top-16 left-0 w-full bg-[#00305d] flex flex-col items-center gap-4 lg:hidden shadow-lg overflow-hidden max-h-0 opacity-0 transition-all duration-500 ease-in-out"
-    >
-        <ul class="flex flex-col justify-center items-center gap-2 w-full py-4">
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/" class="block py-3 w-full">Autores</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/BookList" class="block py-3 w-full">Libros</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/" class="block py-3 w-full">Libros del Mes</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/noticias" class="block py-3 w-full">Noticias</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/Services" class="block py-3 w-full">Servicios</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/eventos" class="block py-3 w-full">Eventos</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/donaciones" class="block py-3 w-full">Donaciones</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/" class="block py-3 w-full">Colaboradores</a>
-            </li>
-            <li
-                class="w-full text-center hover:bg-white/10 transition-colors duration-300"
-            >
-                <a href="/" class="block py-3 w-full">Contacto</a>
-            </li>
-        </ul>
-        <div class="pb-6">
-            <input
-                class="rounded-md h-9 w-60 border-2 border-[#C6DBEA] bg-white text-[#7C7C7C] px-2 focus:outline-none focus:border-white transition-colors duration-300"
-                placeholder="Buscar..."
-                type="text"
-            />
-        </div>
+        <div id="search-results-desktop" class="absolute top-full mt-2 w-full bg-white rounded-md shadow-xl overflow-hidden hidden text-gray-800 z-50">
+            </div>
+      </div>
+
+      <div class="flex lg:hidden">
+        <button id="mobile-menu-btn" type="button" class="text-white hover:text-sky-300 focus:outline-none">
+          <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
     </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden lg:hidden bg-[#00284d] border-t border-sky-900 pb-4">
+    <div class="px-4 pt-4 pb-2 space-y-1">
+        <div class="relative mb-4 w-full">
+            <input
+              id="search-input-mobile"
+              class="w-full rounded-md h-10 border border-[#C6DBEA] bg-white text-[#00305d] px-3 focus:outline-none"
+              placeholder="Buscar..."
+              type="text"
+            />
+            <div id="search-results-mobile" class="absolute top-full mt-1 w-full bg-white rounded-md shadow-xl hidden text-gray-800 z-50"></div>
+        </div>
+        
+        <a href="/autores" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Autores</a>
+        <a href="/BookList" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Libros</a>
+        <a href="/libroDelMes" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Libros del Mes</a>
+        <a href="/noticias" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Noticias</a>
+        <a href="/Services" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Servicios</a>
+        <a href="/donaciones" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Donaciones</a>
+    </div>
+  </div>
 </header>
 
 <script>
-    // Mobile Menu Logic
-    const menuToggle = document.getElementById("menu-toggle");
-    const mobileMenu = document.getElementById("mobile-menu");
+  // 1. Lógica del Menú Hamburguesa
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
 
-    if (menuToggle && mobileMenu) {
-        menuToggle.addEventListener("click", () => {
-            if (mobileMenu.classList.contains("max-h-0")) {
-                // Open menu
-                mobileMenu.classList.remove("max-h-0", "opacity-0");
-                mobileMenu.classList.add("max-h-[600px]", "opacity-100");
-            } else {
-                // Close menu
-                mobileMenu.classList.remove("max-h-[600px]", "opacity-100");
-                mobileMenu.classList.add("max-h-0", "opacity-0");
-            }
-        });
-    }
+  if(btn && menu) {
+    btn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+  }
 
-    // Sliding Underline Logic
-    const navList = document.getElementById("nav-list");
-    const indicator = document.getElementById("nav-indicator");
-    const navItems = document.querySelectorAll(".nav-item");
-    const currentPath = window.location.pathname;
+  // 2. Lógica de Búsqueda (Función reutilizable)
+  function setupSearch(inputId: string, resultsId: string) {
+    const input = document.getElementById(inputId) as HTMLInputElement;
+    const resultsContainer = document.getElementById(resultsId);
 
-    function moveIndicator(element) {
-        if (!indicator || !element) return;
+    if (!input || !resultsContainer) return;
 
-        const width = element.offsetWidth;
-        const left = element.offsetLeft;
+    let debounceTimer: ReturnType<typeof setTimeout>;
 
-        indicator.style.width = `${width}px`;
-        indicator.style.transform = `translateX(${left}px)`;
-        indicator.style.opacity = "1";
-    }
+    input.addEventListener('input', (e) => {
+      const query = (e.target as HTMLInputElement).value.trim();
 
-    // Initialize position based on current URL
-    let activeItem = null;
+      // Limpiar timer anterior (Debounce)
+      clearTimeout(debounceTimer);
 
-    // Only set active item if we are NOT on the home page
-    if (currentPath !== "/") {
-        navItems.forEach((item) => {
-            const link = item.querySelector("a");
-            if (link && link.getAttribute("href") === currentPath) {
-                activeItem = item;
-                moveIndicator(item);
-            }
-        });
-    }
+      if (query.length < 2) {
+        resultsContainer.innerHTML = '';
+        resultsContainer.classList.add('hidden');
+        return;
+      }
 
-    navItems.forEach((item) => {
-        item.addEventListener("mouseenter", () => {
-            moveIndicator(item);
-        });
+      // Esperar 300ms antes de llamar a la API
+      debounceTimer = setTimeout(async () => {
+        try {
+          // Llamada a TU API
+          const res = await fetch(`/api/books?q=${encodeURIComponent(query)}`);
+          if (!res.ok) throw new Error('Error fetching');
+          const books = await res.json();
+
+          // Renderizar resultados
+          if (books.length > 0) {
+            resultsContainer.innerHTML = books.map((book: any) => `
+              <a href="/libros/${book.id}" class="block px-4 py-3 hover:bg-gray-100 border-b border-gray-100 last:border-0 transition-colors flex items-center gap-3">
+                 ${book.image ? `<img src="${book.image}" class="w-8 h-10 object-cover rounded" />` : ''}
+                 <div>
+                    <p class="font-bold text-sm text-[#00305d]">${book.title}</p>
+                    <p class="text-xs text-gray-500">${book.author ? book.author.name : 'Autor desconocido'}</p>
+                 </div>
+              </a>
+            `).join('');
+            
+            // Ver todos
+            resultsContainer.innerHTML += `
+                <a href="/BookList?search=${query}" class="block px-4 py-2 text-xs text-center text-blue-600 font-bold bg-gray-50 hover:bg-gray-100">
+                    Ver todos los resultados
+                </a>
+            `;
+            resultsContainer.classList.remove('hidden');
+          } else {
+            resultsContainer.innerHTML = `<div class="px-4 py-3 text-sm text-gray-500">No se encontraron libros.</div>`;
+            resultsContainer.classList.remove('hidden');
+          }
+
+        } catch (error) {
+          console.error(error);
+        }
+      }, 300);
     });
 
-    if (navList) {
-        navList.addEventListener("mouseleave", () => {
-            if (activeItem) {
-                moveIndicator(activeItem);
-            } else if (indicator) {
-                indicator.style.opacity = "0";
-            }
-        });
-    }
-
-    // Handle window resize to adjust indicator position
-    window.addEventListener("resize", () => {
-        if (activeItem) {
-            moveIndicator(activeItem);
+    // Cerrar resultados si se hace click fuera
+    document.addEventListener('click', (e) => {
+        if (!input.contains(e.target as Node) && !resultsContainer.contains(e.target as Node)) {
+            resultsContainer.classList.add('hidden');
         }
     });
+  }
+
+  // Inicializar búsqueda Desktop y Mobile
+  setupSearch('search-input-desktop', 'search-results-desktop');
+  setupSearch('search-input-mobile', 'search-results-mobile');
+
 </script>

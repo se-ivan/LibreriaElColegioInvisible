@@ -4,6 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import NewsCard from "../components/NewsCard.astro";
 import Footer from "../components/Footer.astro";
 
+const STRAPI_ADMIN_URL = import.meta.env.PUBLIC_STRAPI_ADMIN_NOTICIAS_URL;
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_API_URL;
 const COLLECTION_ENDPOINT = `${STRAPI_URL}/api/noticas`;
 
@@ -70,12 +71,28 @@ try {
     console.error("Error al cargar noticias de Strapi:", error);
     noticias = [];
 }
+
+const isAdmin = true;
 ---
 
 <Layout title="Noticias">
     <Header />
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <section class="py-6 text-white text-center w-full mb-15">
+        <section class="relativepy-6 text-white text-center w-full mb-15">
+            {isAdmin && (
+                <a 
+                    href={STRAPI_ADMIN_URL} 
+                    target="_blank"
+                    class="absolute right-0 top-0 mt-8 md:mt-0 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#01ada4] hover:bg-emerald-500 transition">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-7.57 7.07l5.656-5.656 2.828 2.828-5.656 5.656a1 1 0 01-.392.242l-2.735.684a.5.5 0 01-.626-.626l.684-2.735a1 1 0 01.242-.392z" />
+                    </svg>
+                    Editar Noticias (Strapi)
+                </a>
+            )}
+            
+            {/* Contenido del Encabezado */}
             <h1 class="text-5xl text-slate-900 font-bold">Noticias</h1>
             <p class="text-slate-600 mt-2">
                 Mantente al día con las últimas novedades.

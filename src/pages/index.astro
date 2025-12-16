@@ -37,51 +37,37 @@ const newsArticles = [
 
 <Layout title="El Colegio Invisible || Morelia">
     <Header />
-    <!-- Hero Section with Video -->
-    <section
-        class="relative h-screen  flex items-center justify-center overflow-hidden"
-    >
-        <!-- Video Background 
-        
-        <video
-            id="hero-video"
-            class="absolute inset-0 w-full h-full object-cover"
-            autoplay
-            muted
-            playsinline
-        >
-            <source src="/images/home/video-hero.mp4" type="video/mp4" />
-        </video>
-        -->
+    
+    <section class="relative min-h-[80svh] flex items-center justify-center overflow-hidden">
         <div
             id="hero-logo"
-            class="relative z-10 text-center opacity-100 transition-opacity duration-1000"
+            class="relative z-10 text-center opacity-100 transition-opacity duration-1000 p-4"
         >
             <img
                 src="/images/home/logo.png"
                 alt="El Colegio Invisible"
-                class="mx-auto mb-8 max-w-md w-full px-4"
+                class="mx-auto mb-8 max-w-[80%] md:max-w-md w-full"
             />
         </div>
     </section>
 
-    <section class="max-w-7xl px-4 py-20 mx-auto">
-        <div class="bg-white rounded-3xl p-8 md:p-12 shadow-lg">
-            <div class="flex justify-center gap-20 items-center">
-                <div class="text-center max-w-md">
-                    <h2 class="mb-6 font-bold text-6xl text-balance font-geist">
+    <section class="max-w-7xl px-4 py-12 md:py-20 mx-auto">
+        <div class="bg-white rounded-3xl p-6 md:p-12 shadow-lg">
+            <div class="flex flex-col xl:flex-row justify-center gap-10 xl:gap-20 items-center">
+                
+                <div class="text-center max-w-md w-full">
+                    <h2 class="mb-6 font-bold text-4xl md:text-6xl text-balance font-geist">
                         El<span
                             class="inline-block text-transparent
                                     bg-clip-text
                                     font-normal font-lobster
-                                    
                                     bg-[radial-gradient(ellipse_at_center,_#1E4B8F_0%,_#08A5AA_52%,_#356AAF_100%)]"
                         >
                             &nbsp;descubrimiento
                         </span> del Mes
                     </h2>
-                    <div class="max-w-4xl font-geist font-medium">
-                        <p class="text-texto-claro">
+                    <div class="max-w-4xl font-geist font-medium mx-auto">
+                        <p class="text-texto-claro text-sm md:text-base">
                             <span class="text-texto-resaltado"
                                 >"El Descubrimiento del Mes"</span
                             > es nuestra recomendación más apasionada. Es el libro
@@ -89,40 +75,42 @@ const newsArticles = [
                                 >detenernos, pensar y sentir</span
                             >. Ese que no pudimos dejar de comentar en nuestros
                             pasillos. Ese que queremos que llegue a tus manos
-                            porque cada casa
+                            porque cada casa merece
                             <span class="text-texto-resaltado"
                                 >una historia</span
-                            > que realmente merece ser descubierta.
+                            > que realmente vale ser descubierta.
                         </p>
                     </div>
                 </div>
-                <div class="flex justify-center items-center hover:scale-105 transition-transform duration-300">
-                    <div class="relative w-64">
+
+                <div class="flex flex-col md:flex-row items-center gap-8 hover:scale-105 transition-transform duration-300">
+                    <div class="relative w-full max-w-[200px] md:w-64 flex-shrink-0">
                         <img
                             src="/images/home/descubrimientodelmes.png"
                             alt="El reino de las sombras azules"
-                            class="rounded-2xl shadow-2xl transform "
+                            class="rounded-2xl shadow-2xl w-full h-auto"
                         />
                     </div>
-                    <div class="p-8 font-geist flex flex-col max-w-72 gap-4">
+                    
+                    <div class="p-4 md:p-8 font-geist flex flex-col max-w-sm gap-4 text-center md:text-left items-center md:items-start">
                         <span
-                            class="inline-block bg-blue-100 text-blue-800 text-xs w-24 text-center rounded-2xl"
+                            class="inline-block bg-blue-100 text-blue-800 text-xs py-1 px-3 rounded-2xl"
                         >
                             Fantasía Épica
                         </span>
-                        <h3 class="text-2xl font-bold text-texto-resaltado">
+                        <h3 class="text-xl md:text-2xl font-bold text-texto-resaltado">
                             El reino de las sombras azules
                         </h3>
                         <p class="text-sm text-texto-resaltado font-semibold">
                             por Edna Martínez
                         </p>
-                        <p class="text-gray-700 text-xs leading-relaxed">
+                        <p class="text-gray-700 text-xs leading-relaxed text-balance">
                             Una fábula aventura donde la magia y el destino se
                             entrelazan en un mundo de tonalidades azules.
                             Descubre por qué miles de lectores han quedado
                             cautivados por esta historia.
                         </p>
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between w-full">
                             <p class="text-xs text-gray-500">
                                 ¡1,234 lectores!
                             </p>
@@ -130,7 +118,7 @@ const newsArticles = [
                                 {
                                     [1, 2, 3, 4, 5].map(() => (
                                         <svg
-                                            class="w-5 h-5 text-amber-400"
+                                            class="w-4 h-4 md:w-5 md:h-5 text-amber-400"
                                             fill="currentColor"
                                             viewBox="0 0 20 20"
                                         >
@@ -141,7 +129,7 @@ const newsArticles = [
                             </div>
                         </div>
                         <button
-                            class="bg-blue-900 text-white px-8 py-2 rounded-lg font-semibold cursor-pointer hover:bg-blue-800 transition-colors"
+                            class="bg-blue-900 text-white px-8 py-2 rounded-lg font-semibold cursor-pointer hover:bg-blue-800 transition-colors w-full md:w-auto mt-2"
                         >
                             Ver detalles
                         </button>
@@ -151,10 +139,10 @@ const newsArticles = [
         </div>
     </section>
 
-    <section class="py-20 font-geist mx-auto max-w-7xl">
+    <section class="py-12 md:py-20 font-geist mx-auto max-w-7xl">
         <div class="max-w-7xl px-4 sm:px-6 lg:px-8 mb-8">
-            <div class="flex items-center justify-between">
-                <h2 class="text-5xl md:text-5xl font-bold">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <h2 class="text-4xl md:text-5xl font-bold text-center sm:text-left">
                     Últimas<span
                         class="inline-block text-transparent bg-clip-text font-normal font-lobster
                  bg-[radial-gradient(ellipse_at_center,_#EAEE20_0%,_#F1C86E_52%,_#EAEE20_100%)]"
@@ -206,10 +194,10 @@ const newsArticles = [
             id="scroll-container"
             class="w-full overflow-x-auto scroll-smooth scrollbar-hide pb-8"
         >
-            <div class="flex flex-nowrap gap-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-nowrap gap-4 md:gap-6 px-4 sm:px-6 lg:px-8">
                 {
                     newsArticles.map((article) => (
-                        <article class="bg-white rounded-3xl overflow-hidden w-md flex-shrink-0 shadow-md hover:shadow-xl transition-shadow duration-300 group">
+                        <article class="bg-white rounded-3xl overflow-hidden w-[85vw] sm:w-[20rem] md:w-[24rem] flex-shrink-0 shadow-md hover:shadow-xl transition-shadow duration-300 group">
                             <div class="aspect-[1/1] overflow-hidden m-4">
                                 <img
                                     src={article.image || "/placeholder.svg"}
@@ -217,14 +205,14 @@ const newsArticles = [
                                     class="w-full h-full object-cover rounded-2xl group-hover:scale-110 transition-transform duration-300"
                                 />
                             </div>
-                            <div class="p-6 pt-0 flex flex-col gap-4 justify-around text-center">
-                                <h3 class="font-bold text-lg mb-3 text-gray-900 leading-tight text-balance">
+                            <div class="p-6 pt-0 flex flex-col gap-3 justify-around text-center h-[200px]">
+                                <h3 class="font-bold text-base md:text-lg mb-1 text-gray-900 leading-tight text-balance line-clamp-2">
                                     {article.title}
                                 </h3>
                                 <p class="text-xs text-gray-500 text-center">
                                     {article.date}
                                 </p>
-                                <p class="text-sm text-gray-700">
+                                <p class="text-xs md:text-sm text-gray-700 line-clamp-3 text-pretty">
                                     {article.description}
                                 </p>
                             </div>
@@ -235,39 +223,36 @@ const newsArticles = [
         </div>
     </section>
 
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div class="flex p-8 w-full bg-white justify-center items-center rounded-4xl">
-            <div>
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        <div class="flex flex-col md:flex-row p-6 md:p-8 w-full bg-white justify-center items-center rounded-3xl md:rounded-4xl gap-8">
+            <div class="w-full md:w-1/3 flex justify-center">
                 <img
                     src="/images/home/promocionAutores.png"
                     alt="Persona sosteniendo un libro"
-                    class="rounded-3xl shadow-md"
+                    class="rounded-3xl shadow-md w-full max-w-sm object-cover"
                 />
             </div>
-            <div
-                class="rounded-2xl p-12 md:p-20 text-center"
-            >
-                <h2 class="text-4xl md:text-6xl font-geist font-bold mb-6 text-balance">
+            <div class="w-full md:w-2/3 rounded-2xl p-4 md:p-12 lg:p-20 text-center md:text-left">
+                <h2 class="text-3xl md:text-5xl lg:text-6xl font-geist font-bold mb-6 text-balance">
                     Lleva <span
-                            class="inline-block text-transparent
+                        class="inline-block text-transparent
                                     bg-clip-text
                                     font-normal font-lobster
-                                    
                                     bg-[radial-gradient(ellipse_at_center,_#DAD534_0%,_#13779C_96%,_#0BA1AA_98%,_#2D74AE_100%)]"
-                        >
-                            &nbsp;tu historia
-                        </span>
+                    >
+                        &nbsp;tu historia
+                    </span>
                     a nuevos lectores.
                 </h2>
                 <p
-                    class="text-lg text-texto-claro max-w-2xl mx-auto mb-8 leading-relaxed font-semibold"
+                    class="text-base md:text-lg text-texto-claro max-w-2xl mx-auto md:mx-0 mb-8 leading-relaxed font-semibold"
                 >
                     <span class="text-texto-resaltado">¿Escribes en Morelia?</span> Descubre cómo nuestra comunidad te
                     puede ofrecerte <span class="text-texto-resaltado">promoción, visibilidad, y un espacio exclusivo </span>
                     para que tu libro llegue a cientos de <span class="text-texto-resaltado">nuevos lectores.</span>
                 </p>
                 <button
-                    class="bg-teal-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl"
+                    class="bg-teal-600 text-white px-8 md:px-10 py-3 md:py-4 rounded-lg font-semibold text-base md:text-lg hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl w-full md:w-auto"
                 >
                     Más Información
                 </button>
@@ -305,14 +290,20 @@ const newsArticles = [
         const nextButton = document.getElementById("scroll-next");
 
         if (container && prevButton && nextButton) {
-            const scrollAmount = 448 + 24;
+            
+            // Función para obtener el ancho de desplazamiento dinámicamente
+            const getScrollAmount = () => {
+                const card = container.querySelector('article');
+                // Si existe tarjeta toma su ancho + gap (aprox 24px), si no usa un default
+                return card ? card.offsetWidth + 24 : 320; 
+            };
 
             prevButton.addEventListener("click", () => {
-                container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+                container.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
             });
 
             nextButton.addEventListener("click", () => {
-                container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+                container.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
             });
         }
     </script>

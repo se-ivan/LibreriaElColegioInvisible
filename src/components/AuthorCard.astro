@@ -1,5 +1,6 @@
 ---
 interface Props {
+  id: number;
   name: string;
   nationality: string;
   genre: string;
@@ -7,7 +8,7 @@ interface Props {
   totalBooks: number;
 }
 
-const { name, nationality, genre, imageUrl, totalBooks } = Astro.props;
+const { id, name, nationality, genre, imageUrl, totalBooks } = Astro.props;
 ---
 
 <div class="bg-[#f9fcfe] rounded-lg shadow-md overflow-hidden transition duration-300 ease-in-out hover:shadow-xl hover:scale-[1.02]">
@@ -33,7 +34,7 @@ const { name, nationality, genre, imageUrl, totalBooks } = Astro.props;
         Libros publicados: {totalBooks}
       </span>
     </div>
-    <a href={`/autores/${name.toLowerCase().replace(/\s+/g, '-')}`} 
+    <a href={`/autores/${id}`} 
        class="text-black hover:text-[#007bff] font-semibold text-sm flex items-center transition duration-300">
       Ver Perfil
       <svg class="ml-1 w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

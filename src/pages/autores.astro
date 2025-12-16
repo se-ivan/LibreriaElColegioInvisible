@@ -28,13 +28,15 @@ const truncate = (text: string, maxLength: number): string => {
     return text.substring(0, maxLength) + '...';
 };
 
+const isAdmin = true;
+
 let initialAuthors: AuthorData[] = [];
 let initialTotalPages = 1;
 
 try {
     const url = new URL(Astro.request.url);
     const currentPage = parseInt(url.searchParams.get('p') || '1');
-    const PAGE_SIZE = 10; 
+    const PAGE_SIZE = 4; 
 
     const apiUrl = `${Astro.url.origin}/api/authors?p=${currentPage}&limit=${PAGE_SIZE}`; 
     const response = await fetch(apiUrl); 
@@ -77,22 +79,49 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
 <Layout title="autores">
   <Header />
 <main>
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-                {autorDestacado ? (
+    <div class="bg-[#00305d] text-white py-16">
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-5xl font-bold mb-4">Nuestros Autores</h1>
+
+        <p class="text-xl">Conoce a los escritores que dan vida a las historias que amas</p>
+
+      </div>
+
+    </div>
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            {isAdmin && (
+                <div class="w-full flex justify-center mb-8">
+                    <a 
+                        href="/admin/autores" 
+                        class="inline-flex items-center px-6 py-3 border border-transparent 
+                               text-base font-medium rounded-lg shadow-sm text-white 
+                               bg-[#01ada4] hover:bg-emerald-500 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-7.57 7.07l5.656-5.656 2.828 2.828-5.656 5.656a1 1 0 01-.392.242l-2.735.684a.5.5 0 01-.626-.626l.684-2.735a1 1 0 01.242-.392z" />
+                        </svg>
+                        Administrar Autores
+                    </a>
+                </div>
+            )}
+                            {autorDestacado ? (
             <AutorDestacado 
+                id={autorDestacado.id}
                 name={`${autorDestacado.name} ${autorDestacado.lastName}`}
-                nationality={autorDestacado.nationality}
-                genre={autorDestacado.genre}
-                imageUrl={autorDestacado.imageUrl || 'default.jpg'}
-                description={autorDestacado.biography} 
+                nationality={autorDestacado.nationality}
+                genre={autorDestacado.genre}
+                imageUrl={autorDestacado.imageUrl || 'default.jpg'}
+                description={autorDestacado.biography} 
             />
         ) : null}
-
 
         <div id="authors-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {autoresRejilla.map(autor => (
               <AutorCard
+                id={autor.id}
                 name={`${autor.name} ${autor.lastName}`}
                 nationality={autor.nationality || 'Desconocida'}
                 genre={autor.genre}
@@ -102,11 +131,16 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
           ))}
         </div>
         
-        <nav id="pagination" class="flex justify-center mt-12 gap-2" data-total-pages={initialTotalPages}>
-            <button id="btn-prev" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Anterior</button>
-            <span id="page-indicator" class="px-4 py-2 text-gray-600 bg-white border rounded-lg">Página 1 de {initialTotalPages}</span>
-            <button id="btn-next" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Siguiente</button>
-        </nav>
+        <nav id="pagination" class="flex justify-center mt-12 gap-2" data-total-pages={initialTotalPages} data-current-page={parseInt(new URL(Astro.request.url).searchParams.get('p') || '1')}>
+            <button id="btn-prev" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Anterior</button>
+    
+            <div id="page-buttons" class="flex gap-2 items-center">
+            </div>
+
+                <span id="page-indicator" class="hidden px-4 py-2 text-gray-600 bg-white border rounded-lg">Página 1 de {initialTotalPages}</span>
+
+            <button id="btn-next" class="px-4 py-2 border rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">Siguiente</button>
+        </nav>
         
         <div id="loader" class="hidden text-center mt-4">
             <span class="text-gray-600 font-semibold animate-pulse">Cargando autores...</span>
@@ -145,7 +179,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
 
 <script>
     const API_URL = '/api/authors';
-    const PAGE_SIZE = 10; 
+    const PAGE_SIZE = 4; 
 
     let currentPage = 1;
     let totalPages = Number(document.getElementById('pagination')?.dataset.totalPages) || 1;
@@ -154,6 +188,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
     const loader = document.getElementById('loader');
     const btnPrev = document.getElementById('btn-prev') as HTMLButtonElement;
     const btnNext = document.getElementById('btn-next') as HTMLButtonElement;
+    const pageButtonsContainer = document.getElementById('page-buttons');
     const pageIndicator = document.getElementById('page-indicator');
     const template = document.getElementById('card-template') as HTMLTemplateElement;
 
@@ -172,7 +207,7 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
             const response = await fetch(`${API_URL}?p=${page}&limit=${PAGE_SIZE}`);
             const data = await response.json();
 
-            if (data.error) throw new Error(data.error);
+            if (!response.ok || data.error) throw new Error(data.error || 'Error en la respuesta del API');
 
             currentPage = data.currentPage;
             totalPages = data.totalPages;
@@ -188,6 +223,30 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
         } finally {
             loader?.classList.add('hidden');
             container!.style.opacity = '1';
+        }
+    }
+
+    function renderPageButtons() {
+        if (!pageButtonsContainer) return;
+
+        pageButtonsContainer.innerHTML = ''; 
+
+        for (let i = 1; i <= totalPages; i++) {
+            const button = document.createElement('button');
+            button.textContent = i.toString();
+            button.className = 'page-number-btn px-4 h-10 border rounded-lg transition-colors';
+            
+            if (i === currentPage) {
+                button.classList.add('bg-[#01ada4]', 'text-white', 'border-[#01ada4]');
+            } else {
+                button.classList.add('bg-white', 'text-gray-600', 'hover:bg-gray-100');
+            }
+
+            button.addEventListener('click', () => {
+                fetchAuthors(i); 
+            });
+
+            pageButtonsContainer.appendChild(button);
         }
     }
 
@@ -209,14 +268,14 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
         authorsToRender.forEach(autor => {
             const clone = template.content.cloneNode(true) as DocumentFragment;
             const fullName = `${autor.name} ${autor.lastName || ''}`;
-            const urlSlug = `/autores/${fullName.toLowerCase().replace(/\s+/g, '-')}`;
+            const url = `/autores/${autor.id}`;
 
             const img = clone.querySelector('.card-img') as HTMLImageElement;
             img.src = autor.imageUrl || "/default.jpg";
             img.alt = `Foto de ${fullName}`;
 
             const link = clone.querySelector('.card-link') as HTMLAnchorElement;
-            link.href = urlSlug;
+            link.href = url;
             
             clone.querySelector('.card-name')!.textContent = fullName;
             clone.querySelector('.card-nationality')!.textContent = autor.nationality || 'Desconocida';
@@ -230,6 +289,8 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
         if(pageIndicator) pageIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
         if(btnPrev) btnPrev.disabled = currentPage <= 1;
         if(btnNext) btnNext.disabled = currentPage >= totalPages;
+
+        renderPageButtons();
     }
 
     btnPrev?.addEventListener('click', () => {

@@ -9,6 +9,8 @@ import bcrypt from "bcryptjs";
 export default defineConfig({
   adapter: PrismaAdapter(db),
   
+  secret: import.meta.env.AUTH_SECRET,
+
   providers: [
     Google({
       clientId: import.meta.env.GOOGLE_CLIENT_ID,
@@ -49,11 +51,7 @@ export default defineConfig({
         console.log(passwordIsValid)
 
         if (passwordIsValid) {
-          return { 
-              id: user.id, 
-              name: user.name, 
-              email: user.email, 
-          };
+              return user;
         }
         
         console.log("Contraseña incorrecta.");
@@ -74,6 +72,7 @@ export default defineConfig({
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.isUser = user.isUser;
       }
       return token;
     },
@@ -83,6 +82,7 @@ export default defineConfig({
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
+        session.user.isUser = token.isUser as boolean;
       }
       return session;
     },

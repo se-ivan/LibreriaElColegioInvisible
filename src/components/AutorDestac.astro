@@ -1,5 +1,6 @@
 ---
 interface Props {
+  id: number;
   name: string;
   nationality: string | null;
   genre: string;
@@ -7,7 +8,7 @@ interface Props {
   imageUrl: string;
 }
 
-const { name, nationality, genre, description, imageUrl } = Astro.props;
+const { id, name, nationality, genre, description, imageUrl } = Astro.props;
 
 const urlSlug = name.toLowerCase().replace(/\s+/g, '-');
 ---
@@ -32,7 +33,7 @@ const urlSlug = name.toLowerCase().replace(/\s+/g, '-');
     <p class="text-gray-600 leading-relaxed mb-6">
       {description}
     </p>
-    <a href={`/autores/${urlSlug}`} class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#01ada4] hover:bg-emerald-500 transition duration-300 ease-in-out self-start">
+    <a href={`/autores/${id}`} class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#01ada4] hover:bg-emerald-500 transition duration-300 ease-in-out self-start">
       Ver Perfil
       <svg class="ml-3 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
