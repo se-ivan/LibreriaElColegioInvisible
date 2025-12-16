@@ -1,8 +1,11 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import prisma from '../lib/prisma';
+import { authorActions } from './authors';
 
 export const server = {
+  
+  authorActions,
   
   getAuthors: defineAction({
     handler: async () => {
