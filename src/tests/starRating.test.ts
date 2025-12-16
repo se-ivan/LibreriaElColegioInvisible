@@ -4,6 +4,7 @@ import StarRating from '../components/StarRating.astro';
 
 test("Renderiza el aria-label correcto y score perfecto", async () => {
     const container = await AstroContainer.create();
+    
     const result = await container.renderToString(StarRating, {
         props: { score: 5 }
     });
