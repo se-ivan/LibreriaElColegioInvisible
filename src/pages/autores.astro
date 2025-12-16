@@ -28,6 +28,8 @@ const truncate = (text: string, maxLength: number): string => {
     return text.substring(0, maxLength) + '...';
 };
 
+const isAdmin = true;
+
 let initialAuthors: AuthorData[] = [];
 let initialTotalPages = 1;
 
@@ -80,28 +82,41 @@ const autoresRejilla = autorDestacado ? initialAuthors.slice(1) : initialAuthors
 
     <div class="bg-[#00305d] text-white py-16">
 
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 class="text-5xl font-bold mb-4">Nuestros Autores</h1>
 
-        <h1 class="text-5xl font-bold mb-4">Nuestros Autores</h1>
+        <p class="text-xl">Conoce a los escritores que dan vida a las historias que amas</p>
 
-        <p class="text-xl">Conoce a los escritores que dan vida a las historias que amas</p>
+      </div>
 
-      </div>
-
-    </div>
+    </div>
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-                {autorDestacado ? (
+            
+            {isAdmin && (
+                <div class="w-full flex justify-center mb-8">
+                    <a 
+                        href="/admin/autores" 
+                        class="inline-flex items-center px-6 py-3 border border-transparent 
+                               text-base font-medium rounded-lg shadow-sm text-white 
+                               bg-[#01ada4] hover:bg-emerald-500 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-7.57 7.07l5.656-5.656 2.828 2.828-5.656 5.656a1 1 0 01-.392.242l-2.735.684a.5.5 0 01-.626-.626l.684-2.735a1 1 0 01.242-.392z" />
+                        </svg>
+                        Administrar Autores
+                    </a>
+                </div>
+            )}
+                            {autorDestacado ? (
             <AutorDestacado 
-                id={autorDestacado.id}
+                id={autorDestacado.id}
                 name={`${autorDestacado.name} ${autorDestacado.lastName}`}
-                nationality={autorDestacado.nationality}
-                genre={autorDestacado.genre}
-                imageUrl={autorDestacado.imageUrl || 'default.jpg'}
-                description={autorDestacado.biography} 
+                nationality={autorDestacado.nationality}
+                genre={autorDestacado.genre}
+                imageUrl={autorDestacado.imageUrl || 'default.jpg'}
+                description={autorDestacado.biography} 
             />
         ) : null}
-
 
         <div id="authors-container" class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {autoresRejilla.map(autor => (
