@@ -1,0 +1,54 @@
+---
+// src/layouts/AdminLayout.astro
+import '../styles/global.css';
+import { getSession } from 'auth-astro/server';
+
+interface CustomUser {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+
+    isUser?: boolean; 
+}
+
+const STRAPI_ADMIN_URL = import.meta.env.PUBLIC_STRAPI_ADMIN_NOTICIAS_URL;
+
+const session = await getSession(Astro.request);
+
+// Definir la convención de administrador
+const IS_ADMIN = false; 
+
+// Verificar el permiso: Debe haber sesión Y el campo isUser debe ser false.
+const user = session?.user as CustomUser | undefined;
+
+// Usamos el objeto 'user' casteado para la validación:
+const isAllowed = !!user && user.isUser === IS_ADMIN;
+
+/*
+if (!session || !isAllowed) {
+    return Astro.redirect('/login'); 
+}
+*/
+const { title = "Administración" } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} | Admin</title>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-[#00305d] text-white p-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="/admin/autores" class="text-2xl font-bold hover:text-blue-300">Panel de Administración</a>
+           
+        </div>
+    </header>
+    
+    <main class="max-w-7xl mx-auto p-4 sm:p-8">
+        <slot />
+    </main>
+</body>
+</html>

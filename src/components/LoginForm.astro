@@ -74,7 +74,8 @@ const error = Astro.url.searchParams.get("error");
           class="space-y-5"
           novalidate
         >
-          <input type="hidden" name="csrfToken" value={csrfToken} />
+          <!-- Añadido ID que coincide con el script -->
+          <input type="hidden" id="csrfTokenInput" name="csrfToken" value={csrfToken} />
 
           <div class="space-y-1">
             <label
@@ -138,6 +139,9 @@ const error = Astro.url.searchParams.get("error");
 
       <div id="register-form">
         <form method="POST" action="/api/register" class="space-y-5">
+          <!-- Añadido CSRF token al formulario de registro -->
+          <input type="hidden" id="csrfTokenInputRegister" name="csrfToken" value={csrfToken} />
+          
           <div class="space-y-1">
             <label for="name" class="block text-sm font-medium text-gray-700">
               Nombre<span class="text-red-500">*</span>
@@ -244,10 +248,10 @@ const error = Astro.url.searchParams.get("error");
 </div>
 
 <script type="module">
-  const form = document.getElementById("login-form-el");
   const errorBox = document.getElementById("login-error");
   const csrfInput = document.getElementById("csrfTokenInput");
   const csrfInputGoogle = document.getElementById("csrfTokenInputGoogle");
+  const csrfInputRegister = document.getElementById("csrfTokenInputRegister");
 
   async function fetchCsrf() {
     try {
@@ -261,13 +265,13 @@ const error = Astro.url.searchParams.get("error");
 
       if (csrfInput) csrfInput.value = token;
       if (csrfInputGoogle) csrfInputGoogle.value = token;
+      if (csrfInputRegister) csrfInputRegister.value = token;
     } catch (err) {
       console.warn("Error en el CSRF del Cliente:", err);
     }
   }
 
   fetchCsrf();
-
 
   const showLoginBtn = document.getElementById("show-login-btn");
   const showRegisterBtn = document.getElementById("show-register-btn");
@@ -276,22 +280,22 @@ const error = Astro.url.searchParams.get("error");
   const goToLoginLink = document.getElementById("go-to-login");
 
   function showLogin() {
-    loginForm.classList.remove("hidden");
-    registerForm.classList.add("hidden");
-    showLoginBtn.classList.add("bg-black", "text-white");
-    showRegisterBtn.classList.remove("bg-black", "text-white");
+    loginForm?.classList.remove("hidden");
+    registerForm?.classList.add("hidden");
+    showLoginBtn?.classList.add("bg-black", "text-white");
+    showRegisterBtn?.classList.remove("bg-black", "text-white");
   }
 
   function showRegister() {
-    loginForm.classList.add("hidden");
-    registerForm.classList.remove("hidden");
-    showRegisterBtn.classList.add("bg-black", "text-white");
-    showLoginBtn.classList.remove("bg-black", "text-white");
+    loginForm?.classList.add("hidden");
+    registerForm?.classList.remove("hidden");
+    showRegisterBtn?.classList.add("bg-black", "text-white");
+    showLoginBtn?.classList.remove("bg-black", "text-white");
   }
 
-  showLoginBtn.addEventListener("click", showLogin);
-  showRegisterBtn.addEventListener("click", showRegister);
-  goToLoginLink.addEventListener("click", (e) => {
+  showLoginBtn?.addEventListener("click", showLogin);
+  showRegisterBtn?.addEventListener("click", showRegister);
+  goToLoginLink?.addEventListener("click", (e) => {
     e.preventDefault();
     showLogin();
   });
