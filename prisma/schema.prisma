@@ -147,14 +147,3 @@ model Reply {
   comment   Comment  @relation(fields: [commentId], references: [id])
   @@map("reply")
 }
-
-model Vote {
-  userId String @map("User_id_user")
-  bookId Int    @map("Book_id_book")
-
-  book   Book   @relation(fields: [bookId], references: [id])
-  user   User   @relation(fields: [userId], references: [id])
-
-  @@unique([userId, bookId])
-  @@map("vote")
-}
