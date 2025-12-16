@@ -9,6 +9,8 @@ import bcrypt from "bcryptjs";
 export default defineConfig({
   adapter: PrismaAdapter(db),
   
+  secret: import.meta.env.AUTH_SECRET,
+
   providers: [
     Google({
       clientId: import.meta.env.GOOGLE_CLIENT_ID,
