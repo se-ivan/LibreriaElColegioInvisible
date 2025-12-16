@@ -16,7 +16,7 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
-  integrations: [react({ include: ['src/components/react/**'] }), markdoc(), keystatic(), Auth()],
+  integrations: [react({ include: ['src/components/react/**'] }), markdoc(), Auth()],
 
   vite: {
     plugins: [tailwindcss()],
