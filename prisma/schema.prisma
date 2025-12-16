@@ -25,7 +25,6 @@ model User {
   news          New[]
   events        Event[]
   comments      Comment[]
-  donations     Donation[]
   
   @@map("user")
 }
@@ -149,18 +148,13 @@ model Reply {
   @@map("reply")
 }
 
-model Donation {
-  id           Int      @id @default(autoincrement()) @map("id_Donaciones")
-  name         String  
-  email        String  
-  phone        String   
-  quantityBook Int      @map("quantity_book")
-  type         Int
-  address      String 
-  message      String?
+model Vote {
+  userId String @map("User_id_user")
+  bookId Int    @map("Book_id_book")
 
-  userId       String   @map("User_id_user")
-  user         User     @relation(fields: [userId], references: [id])
+  book   Book   @relation(fields: [bookId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
-  @@map("donaciones")
+  @@unique([userId, bookId])
+  @@map("vote")
 }
