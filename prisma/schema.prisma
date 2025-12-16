@@ -25,7 +25,6 @@ model User {
   news          New[]
   events        Event[]
   comments      Comment[]
-  donations     Donation[]
   
   @@map("user")
 }
@@ -147,20 +146,4 @@ model Reply {
   commentId Int      @map("id_comment")
   comment   Comment  @relation(fields: [commentId], references: [id])
   @@map("reply")
-}
-
-model Donation {
-  id           Int      @id @default(autoincrement()) @map("id_Donaciones")
-  name         String  
-  email        String  
-  phone        String   
-  quantityBook Int      @map("quantity_book")
-  type         Int
-  address      String 
-  message      String?
-
-  userId       String   @map("User_id_user")
-  user         User     @relation(fields: [userId], references: [id])
-
-  @@map("donaciones")
 }
