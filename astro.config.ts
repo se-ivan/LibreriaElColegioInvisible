@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 
 import markdoc from '@astrojs/markdoc';
 import Auth from "auth-astro";
-import vercel from '@astrojs/vercel/serverless';
+
 import react from '@astrojs/react';
 
 import tailwindcss from '@tailwindcss/vite';

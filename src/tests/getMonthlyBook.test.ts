@@ -1,35 +1,28 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
-vi.mock("../pages/lib/prisma", () => ({
-  default: {
-    user: {
-      findMany: vi.fn(),
+
+vi.mock("../lib/prisma", () => ({
+  prisma: {
+    book: {
+      findFirst: vi.fn().mockResolvedValue({
+        title: "Libro del mes",
+        author: "Autor",
+        description: "Descripción",
+      }),
     },
   },
 }));
 
-import prisma from "../pages/lib/prisma";
-import { GET } from "../pages/api/usersTest"; 
+import { GET } from "../pages/api/monthlyBook";
 
-describe("GET /api/users", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+describe("GET /api/monthlyBook", () => {
+  it("retorna el libro del mes", async () => {
+    const response = await GET({} as any);
+
+    expect(response.status).toBe(200);
+
+    const data = await response.json();
+
+    expect(data.title).toBe("Libro del mes");
   });
-
-  it("devuelve la lista de usuarios", async () => {
-    (prisma.user.findMany as any).mockResolvedValue([
-      { id: "1", name: "Juan", isUser: true },
-      { id: "2", name: "Ana", isUser: true },
-    ]);
-
-    const res = await GET({} as any);
-
-    expect(res.status).toBe(200);
-
-    const data = await res.json();
-    expect(data).toHaveLength(2);
-    expect(data[0]).toEqual(expect.objectContaining({ 
-        id: "1", 
-        name: "Juan" 
-    }));
-  })});
+});

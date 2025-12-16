@@ -1,5 +1,11 @@
 /// <reference types="astro/client" />
 
+declare module '*.astro' {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Component: any;
+  export default Component;
+}
+
 declare namespace App {
   interface Locals {
     session: Promise<import("@auth/core/types").Session | null>;
