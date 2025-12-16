@@ -16,7 +16,10 @@ jobs:
           node-version: 18
 
       - name: Instala dependencias
-        run: npm ci
+        run: |
+          rm -f package-lock.json
+          npm install
+          npm rebuild
 
       - name: Corre tests
         run: npm test
