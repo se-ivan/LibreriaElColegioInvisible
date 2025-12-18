@@ -30,7 +30,7 @@ export const server = {
     }),
     handler: async (input) => {
       const skip = (input.page - 1) * input.pageSize;
-      const where = input.search ? { OR: [{ title: { contains: input.search } }] } : undefined;
+      const where = input.search ? { OR: [{ title: { contains: input.search, mode: 'insensitive' as any } }] } : undefined;
 
       try {
         const [booksRaw, total] = await Promise.all([
