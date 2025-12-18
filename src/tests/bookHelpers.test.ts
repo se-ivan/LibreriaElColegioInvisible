@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatPrice, validateBookInput } from '../src/utils/bookHelpers';
+import { formatPrice, validateBookInput } from '../utils/bookHelpers';
 
 describe('Pruebas del Catálogo de Libros', () => {
 

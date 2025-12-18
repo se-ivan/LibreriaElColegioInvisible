@@ -9,7 +9,7 @@ import { CreateComments } from "../components/CreateComments";
 import { getSession } from "auth-astro/server";
 
 const session = await getSession(Astro.request);
-const userId = session?.user.id || "cmh2ekh300000szsg3z480swa";
+const userId = session?.user.id || "";
 
 const res = await fetch("http://localhost:4321/api/monthlyBook");
 
