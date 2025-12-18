@@ -1,8 +1,8 @@
-import prisma from '../pages/lib/prisma'; 
+import prisma from '../lib/prisma'; 
 import { defineAction } from 'astro:actions';
 import z from 'zod';
 import { Prisma } from '@prisma/client';
-import { uploadImage, deleteImageByUrl } from '../utils/cloudinary'; // Ruta para cloudinary
+import { uploadImage, deleteImageByUrl } from '../utils/cloudinary';
 
 const cleanOptional = (value: string | null | undefined) => 
     (value === '' || value === null) ? undefined : value;
