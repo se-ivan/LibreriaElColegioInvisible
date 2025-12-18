@@ -7,15 +7,20 @@ import NextMontlyBook from "../components/NextMontlyBook.astro";
 import FormerMonthlyBook from "../components/FormerMonthlyBook.astro";
 import { CreateComments } from "../components/CreateComments";
 import { getSession } from "auth-astro/server";
+import logger from "../lib/logger";
 
 const session = await getSession(Astro.request);
 const userId = session?.user.id || "";
+
+if (!userId) {
+  logger.warn("Usuario no autenticado accediendo a Libro del Mes");
+}
 
 const res = await fetch("http://localhost:4321/api/monthlyBook");
 
 if (!res.ok) {
   const text = await res.text();
-  console.error("monthlyBook ERROR:", text);
+  logger.error("monthlyBook ERROR:", text);
   throw new Error("monthlyBook no devolvió JSON");
 }
 
@@ -27,7 +32,7 @@ const nextMonthRes = await fetch(
 
 if (!nextMonthRes.ok) {
   const text = await nextMonthRes.text();
-  console.error("nextMonthly ERROR:", text);
+  logger.error("nextMonthly ERROR:", text);
   throw new Error("nextMonthly no devolvió JSON");
 }
 

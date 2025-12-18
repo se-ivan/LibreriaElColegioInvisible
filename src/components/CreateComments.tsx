@@ -13,6 +13,7 @@ type CreateCommentPayload = Omit<Comment, 'id' | 'user' | 'replies' | 'like'>;
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 async function sendComment(url: string, { arg }: { arg: CreateCommentPayload }) {
+
     const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

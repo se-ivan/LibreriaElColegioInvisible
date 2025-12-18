@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import prisma from '../../lib/prisma';
 import type { Comment } from '../../../data/mock-db';
+import logger from '../../../lib/logger';
 
 export const GET: APIRoute = async ({ request }) => {
     const url = new URL(request.url);
@@ -34,14 +35,14 @@ export const GET: APIRoute = async ({ request }) => {
             take:pageSize,
             skip: (page - 1) * pageSize,
         });
-
+    
         return new Response(JSON.stringify(comments), {
             status: 200,
             headers: { "Content-Type": "application/json" }
         });
-
+        
     } catch (error) {
-        console.error("Error cargando comentarios:", error);
+        logger.error("Error al obtener los comentarios:", error);
         return new Response(JSON.stringify({ error: "Error interno" }), { status: 500 });
     }
 };
@@ -76,7 +77,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
   } catch (error) {
-    console.error('Error al crear el comentario:', error);
+    logger.error("Error al crear el comentario:", error)
 
     return new Response(JSON.stringify({ error: 'Error interno del servidor al crear el comentario.' }),
       {
