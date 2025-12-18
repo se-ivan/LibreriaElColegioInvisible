@@ -32,7 +32,14 @@
     "swr": "^2.3.8",
     "tailwindcss": "^4.1.16",
     "winston": "^3.19.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "@markdoc/markdoc": "0.5.4",
+    "next": "16.0.10",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.561.0",
+    "tailwind-merge": "3.4.0",
+    "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",
@@ -41,7 +48,10 @@
     "jsdom": "^27.3.0",
     "prisma": "^6.16.3",
     "tsx": "^4.20.6",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.15",
+    "@types/node": "25.0.3",
+    "typescript": "5.9.3",
+    "postcss": "8.5.6"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.53.4"
