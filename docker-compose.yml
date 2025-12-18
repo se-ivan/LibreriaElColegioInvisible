@@ -1,0 +1,9 @@
+services:
+  astro-app:
+    build: .
+    container_name: astro_web
+    ports:
+      - "8080:4321"
+    env_file:
+      - .env  # <--- Esto carga tus claves de Turso automáticamente
+    restart: always
