@@ -1,56 +1,144 @@
 ---
-const { title, description, date, duration, image, category, buttonText = "Suscribirse" } = Astro.props;
+interface Props {
+    title: string;
+    description: string;
+    date: string;
+    duration?: string;
+    image: string;
+    category?: string;
+    buttonText?: string;
+    registrationUrl?: string;
+    location?: string;
+    price?: number;
+}
+const {
+    title,
+    description,
+    date,
+    duration,
+    image,
+    category,
+    buttonText = "Suscribirse",
+    registrationUrl,
+    location,
+    price,
+} = Astro.props;
 ---
 
-<div class="bg-white shadow-md rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-6xl mx-auto border border-gray-200">
-  
-<div class="md:w-1/2 w-full h-48 md:h-auto">
-  <img 
-    src={image ?? "/evento.jpeg"} 
-    alt={title} 
-    class="w-full h-full object-cover rounded-lg"
-  />
-</div>
-
-  
-  <div class="p-6 flex flex-col justify-between md:w-1/2 w-full">
-    <div>
-      
-      <span class="inline-block bg-[#E6F4F1] text-[#0078A8] text-xs font-medium px-3 py-1 rounded-full mb-3">
-        {category ?? "Evento"}
-      </span>
-
-      
-      <h3 class="text-2xl font-semibold text-[#003B5B] mb-2">
-        {title ?? "Gran Firma de Libros"}
-      </h3>
-
-     
-      <p class="text-gray-600 mb-4 leading-relaxed">
-        {description ?? "El reconocido autor de 'El Libro' visitará nuestra librería el próximo mes para una firma exclusiva."}
-      </p>
+<div
+    class="bg-white shadow-md rounded-xl overflow-hidden flex flex-col md:flex-row w-full max-w-6xl mx-auto border border-gray-200"
+>
+    <div class="md:w-1/2 w-full h-48 md:h-auto relative">
+        <img
+            src={image ?? "/evento.jpeg"}
+            alt={title}
+            class="w-full h-full object-cover"
+        />
+        {
+            price !== undefined && price > 0 && (
+                <div class="absolute top-2 right-2 bg-yellow-500 text-slate-900 text-xs font-bold px-2 py-1 rounded shadow">
+                    ${price}
+                </div>
+            )
+        }
     </div>
 
-   
-    <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
-      <div class="flex items-center gap-1">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        {date ?? "30 de Septiembre, 2025"}
-      </div>
+    <div class="p-6 flex flex-col justify-between md:w-1/2 w-full">
+        <div>
+            <span
+                class="inline-block bg-[#E6F4F1] text-[#0078A8] text-xs font-medium px-3 py-1 rounded-full mb-3"
+            >
+                {category ?? "Evento"}
+            </span>
 
-      <div class="flex items-center gap-1">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        {duration ?? "60 min"}
-      </div>
+            <h3 class="text-2xl font-semibold text-[#003B5B] mb-2">
+                {title ?? "Gran Firma de Libros"}
+            </h3>
+
+            <p class="text-gray-600 mb-4 leading-relaxed">
+                {
+                    description ??
+                        "Descripción del evento no disponible en este momento."
+                }
+            </p>
+        </div>
+
+        <div
+            class="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4"
+        >
+            <div class="flex items-center gap-1">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path>
+                </svg>
+                {date ?? "Fecha por confirmar"}
+            </div>
+
+            {
+                duration && (
+                    <div class="flex items-center gap-1">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+                        {duration}
+                    </div>
+                )
+            }
+            {
+                location && (
+                    <div class="flex items-center gap-1">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                        </svg>
+                        {location}
+                    </div>
+                )
+            }
+        </div>
+
+        <a
+            href={registrationUrl ?? "#"}
+            class="self-start bg-[#01ACA5] hover:bg-[#009875] text-white text-sm font-medium px-4 py-2 rounded-full transition text-center"
+        >
+            {buttonText}
+        </a>
     </div>
-
-    
-    <button class="self-start bg-[#01ACA5] hover:bg-[#009875] text-white text-sm font-medium px-4 py-2 rounded-full transition">
-      {buttonText}
-    </button>
-  </div>
 </div>

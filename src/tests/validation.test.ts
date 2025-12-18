@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateBookInput } from '../src/utils/bookHelpers';
+import { validateBookInput } from '../utils/bookHelpers';
 
 describe('Pruebas de Validación de Datos', () => {
 
