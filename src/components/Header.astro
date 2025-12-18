@@ -26,33 +26,44 @@ import "../styles/global.css";
         </ul>
       </nav>
 
-      <div class="relative hidden sm:block w-64 group">
-        <input
-          id="search-input-desktop"
-          class="w-full rounded-md h-9 border-2 border-[#C6DBEA] bg-white text-[#00305d] px-3 pr-8 focus:outline-none focus:border-sky-500 transition-colors placeholder-gray-400 text-sm"
-          placeholder="Buscar libro..."
-          type="text"
-          autocomplete="off"
-        />
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-2 top-2 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-
-        <div id="search-results-desktop" class="absolute top-full mt-2 w-full bg-white rounded-md shadow-xl overflow-hidden hidden text-gray-800 z-50">
-            </div>
-      </div>
-
-      <div class="flex lg:hidden">
-        <button id="mobile-menu-btn" type="button" class="text-white hover:text-sky-300 focus:outline-none">
-          <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      <div class="flex items-center gap-3">
+        
+        <div class="relative hidden sm:block w-48 md:w-64 group">
+          <input
+            id="search-input-desktop"
+            class="w-full rounded-full h-9 border-2 border-[#C6DBEA] bg-white text-[#00305d] px-3 pr-8 focus:outline-none focus:border-sky-500 transition-colors placeholder-gray-400 text-sm"
+            placeholder="Buscar libro..."
+            type="text"
+            autocomplete="off"
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-2 top-2 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-        </button>
+  
+          <div id="search-results-desktop" class="absolute top-full mt-2 w-full bg-white rounded-md shadow-xl overflow-hidden hidden text-gray-800 z-50">
+          </div>
+        </div>
+
+        <a 
+          href="/login" 
+          class="hidden sm:inline-flex items-center justify-center px-5 py-1.5 border border-transparent text-sm font-bold rounded-full text-[#00305d] bg-white hover:bg-gray-100 transition-colors shadow-sm"
+        >
+          Iniciar Sesión
+        </a>
+
+        <div class="flex lg:hidden">
+          <button id="mobile-menu-btn" type="button" class="text-white hover:text-sky-300 focus:outline-none">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden lg:hidden bg-[#00284d] border-t border-sky-900 pb-4">
+  <div id="mobile-menu" class="hidden lg:hidden bg-[#00284d] border-t border-sky-900 pb-4 shadow-inner">
     <div class="px-4 pt-4 pb-2 space-y-1">
         <div class="relative mb-4 w-full">
             <input
@@ -71,14 +82,41 @@ import "../styles/global.css";
         <a href="/Services" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Servicios</a>
         <a href="/eventos" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Eventos</a>
         <a href="/donaciones" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-sky-900 transition">Donaciones</a>
+        
+        <div class="border-t border-sky-800 mt-2 pt-2">
+            <a href="/login" class="flex items-center gap-2 px-3 py-2 rounded-md text-base font-bold text-white bg-sky-900/50 hover:bg-sky-800 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                Iniciar Sesión
+            </a>
+        </div>
     </div>
   </div>
 </header>
 
 <script>
-  // 1. Lógica del Menú Hamburguesa
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
+  // 1. Definición de Interfaces para TypeScript
+  interface Author {
+    name: string;
+  }
+
+  interface Book {
+    id: number | string;
+    title: string;
+    image?: string | null;
+    author?: Author | null;
+  }
+
+  interface ApiResponse {
+    books: Book[];
+    total?: number;
+    // Agrega otros campos si tu API los devuelve
+  }
+
+  // 2. Lógica del Menú Hamburguesa
+  const btn = document.getElementById('mobile-menu-btn') as HTMLButtonElement | null;
+  const menu = document.getElementById('mobile-menu') as HTMLDivElement | null;
 
   if(btn && menu) {
     btn.addEventListener('click', () => {
@@ -86,19 +124,21 @@ import "../styles/global.css";
     });
   }
 
-  // 2. Lógica de Búsqueda (Función reutilizable)
+  // 3. Lógica de Búsqueda
   function setupSearch(inputId: string, resultsId: string) {
-    const input = document.getElementById(inputId) as HTMLInputElement;
-    const resultsContainer = document.getElementById(resultsId);
+    // Aserción de tipos para elementos del DOM
+    const input = document.getElementById(inputId) as HTMLInputElement | null;
+    const resultsContainer = document.getElementById(resultsId) as HTMLDivElement | null;
 
     if (!input || !resultsContainer) return;
 
     let debounceTimer: ReturnType<typeof setTimeout>;
 
-    input.addEventListener('input', (e) => {
-      const query = (e.target as HTMLInputElement).value.trim();
+    input.addEventListener('input', (e: Event) => {
+      // Casteamos el target para acceder a .value
+      const target = e.target as HTMLInputElement;
+      const query = target.value.trim();
 
-      // Limpiar timer anterior (Debounce)
       clearTimeout(debounceTimer);
 
       if (query.length < 2) {
@@ -107,17 +147,24 @@ import "../styles/global.css";
         return;
       }
 
-      // Esperar 300ms antes de llamar a la API
       debounceTimer = setTimeout(async () => {
         try {
-          // Llamada a TU API
           const res = await fetch(`/api/books?q=${encodeURIComponent(query)}`);
           if (!res.ok) throw new Error('Error fetching');
-          const books = await res.json();
+          
+          // Tipamos la respuesta
+          const responseData = await res.json() as ApiResponse | Book[];
+          
+          // Manejamos si la API devuelve array directo o un objeto { books: [...] }
+          let books: Book[] = [];
+          if (Array.isArray(responseData)) {
+            books = responseData;
+          } else if (responseData.books) {
+            books = responseData.books;
+          }
 
-          // Renderizar resultados
           if (books.length > 0) {
-            resultsContainer.innerHTML = books.map((book: any) => `
+            resultsContainer.innerHTML = books.map((book) => `
               <a href="/libros/${book.id}" class="block px-4 py-3 hover:bg-gray-100 border-b border-gray-100 last:border-0 transition-colors flex items-center gap-3">
                  ${book.image ? `<img src="${book.image}" class="w-8 h-10 object-cover rounded" />` : ''}
                  <div>
@@ -127,7 +174,6 @@ import "../styles/global.css";
               </a>
             `).join('');
             
-            // Ver todos
             resultsContainer.innerHTML += `
                 <a href="/BookList?search=${query}" class="block px-4 py-2 text-xs text-center text-blue-600 font-bold bg-gray-50 hover:bg-gray-100">
                     Ver todos los resultados
@@ -145,15 +191,16 @@ import "../styles/global.css";
       }, 300);
     });
 
-    // Cerrar resultados si se hace click fuera
-    document.addEventListener('click', (e) => {
-        if (!input.contains(e.target as Node) && !resultsContainer.contains(e.target as Node)) {
+    // Evento de click fuera para cerrar el dropdown
+    document.addEventListener('click', (e: MouseEvent) => {
+        const target = e.target as Node;
+        if (!input.contains(target) && !resultsContainer.contains(target)) {
             resultsContainer.classList.add('hidden');
         }
     });
   }
 
-  // Inicializar búsqueda Desktop y Mobile
+  // Inicializar
   setupSearch('search-input-desktop', 'search-results-desktop');
   setupSearch('search-input-mobile', 'search-results-mobile');
 

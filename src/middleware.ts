@@ -1,37 +1,65 @@
-// src/middleware.ts
-import { defineMiddleware } from "astro:middleware";
-import { getSession } from "auth-astro/server";
+import { defineMiddleware } from "astro:middleware"
+import { getSession } from "auth-astro/server"
+import logger, { generateCorrelationId } from "./lib/logger"
 
-const protectedRoutes = ["/dashboard", "/profile", "/admin"];
-
-const authRoutes = ["/login"];
+const protectedRoutes = ["/dashboard", "/profile", "/admin"]
+const authRoutes = ["/login"]
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  // Obtener la sesión usando getSession
-  const session = await getSession(context.request);
-  const { pathname } = context.url;
+  const correlationId = generateCorrelationId()
+  const startTime = Date.now()
+  const { pathname } = context.url
 
-  // Verificar si la ruta actual es protegida
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  // Si es una ruta protegida y no hay sesión, redirigir al login
-  if (isProtectedRoute && !session) {
-    console.log("Usuario no autenticado intentando acceder a:", pathname);
-    return context.redirect("/login");
+  if (!pathname.startsWith("/_") && !pathname.includes(".")) {
+    logger.http("Page request", {
+      correlationId,
+      context: {
+        method: context.request.method,
+        path: pathname,
+      },
+    })
   }
 
-  // Verificar si es una ruta de autenticación (login/register)
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const session = await getSession(context.request)
+
+  const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route))
+
+  if (isProtectedRoute && !session) {
+    logger.warn("Unauthorized access attempt", {
+      correlationId,
+      context: {
+        path: pathname,
+        action: "REDIRECT_TO_LOGIN",
+      },
+    })
+    return context.redirect("/login")
+  }
+
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route))
 
   if (isAuthRoute && session) {
-    console.log("Usuario autenticado redirigido desde login a home");
-    return context.redirect("/");
+    logger.info("Authenticated user redirected from auth page", {
+      correlationId,
+      context: {
+        userId: session.user?.email,
+        from: pathname,
+        to: "/",
+      },
+    })
+    return context.redirect("/")
   }
 
-  // Agregar sesión a locals para que esté disponible en las páginas
-  context.locals.session = Promise.resolve(session);
+  context.locals.session = Promise.resolve(session)
 
-  return next();
-});
+  const response = await next()
+
+  if (!pathname.startsWith("/_") && !pathname.includes(".")) {
+    logger.debug("Page rendered", {
+      correlationId,
+      duration: Date.now() - startTime,
+      context: { path: pathname, status: response.status },
+    })
+  }
+
+  return response
+})
